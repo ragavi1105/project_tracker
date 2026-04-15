@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Tracker</title>
+  <link rel="stylesheet" href="/css/project-tracker.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="logo">
+      <h1>Project Tracker</h1>
+      <p>Track, manage and deliver projects efficiently</p>
+    </div>
+    <button class="btn-find" onclick="findProject()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Find Your Project
+    </button>
+    <div class="user-pill">
+      <i class="fa-solid fa-user-astronaut"></i>
+      <span>Welcome,<br><strong id="userName">Divya Dharshini</strong></span>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="project-card">
+
+      <!-- Col 1: Project ID -->
+      <div class="proj-id-col">
+        <div class="proj-icon">
+          <i class="fa-solid fa-file-lines"></i>
+        </div>
+        <div>
+          <div class="proj-id-label">Project ID</div>
+          <div class="proj-id-val" id="projectId">AM110-AP</div>
+        </div>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span id="projectStatus">Active</span>
+        </div>
+        <div class="created-row">
+          <i class="fa-regular fa-calendar"></i>
+          Created at&nbsp;<strong id="createdAt">14 April 2026</strong>
+        </div>
+      </div>
+
+      <!-- Col 2: Dates -->
+      <div class="dates-col">
+        <div class="date-row">
+          <label class="date-label" for="startDate">Starting Date</label>
+          <div class="date-input-wrap">
+            <input type="date" id="startDate" value="2026-04-14"/>
+          </div>
+        </div>
+        <div class="date-row">
+          <label class="date-label" for="reqDate">Customer Req Date</label>
+          <div class="date-input-wrap">
+            <input type="date" id="reqDate" value="2026-04-30"/>
+          </div>
+        </div>
+        <div class="dates-action">
+          <button class="btn-save" onclick="saveDates()">Save Dates</button>
+          <span class="saved-msg" id="savedDatesMsg">
+            <i class="fa-solid fa-circle-check"></i> Dates saved
+          </span>
+        </div>
+      </div>
+
+      <!-- Col 3: People -->
+      <div class="people-col">
+        <div class="person-row">
+          <span class="person-label">Project Manager</span>
+          <div class="person-select-wrap">
+            <select id="pmSelect">
+              <option>Arun Kumar</option>
+              <option>Divya Dharshini</option>
+              <option>Sneha Priya</option>
+            </select>
+          </div>
+        </div>
+        <div class="person-row">
+          <span class="person-label">Quality Manager</span>
+          <div class="person-select-wrap">
+            <select id="qmSelect">
+              <option>Sneha Priya</option>
+              <option>Arun Kumar</option>
+              <option>Karthik R</option>
+            </select>
+          </div>
+        </div>
+        <div class="person-row">
+          <span class="person-label">Project Engineer</span>
+          <div class="person-select-wrap">
+            <select id="peSelect">
+              <option>Karthik R</option>
+              <option>Arun Kumar</option>
+              <option>Divya Dharshini</option>
+            </select>
+          </div>
+        </div>
+        <div class="person-row">
+          <span class="person-label">Engineer</span>
+          <div class="person-select-wrap">
+            <select id="engSelect">
+              <option>Karthik R</option>
+              <option>Arun Kumar</option>
+              <option>Divya Dharshini</option>
+            </select>
+          </div>
+        </div>
+        <div class="people-action">
+          <button class="btn-save" onclick="savePeople()">Save</button>
+          <span class="saved-msg" id="savedPeopleMsg">
+            <i class="fa-solid fa-circle-check"></i> Saved
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/js/project-tracker.js"></script>
+</body>
+</html>
