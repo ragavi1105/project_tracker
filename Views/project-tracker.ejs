@@ -20,7 +20,7 @@
     </button>
     <div class="user-pill">
       <i class="fa-solid fa-user-astronaut"></i>
-      <span>Welcome,<br><strong id="userName">Divya Dharshini</strong></span>
+      <span>Welcome,<br><label class="user-name" id="userName">Divya Dharshini</label></span>
     </div>
   </header>
 
@@ -42,7 +42,7 @@
         </div>
         <div class="created-row">
           <i class="fa-regular fa-calendar"></i>
-          Created at&nbsp;<strong id="createdAt">14 April 2026</strong>
+          Created at&nbsp;<b><label id="createdAt">14 April 2026</label></b>
         </div>
       </div>
 
@@ -61,7 +61,7 @@
           </div>
         </div>
         <div class="dates-action">
-          <button class="btn-save" onclick="saveDates()">Save Dates</button>
+          <button class="btn-date" onclick="saveDates()">Save Dates</button>
           <span class="saved-msg" id="savedDatesMsg">
             <i class="fa-solid fa-circle-check"></i> Dates saved
           </span>
@@ -104,21 +104,97 @@
           <span class="person-label">Engineer</span>
           <div class="person-select-wrap">
             <select id="engSelect">
-              <option>Karthik R</option>
-              <option>Arun Kumar</option>
-              <option>Divya Dharshini</option>
+              <option>Hariharan S</option>
+              <option>Abinaya Sri</option>
+              <option>Hansika</option>
             </select>
           </div>
         </div>
-        <div class="people-action">
+        <div class="people-action save-people-btn">
           <button class="btn-save" onclick="savePeople()">Save</button>
           <span class="saved-msg" id="savedPeopleMsg">
             <i class="fa-solid fa-circle-check"></i> Saved
           </span>
         </div>
       </div>
-
     </div>
+
+    <section class="docs-section">
+  <div class="docs-header">
+    <div class="docs-title">
+      <i class="fa-solid fa-boxes-stacked"></i>
+      <h2>Parts & Orders</h2>
+    </div>
+    <span class="docs-count" id="docsCount">6 parts</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Part Number</th>
+          <th>Part Name</th>
+          <th>Order Quantity</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-num">01</td>
+          <td class="part-num">AM-1042</td>
+          <td>Hydraulic Cylinder</td>
+          <td>12</td>
+          <td><span class="status in-progress">In Progress</span></td>
+          <td class="actions-cell">
+            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="row-num">02</td>
+          <td class="part-num">AM-2087</td>
+          <td>Bearing Housing</td>
+          <td>30</td>
+          <td><span class="status completed">Completed</span></td>
+          <td class="actions-cell">
+            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="row-num">03</td>
+          <td class="part-num">AM-3310</td>
+          <td>Shaft Coupling</td>
+          <td>8</td>
+          <td><span class="status pending">Pending </span></td>
+          <td class="actions-cell">
+            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> </i>View</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="row-num">04</td>
+          <td class="part-num">AM-4455</td>
+          <td>Flange Bolt Set</td>
+          <td>100</td>
+          <td><span class="status on-hold">On Hold</span></td>
+          <td class="actions-cell">
+            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i>  View</button>
+            <tr>
+          <td class="row-num">01</td>
+          <td class="part-num">AM-1042</td>
+          <td>Hydraulic Cylinder</td>
+          <td>12</td>
+          <td><span class="status in-progress">In Progress</span></td>
+          <td class="actions-cell">
+            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
+          </td>
+        </tr> 
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
   </main>
 
   <script src="/js/project-tracker.js"></script>
