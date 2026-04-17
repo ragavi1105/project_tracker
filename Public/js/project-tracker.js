@@ -89,3 +89,30 @@ function setSelectValue(id, value) {
 }
 
 document.addEventListener('DOMContentLoaded', loadProject);
+
+// ── Popup from right ──
+function viewPart(btn) {
+  const row = btn.closest("tr");
+
+  const partNumber = row.children[1].innerText;
+  const partName = row.children[2].innerText;
+  const qty = row.children[3].innerText;
+  const status = row.children[4].innerText;
+
+  const content = `
+    <p><b>Part Number:</b> ${partNumber}</p>
+    <p><b>Part Name:</b> ${partName}</p>
+    <p><b>Order Quantity:</b> ${qty}</p>
+    <p><b>Status:</b> ${status}</p>
+  `;
+
+  document.getElementById("viewContent").innerHTML = content;
+
+  document.getElementById("viewPanel").classList.add("active");
+  document.getElementById("overlay").classList.add("active"); 
+}
+
+function closePanel() {
+  document.getElementById("viewPanel").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active"); 
+}

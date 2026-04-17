@@ -6,6 +6,7 @@
   <title>Project Tracker</title>
   <link rel="stylesheet" href="/css/project-tracker.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="/assets/project_tracker.png">
 </head>
 <body>
 
@@ -196,6 +197,25 @@
   </div>
 </section>
   </main>
+
+  <!-- RIGHT SIDE VIEW PANEL -->
+   <div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="view-panel" id="viewPanel">
+  <div class="view-panel-content">
+    
+    <div class="view-header">
+      <h3>Part Details</h3>
+      <button class="close-btn" onclick="closePanel()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="view-body" id="viewContent">
+      <!-- Dynamic content will come here -->
+    </div>
+
+  </div>
+</div>
 
   <script src="/js/project-tracker.js"></script>
 </body>
