@@ -1,4 +1,3 @@
-
 async function saveDates() {
   const startDate = document.getElementById('startDate').value;
   const reqDate   = document.getElementById('reqDate').value;
