@@ -180,42 +180,281 @@
           <td><span class="status on-hold">On Hold</span></td>
           <td class="actions-cell">
             <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i>  View</button>
-            <tr>
-          <td class="row-num">01</td>
-          <td class="part-num">AM-1042</td>
-          <td>Hydraulic Cylinder</td>
-          <td>12</td>
-          <td><span class="status in-progress">In Progress</span></td>
-          <td class="actions-cell">
-            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
-          </td>
-        </tr> 
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </section>
-  </main>
+</main>
 
   <!-- RIGHT SIDE VIEW PANEL -->
-   <div class="overlay" id="overlay" onclick="closePanel()"></div>
+   <div class="overlay" id="overlay"></div>
 <div class="view-panel" id="viewPanel">
   <div class="view-panel-content">
-    
+
     <div class="view-header">
-      <h3>Part Details</h3>
-      <button class="close-btn" onclick="closePanel()">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
+  <h3>Part Details</h3>
 
-    <div class="view-body" id="viewContent">
-      <!-- Dynamic content will come here -->
-    </div>
-
+  <div class="header-icons">
+    <i class="fa-solid fa-clone"></i>
+    <i class="fa-solid fa-share"></i>
+    <i class="fa-solid fa-xmark close-icon" onclick="closePanel()"></i>
   </div>
 </div>
+
+<div class="view-body">
+
+  <!-- TOP DETAILS -->
+  <div class="part-top">
+    <div class="part-col">
+      <label>Part Name: </label>
+      <p id="partName">-</p>
+    </div>
+
+    <div class="part-col">
+      <label>Order Quantity: </label>
+      <p id="partQty">-</p>
+    </div>
+
+    <div class="part-col">
+  <label>Upload File: </label>
+
+  <span class="stage-upload-trigger part-files-text">
+    Part Files (<span class="file-count">0</span>)
+  </span>
+</div>
+</div>
+
+<div class="tabs">
+          <button class="tab active" data-tab="stage">Stages</button>
+          <button class="tab" data-tab="document">Documents</button>
+        </div>
+
+
+ <!-- TABS -->
+
+        <!-- STAGES TAB -->
+        <div id="stage" class="tab-content active">
+
+          <!-- STAGE 1: DFM Checking — 2 rows -->
+          <div class="stage-section" id="section-dfm">
+            <div class="stage-section-header">
+              <span class="stage-section-title">DFM Checking</span>
+              <button class="btn-add" onclick="addRow('tbody-dfm', getVerifiers())">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </div>
+            <div class="stage-table-wrap">
+              <table class="stage-tbl">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Target Date</th>
+                    <th>Actual Date</th>
+                    <th>Inward</th>
+                    <th>Outward</th>
+                    <th>Upload</th>
+                    <th>Verifier</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dfm">
+                  <!-- 2 default rows for DFM -->
+                </tbody>
+              </table>
+            </div>
+            <div class="stage-footer">
+              <button class="btn-close-section" onclick="toggleSection('section-dfm')">
+                Close Section <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- STAGE 2: Manufacturing — 1 row -->
+          <div class="stage-section" id="section-mfg">
+            <div class="stage-section-header">
+              <span class="stage-section-title">Manufacturing</span>
+              <button class="btn-add" onclick="addRow('tbody-mfg', getVerifiers())">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </div>
+            <div class="stage-table-wrap">
+              <table class="stage-tbl">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Target Date</th>
+                    <th>Actual Date</th>
+                    <th>Inward</th>
+                    <th>Outward</th>
+                    <th>Upload</th>
+                    <th>Verifier</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-mfg">
+                </tbody>
+              </table>
+            </div>
+            <div class="stage-footer">
+              <button class="btn-close-section" onclick="toggleSection('section-mfg')">
+                Close Section <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- STAGE 3: Inspection — 1 row -->
+          <div class="stage-section" id="section-insp">
+            <div class="stage-section-header">
+              <span class="stage-section-title">Inspection</span>
+              <button class="btn-add" onclick="addRow('tbody-insp', getVerifiers())">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </div>
+            <div class="stage-table-wrap">
+              <table class="stage-tbl">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Target Date</th>
+                    <th>Actual Date</th>
+                    <th>Inward</th>
+                    <th>Outward</th>
+                    <th>Upload</th>
+                    <th>Verifier</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-insp">
+                </tbody>
+              </table>
+            </div>
+            <div class="stage-footer">
+              <button class="btn-close-section" onclick="toggleSection('section-insp')">
+                Close Section <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- STAGE 4: Dispatch — 1 row -->
+          <div class="stage-section" id="section-disp">
+            <div class="stage-section-header">
+              <span class="stage-section-title">Dispatch</span>
+              <button class="btn-add" onclick="addRow('tbody-disp', getVerifiers())">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </div>
+            <div class="stage-table-wrap">
+              <table class="stage-tbl">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Target Date</th>
+                    <th>Actual Date</th>
+                    <th>Inward</th>
+                    <th>Outward</th>
+                    <th>Upload</th>
+                    <th>Verifier</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-disp">
+                </tbody>
+              </table>
+            </div>
+            <div class="stage-footer">
+              <button class="btn-close-section" onclick="toggleSection('section-disp')">
+                Close Section <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /stage tab -->
+
+        <!-- DOCUMENTS TAB -->
+        <div id="document" class="tab-content">
+          <div id="documentsContainer"></div>
+        </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ADDED: REMARKS POPUP (positioned near clicked field via JS) ===== -->
+  <div id="remarksOverlay" class="remarks-overlay-bg"></div>
+  <div id="remarksPopup" style="height: 140px;" class="remarks-popup">
+    <textarea id="remarksText" placeholder="Enter remarks..."></textarea>
+    <div class="remarks-popup-actions">
+      <button class="remarks-btn-cancel" onclick="closeRemarksPopup()">Cancel</button>
+      <button class="remarks-btn-save" onclick="saveRemarks()">Save</button>
+    </div>
+  </div>
+
+  <!-- ===== ADDED: UPLOAD FILES POPUP ===== -->
+  <div class="upload-popup-overlay" id="uploadPopupOverlay" onclick="closeUploadPopup()"></div>
+  <div class="upload-popup" id="uploadPopup">
+    <div class="upload-popup-header">
+      <div class="upload-popup-title">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Project Files</span>
+      </div>
+      <i class="fa-solid fa-xmark upload-popup-close" onclick="closeUploadPopup()"></i>
+    </div>
+    <div class="upload-popup-body">
+      <div class="upload-drop-zone" onclick="document.getElementById('stageFilePicker').click()">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p>Click to choose files</p>
+        <span>PDF, DWG, XLSX, images and more</span>
+      </div>
+      <input type="file" id="stageFilePicker" multiple style="display:none;" onchange="handleStageFiles(this)" />
+      <table class="upload-files-table">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>File Type</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="uploadFilesTbody">
+          <tr id="uploadEmptyRow">
+            <td colspan="4" class="upload-empty-cell">No files added yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="upload-popup-footer">
+      <button class="upload-btn-cancel" onclick="closeUploadPopup()">Cancel</button>
+      <button class="upload-btn-insert" onclick="insertStageFiles()">
+        <i class="fa-solid fa-circle-check"></i> Insert Files
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== ADDED: FIND PROJECT MODAL ===== -->
+  <div class="find-modal-overlay" id="findModalOverlay" onclick="closeFindModal()"></div>
+  <div class="find-modal" id="findModal">
+    <div class="find-modal-top">
+      <div class="find-modal-icon-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <h2>Find Your Project</h2>
+      <p>Enter a project ID to view progress and updates</p>
+    </div>
+    <div class="find-modal-body">
+      <input type="text" id="findModalInput" class="find-modal-input" placeholder="Enter here..."
+             onkeydown="if(event.key==='Enter') doFindProject()" />
+      <p class="find-modal-error" id="findModalError"></p>
+      <button class="find-modal-search-btn" onclick="doFindProject()">
+        <i class="fa-solid fa-magnifying-glass"></i> Search
+      </button>
+      <button class="find-modal-cancel-btn" onclick="closeFindModal()">Cancel</button>
+    </div>
+  </div>
 
   <script src="/js/project-tracker.js"></script>
 </body>
