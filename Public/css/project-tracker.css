@@ -143,7 +143,7 @@
     .part-col p { font-size: 14px; }
 
     /* TABS */
-    .tabs { display: flex; align-items: center; margin-top: 8px; padding: 0 16px 12px; border-bottom: 1px solid #e5e7eb; }
+    .tabs { display: flex; align-items: center; margin-top: 8px; padding: 0 16px 12px;  }
     .tab { border: none; background: none; padding: 6px 10px; cursor: pointer; font-size: 14px; color: var(--accent); }
     .tab.active { border-bottom: 2px solid #1D4ED8; color: #1D4ED8; }
     .tab-content { display: none; }
@@ -341,14 +341,12 @@
   border-bottom: 1px solid #f1f1f1;
 }
 
-/* Alternate Rows */
 #document .docs-table tbody tr:nth-child(even) {
   background: #fafafa;
 }
 
-/* Hover Effect */
 #document .docs-table tbody tr:hover {
-  background: #fff2f4;
+  background: #fafafa;
 }
 
 /* Column Alignment Fix */
@@ -600,7 +598,7 @@
 }
 .upload-btn-view:hover { background: #bfdbfe; }
 .upload-btn-del {
-  background: #fee2e2; color: #ef4444; border: none;
+  background: transparent; color: var(--primary); border: none;
   padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;
 }
 .upload-btn-del:hover { background: #fecaca; }
@@ -745,6 +743,8 @@ img, table {
   width: 100%;
 }
 
+
+
 /* ===============================
    TOPBAR
    =============================== */
@@ -770,6 +770,53 @@ img, table {
   .user-pill {
     width: 100%;
     justify-content: flex-start;
+  }
+}
+
+/* MOBILE ONLY */
+@media (max-width: 768px) {
+
+  /* Move user icon near heading */
+  .topbar {
+    position: relative;
+  }
+
+  .user-pill {
+    position: absolute;
+    left: 180px; /* 👈 adjust based on your heading width */
+    top: 15px;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* Hide text */
+  .user-pill span {
+    display: none;
+  }
+
+  /* Icon style (PINK 🔥) */
+  .user-pill i {
+    font-size: 18px;
+    background: #fa788d; /* ✅ your pink */
+    color: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    margin-left: 120px;
+  }
+
+  .user-pill.active span {
+    display: block;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: #fa788d; 
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 5px;
+    min-width: 160px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    z-index: 1000;
   }
 }
 

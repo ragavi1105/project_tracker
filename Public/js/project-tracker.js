@@ -347,6 +347,7 @@ if (trigger) {
       <tr>
         <th>File Name</th>
         <th>File Type</th>
+        <th>Action</th>
       </tr>
     `;
   } else {
@@ -375,7 +376,7 @@ if (trigger) {
     const tr = document.createElement('tr');
 
     if (isStage) {
-      // ✅ SIMPLE VIEW (stage)
+      // SIMPLE VIEW (stage)
       tr.innerHTML = `
         <td class="upload-file-name">
           <i class="fa-solid fa-file-lines"></i> ${f.name}
@@ -383,9 +384,14 @@ if (trigger) {
         <td>
           <span class="upload-type-badge">${f.ext}</span>
         </td>
+        <td class="upload-actions-cell">
+          <button class="upload-btn-del" onclick="deleteUploadFile(${i})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
       `;
     } else {
-      // ✅ FULL VIEW (part files)
+      // FULL VIEW (part files)
       tr.innerHTML = `
         <td class="upload-file-name">
           <i class="fa-solid fa-file-lines"></i> ${f.name}
@@ -396,9 +402,6 @@ if (trigger) {
                  onchange="updateUploadRemark(${i}, this.value)" />
         </td>
         <td class="upload-actions-cell">
-          <button class="upload-btn-view" onclick="viewUploadFile(${i})">
-            <i class="fa-solid fa-eye"></i> View
-          </button>
           <button class="upload-btn-del" onclick="deleteUploadFile(${i})">
             <i class="fa-solid fa-trash"></i>
           </button>
@@ -546,7 +549,6 @@ function renderDocuments() {
                 <td>${f.date}</td>
                 <td class="doc-actions">
   <i class="fa-solid fa-eye action-icon view" onclick="viewDoc(${i}, 'project')" title="View"></i>
-  <i class="fa-solid fa-download action-icon download" onclick="downloadDoc(${i}, 'project')" title="Download"></i>
   <i class="fa-solid fa-trash action-icon delete" onclick="deleteDoc(${i}, 'project')" title="Delete"></i>
 </td>
               </tr>
@@ -607,4 +609,15 @@ function renderDocuments() {
   container.innerHTML = html;
 }
 
+const userPill = document.querySelector('.user-pill');
 
+userPill.addEventListener('click', function (e) {
+  if (window.innerWidth <= 768) {
+    this.classList.toggle('active');
+    e.stopPropagation();
+  }
+});
+
+document.addEventListener('click', function () {
+  userPill.classList.remove('active');
+});
