@@ -1,7 +1,20 @@
-// ── Verifier options ──
-    function getVerifiers() {
-      return ['Select Verifier', 'Arun Kumar', 'Divya Dharshini', 'Sneha Priya', 'Karthik R', 'Hariharan S'];
-    }
+async function saveDates() {
+  const startDate = document.getElementById('startDate').value;
+  const reqDate   = document.getElementById('reqDate').value;
+  const projectId = document.getElementById('projectId').textContent.trim();
+
+  try {
+    const res = await fetch('/api/project/save-dates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectId, startDate, reqDate })
+    });
+    if (!res.ok) throw new Error('Failed');
+    showMsg('savedDatesMsg');
+  } catch {
+    alert('Could not save dates. Please try again.');
+  }
+}
 
     // ── Build a table row ──
     function buildRow(stageName, verifiers, isDefault = false) {
