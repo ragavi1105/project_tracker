@@ -52,13 +52,13 @@
         <div class="date-row">
           <label class="date-label" for="startDate">Starting Date</label>
           <div class="date-input-wrap">
-            <input type="date" id="startDate" value="2026-04-14"/>
+            <input type="date" id="startDate"/>
           </div>
         </div>
         <div class="date-row">
           <label class="date-label" for="reqDate">Customer Req Date</label>
           <div class="date-input-wrap">
-            <input type="date" id="reqDate" value="2026-04-30"/>
+            <input type="date" id="reqDate"/>
           </div>
         </div>
         <div class="dates-action">
@@ -75,9 +75,6 @@
           <span class="person-label">Project Manager</span>
           <div class="person-select-wrap">
             <select id="pmSelect">
-              <option>Arun Kumar</option>
-              <option>Divya Dharshini</option>
-              <option>Sneha Priya</option>
             </select>
           </div>
         </div>
@@ -85,9 +82,6 @@
           <span class="person-label">Quality Manager</span>
           <div class="person-select-wrap">
             <select id="qmSelect">
-              <option>Sneha Priya</option>
-              <option>Arun Kumar</option>
-              <option>Karthik R</option>
             </select>
           </div>
         </div>
@@ -95,9 +89,6 @@
           <span class="person-label">Project Engineer</span>
           <div class="person-select-wrap">
             <select id="peSelect">
-              <option>Karthik R</option>
-              <option>Arun Kumar</option>
-              <option>Divya Dharshini</option>
             </select>
           </div>
         </div>
@@ -105,9 +96,6 @@
           <span class="person-label">Engineer</span>
           <div class="person-select-wrap">
             <select id="engSelect">
-              <option>Hariharan S</option>
-              <option>Abinaya Sri</option>
-              <option>Hansika</option>
             </select>
           </div>
         </div>
@@ -141,48 +129,7 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td class="row-num">01</td>
-          <td class="part-num">AM-1042</td>
-          <td>Hydraulic Cylinder</td>
-          <td>12</td>
-          <td><span class="status in-progress">In Progress</span></td>
-          <td class="actions-cell">
-            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="row-num">02</td>
-          <td class="part-num">AM-2087</td>
-          <td>Bearing Housing</td>
-          <td>30</td>
-          <td><span class="status completed">Completed</span></td>
-          <td class="actions-cell">
-            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> View</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="row-num">03</td>
-          <td class="part-num">AM-3310</td>
-          <td>Shaft Coupling</td>
-          <td>8</td>
-          <td><span class="status pending">Pending </span></td>
-          <td class="actions-cell">
-            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i> </i>View</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="row-num">04</td>
-          <td class="part-num">AM-4455</td>
-          <td>Flange Bolt Set</td>
-          <td>100</td>
-          <td><span class="status on-hold">On Hold</span></td>
-          <td class="actions-cell">
-            <button class="btn-action view" onclick="viewPart(this)"><i class="fa-solid fa-list-check"></i>  View</button>
-          </td>
-        </tr>
-      </tbody>
+      <tbody id="partsTableBody"></tbody>
     </table>
   </div>
 </section>
@@ -220,7 +167,7 @@
     <div class="part-col">
   <label>Upload File: </label>
 
-  <span class="stage-upload-trigger part-files-text">
+  <span class="part-files-text">
     Part Files (<span class="file-count">0</span>)
   </span>
 </div>
@@ -241,7 +188,7 @@
           <div class="stage-section" id="section-dfm">
             <div class="stage-section-header">
               <span class="stage-section-title">DFM Checking</span>
-              <button class="btn-add" onclick="addRow('tbody-dfm', getVerifiers())">
+              <button class="btn-add" onclick="addRow('tbody-dfm')">
                 <i class="fa-solid fa-plus"></i> Add
               </button>
             </div>
@@ -273,12 +220,18 @@
           </div>
 
           <!-- STAGE 2: Manufacturing — 1 row -->
-          <div class="stage-section" id="section-mfg">
-            <div class="stage-section-header">
-              <span class="stage-section-title">Manufacturing</span>
-              <button class="btn-add" onclick="addRow('tbody-mfg', getVerifiers())">
-                <i class="fa-solid fa-plus"></i> Add
-              </button>
+      <div class="stage-section" id="section-mfg">
+        <div class="stage-section-header">
+          <span class="stage-section-title">
+            Manufacturing
+            <i class="fa-solid fa-folder-plus mfg-files-icon" 
+              title="Upload Manufacturing Files" 
+              style="margin-left:8px; color:#fa788d; cursor:pointer; font-size:14px;">
+            </i>
+          </span>
+    <button class="btn-add" onclick="addRow('tbody-mfg')">
+      <i class="fa-solid fa-plus"></i> Add
+    </button>
             </div>
             <div class="stage-table-wrap">
               <table class="stage-tbl">
@@ -307,13 +260,26 @@
           </div>
 
           <!-- STAGE 3: Inspection — 1 row -->
-          <div class="stage-section" id="section-insp">
-            <div class="stage-section-header">
-              <span class="stage-section-title">Inspection</span>
-              <button class="btn-add" onclick="addRow('tbody-insp', getVerifiers())">
-                <i class="fa-solid fa-plus"></i> Add
-              </button>
-            </div>
+         <div class="stage-section" id="section-insp">
+  <div class="stage-section-header">
+    <span class="stage-section-title">
+      Inspection
+      <select id="inspVariantSelect""
+  style="margin-left:10px; font-size:12px; padding:4px 8px; border:1px solid #e5e7eb;
+         border-radius:4px; background:#f9fafb; color:#111; outline:none; cursor:pointer;">
+  <option value="">Default</option>
+  <option value="FAI">FAI</option>
+  <option value="PPAP I">PPAP I</option>
+  <option value="PPAP II">PPAP II</option>
+  <option value="PPAP III">PPAP III</option>
+  <option value="PPAP IV">PPAP IV</option>
+</select>
+    </span>
+    <button class="btn-add" onclick="addRow('tbody-insp')">
+      <i class="fa-solid fa-plus"></i> Add
+    </button>
+  </div>
+  
             <div class="stage-table-wrap">
               <table class="stage-tbl">
                 <thead>
@@ -429,7 +395,7 @@
     </div>
     <div class="upload-popup-footer">
       <button class="upload-btn-cancel" onclick="closeUploadPopup()">Cancel</button>
-      <button class="upload-btn-insert" onclick="insertStageFiles()">
+      <button class="upload-btn-insert" onclick="insertFiles()">
         <i class="fa-solid fa-circle-check"></i> Insert Files
       </button>
     </div>
