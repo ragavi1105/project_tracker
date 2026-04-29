@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-  cb(null, file.originalname); // ✅ SAME NAME
+  cb(null, file.originalname); 
 
 }
 });
@@ -26,7 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   setHeaders: (res, filePath) => {
-    res.setHeader('Content-Disposition', 'inline'); // 🔥 THIS FIXES IT
+    res.setHeader('Content-Disposition', 'inline'); 
   }
 }));
 
@@ -228,95 +228,62 @@ app.get('/api/users', (req, res) => {
     res.json(result);
   });
 });
-
 app.post('/api/stages', (req, res) => {
   const stages = req.body.stages;
 
-  if (!stages || stages.length === 0) {
-    return res.status(400).json({ error: "No stages to save" });
-  }
-
-  let completed = 0;
-  let hasError = false;
+  const results = [];
 
   stages.forEach(stage => {
 
-    // 🔍 Check if stage already exists
-    const checkSql = `
-      SELECT id FROM project_stages
-      WHERE product_id = ? AND stage_name = ?
+    const sql = `
+      INSERT INTO project_stages
+      (product_id, stage_name, section_title, stage_date, achieve_date,
+       inward, outward, assigned_user_id, saved_by_user_id, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(checkSql, [stage.product_id, stage.stage_name], (err, result) => {
-      if (err && !hasError) {
-        hasError = true;
-        return res.status(500).json(err);
-      }
+    db.query(sql, [
+      stage.product_id,
+      stage.stage_name,
+      stage.section_title,
+      stage.stage_date,
+      stage.achieve_date,
+      stage.inward,
+      stage.outward,
+      stage.assigned_user_id,
+      stage.saved_by_user_id,
+      stage.status
+    ], (err, result) => {
 
-      // 🔁 UPDATE if exists
-      if (result.length > 0) {
-        const updateSql = `
-          UPDATE project_stages
-          SET
-            stage_date = ?,
-            achieve_date = ?,
-            inward = ?,
-            outward = ?,
-            assigned_user_id = ?,
-            status = ?
-          WHERE product_id = ? AND stage_name = ?
+      if (err) return res.status(500).json(err);
+
+      const stageId = result.insertId;
+
+      // 🔥 INSERT COMMENT IF EXISTS
+      if (stage.comment_text) {
+
+        const commentSql = `
+          INSERT INTO stage_comments (stage_id, comment_text, user_id)
+          VALUES (?, ?, ?)
         `;
 
-        db.query(updateSql, [
-          stage.stage_date,
-          stage.achieve_date,
-          stage.inward,
-          stage.outward,
-          stage.assigned_user_id,
-          stage.status,
-          stage.product_id,
-          stage.stage_name
-        ], done);
-
-      } else {
-        // ➕ INSERT if not exists
-        const insertSql = `
-          INSERT INTO project_stages
-          (product_id, stage_name, section_title, stage_date, achieve_date, inward, outward, assigned_user_id, saved_by_user_id, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        db.query(insertSql, [
-          stage.product_id,
-          stage.stage_name,
-          stage.section_title,
-          stage.stage_date,
-          stage.achieve_date,
-          stage.inward,
-          stage.outward,
-          stage.assigned_user_id,
-          stage.saved_by_user_id,
-          stage.status
-        ], done);
+        db.query(commentSql, [
+          stageId,
+          stage.comment_text,
+          stage.saved_by_user_id
+        ]);
       }
 
-      function done(err2) {
-        if (err2 && !hasError) {
-          hasError = true;
-          return res.status(500).json(err2);
-        }
+      results.push(stageId);
 
-        completed++;
-
-        // ✅ Send response only once after all queries finish
-        if (completed === stages.length && !hasError) {
-          res.json({ success: true });
-        }
+      if (results.length === stages.length) {
+        res.json({ success: true, ids: results });
       }
+
     });
+
   });
 });
-
 app.get('/api/stages/:productId', (req, res) => {
   const productId = req.params.productId;
 
@@ -509,6 +476,77 @@ app.get('/api/stage-files-by-part/:productId', (req, res) => {
     res.json(result);
   });
 });
+
+
+
+//section close
+app.post('/api/close-section', (req, res) => {
+  const { product_id, section_title } = req.body;
+
+  const sql = `
+    UPDATE project_stages
+    SET status = 'closed'
+    WHERE product_id = ? AND section_title = ?
+  `;
+
+  db.query(sql, [product_id, section_title], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ success: true });
+  });
+});
+
+
+app.post('/api/stage-comments', (req, res) => {
+  const { stage_id, comment_text, user_id } = req.body;
+
+  
+  if (!stage_id || !comment_text) {
+    return res.status(400).json({ error: 'Missing data' });
+  }
+
+  const sql = `
+    INSERT INTO stage_comments (stage_id, comment_text, user_id)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [stage_id, comment_text, user_id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'DB error' });
+    }
+
+    res.json({
+      success: true,
+      id: result.insertId
+    });
+  });
+});
+
+app.get('/api/stage-comments/:stageId', (req, res) => {
+  const stageId = req.params.stageId;
+
+  const sql = `
+    SELECT 
+      sc.comment_text,
+      sc.created_at,
+      u.name AS user_name
+    FROM stage_comments sc
+    LEFT JOIN users u ON sc.user_id = u.user_id
+    WHERE sc.stage_id = ?
+    ORDER BY sc.created_at DESC
+  `;
+
+  db.query(sql, [stageId], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'DB error' });
+    }
+
+    res.json(result);
+  });
+});
+
+
 //  ROUTES
 app.get('/project-tracker/:poId/:partId', (req, res) => {
   res.render('project-tracker');

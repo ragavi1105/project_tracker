@@ -269,8 +269,8 @@ function updateStageSectionState(sectionId) {
 function updateAllStageStates() {
   ['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach(updateStageSectionState);
 }
+async function toggleSection(sectionId) {
 
-   function toggleSection(sectionId) {
   const section = document.getElementById(sectionId);
   const wrap = section.querySelector('.stage-table-wrap');
   const btn = section.querySelector('.btn-close-section');
@@ -280,33 +280,61 @@ function updateAllStageStates() {
 
   const rows = section.querySelectorAll('tbody tr');
 
-  // 🔴 STEP 1: VALIDATE ALL ROWS
+  // ============================
+  // 🔴 STEP 1: VALIDATION
+  // ============================
   for (const row of rows) {
 
     const stageName = row.children[0].querySelector('input')?.value.trim();
     const stageDate = row.querySelector('[name="stage_date"]')?.value;
     const verifier = row.children[6].querySelector('select')?.value;
 
-    // ❌ Empty check
     if (!stageName || !stageDate || !verifier) {
       alert("⚠️ Fill all required fields before closing this section");
       return;
     }
 
-    // ❌ Not saved
     if (row.dataset.edited === 'true') {
       alert("⚠️ Please click Save (💾) before closing");
       return;
     }
 
-    // ❌ Files added but not saved
     if (row._files && row._files.length) {
       alert("⚠️ Please save uploaded files before closing");
       return;
     }
   }
 
-  // ✅ STEP 2: FREEZE SECTION
+  // ============================
+  // 🧩 STEP 2: UPDATE DB
+  // ============================
+
+  const sectionMap = {
+    'section-dfm': 'DFM Checking',
+    'section-mfg': 'Manufacturing',
+    'section-insp': 'Inspection',
+    'section-disp': 'Dispatch'
+  };
+
+  try {
+    await fetch('/api/close-section', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product_id: getParamsFromUrl().partId,
+        section_title: sectionMap[sectionId]
+      })
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Error updating section status");
+    return;
+  }
+
+  // ============================
+  // 🔒 STEP 3: FREEZE UI
+  // ============================
+
   wrap.dataset.frozen = 'true';
   wrap.style.opacity = '0.6';
   wrap.style.pointerEvents = 'none';
@@ -318,12 +346,25 @@ function updateAllStageStates() {
   btn.innerHTML = '✅ Section Completed';
   btn.disabled = true;
 
-  // ✅ STEP 3: UNLOCK NEXT SECTION
+  // ============================
+  // ➡️ STEP 4: UNLOCK NEXT
+  // ============================
+
   const nextSectionId = getNextSectionId(sectionId);
   if (nextSectionId) {
     updateStageSectionState(nextSectionId);
   }
+
+  // ============================
+  // 🧠 STEP 5: MARK ROW STATUS (UI ONLY)
+  // ============================
+
+  rows.forEach(row => {
+    row.dataset.status = 'closed';
+  });
 }
+
+
 
     function viewPart(btn) {
   const row = btn.closest('tr');
@@ -457,22 +498,19 @@ function updateAllStageStates() {
       const popup = document.getElementById('remarksPopup');
       let remarkTrigger = null;
 
-      // Open when clicking a remarks-input or remarks-icon
-      if (e.target.classList.contains('remarks-input')) {
-        remarkTrigger = e.target;
-        _remarksMode = 'edit';
-      } else if (e.target.classList.contains('remarks-icon')) {
-        remarkTrigger = e.target.closest('.remarks-field').querySelector('.remarks-input');
-        _remarksMode = 'history';
-      }
+              if (e.target.closest('.remarks-input')) {
+          remarkTrigger = e.target.closest('.remarks-input');
+          _remarksMode = 'edit';
 
+        } else if (e.target.closest('.remarks-icon')) {
+          remarkTrigger = e.target.closest('.remarks-field')
+                          .querySelector('.remarks-input');
+          _remarksMode = 'history';
+        }
             if (remarkTrigger) {
         _remarksTarget = remarkTrigger;
         renderRemarksHistory();
 
-        if (_remarksMode === 'edit') {
-          document.getElementById('remarksText').value = '';
-        }
 
         const popup = document.getElementById('remarksPopup');
         const isMobile = window.innerWidth <= 768;
@@ -537,13 +575,10 @@ function updateAllStageStates() {
     });
 
     
-let _uploadTrigger = null; // will store row OR element
+let _uploadTrigger = null; 
 
 document.addEventListener('click', function (e) {
 
-  // ─────────────────────────────────────
-  // 🔹 PART FILES (FIXED)
-  // ─────────────────────────────────────
   const partTrigger = e.target.closest('.part-files-text');
 
   if (partTrigger) {
@@ -559,7 +594,7 @@ document.addEventListener('click', function (e) {
     document.getElementById('uploadPopup').classList.add('active');
     document.getElementById('uploadPopupOverlay').classList.add('active');
 
-    return; // 🔥 VERY IMPORTANT
+    return; 
   }
 
   // ─────────────────────────────────────
@@ -920,9 +955,6 @@ function insertFiles() {
   document.getElementById('remarksOverlay').style.display = 'none';
 }
 
-    // =====================================================
-    // DOCUMENTS TAB — Render all uploaded files
-    // =====================================================
 
     // ── Keep a snapshot of project/stage files for delete operations ──
     let _projectFilesSnapshot = [];
@@ -1016,7 +1048,6 @@ function isRemarksFrozen(input) {
   return wrap?.dataset.frozen === 'true';
 }
 
-
 async function renderRemarksHistory() {
   if (!_remarksTarget) return;
 
@@ -1024,83 +1055,130 @@ async function renderRemarksHistory() {
   if (!row) return;
 
   const stageId = row.getAttribute('data-stage-id');
-
   const historyDiv = document.getElementById('remarksHistory');
-  if (!historyDiv) return; // ✅ prevent crash
 
-  // 🚨 If stage not saved yet
-  if (!stageId) {
-    historyDiv.innerHTML = '<div>⚠️ Please save stage first</div>';
+  // ✅ Safety check
+  if (!historyDiv) {
+    console.error("❌ remarksHistory div not found");
     return;
   }
 
-  try {
-    const res = await fetch(`/api/stage-comments/${stageId}`);
+  // ==========================================
+  // ✍️ EDIT MODE (TEXTBOX CLICK)
+  // ==========================================
+  if (_remarksMode === 'edit') {
+    historyDiv.innerHTML = `
+      <div class="remarks-history-header">Add Comment</div>
 
-    if (!res.ok) {
-      historyDiv.innerHTML = '<div>Error loading comments</div>';
-      return;
-    }
+      <textarea id="remarksText"
+        placeholder="Enter comment..."
+        style="width:100%;height:80px;margin-bottom:8px;padding:8px;border:1px solid #ddd;border-radius:6px;"></textarea>
 
-    const comments = await res.json();
+      <div style="text-align:right;">
+        <button onclick="saveRemarks()"
+          style="background:#3b82f6;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">
+          Save
+        </button>
+      </div>
+    `;
 
-    if (!comments.length) {
+    // ✅ auto focus
+    setTimeout(() => {
+      const el = document.getElementById('remarksText');
+      if (el) el.focus();
+    }, 50);
+
+    return;
+  }
+
+  // ==========================================
+  // 💬 HISTORY MODE (ICON CLICK)
+  // ==========================================
+
+  // 🔴 BEFORE SAVE → LOCAL COMMENTS
+  if (!stageId) {
+    const localComments = row._comments || [];
+
+    if (!localComments.length) {
       historyDiv.innerHTML = '<div>No comments yet</div>';
       return;
     }
 
-    historyDiv.innerHTML = comments.map(c => `
-      <div class="remarks-history-item">
-        <div>${c.comment_text}</div>
-        <small>${new Date(c.created_at).toLocaleString()}</small>
-      </div>
-    `).join('');
+    historyDiv.innerHTML = `
+      <div class="remarks-history-header">Comments</div>
+      ${localComments.map(item => `
+        <div class="remarks-history-item">
+          <div class="comment-text">${item.comment_text}</div>
+          <div class="timestamp">
+            <span class="user">${item.user_name}</span>
+            <span class="dot">•</span>
+            <span class="date">${new Date(item.created_at).toLocaleDateString()}</span>
+            <span class="time">${new Date(item.created_at).toLocaleTimeString()}</span>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    return;
+  }
+
+  // 🟢 AFTER SAVE → FETCH FROM DB
+  try {
+    const res = await fetch(`/api/stage-comments/${stageId}`);
+
+    if (!res.ok) throw new Error("API failed");
+
+    const comments = await res.json();
+
+    if (!comments || !comments.length) {
+      historyDiv.innerHTML = '<div>No comments yet</div>';
+      return;
+    }
+
+    historyDiv.innerHTML = `
+      <div class="remarks-history-header">Comments</div>
+      ${comments.map(item => `
+        <div class="remarks-history-item">
+          <div class="comment-text">${item.comment_text}</div>
+          <div class="timestamp">
+            <span class="user">${item.user_name || 'User'}</span>
+            <span class="dot">•</span>
+            <span class="date">${new Date(item.created_at).toLocaleDateString()}</span>
+            <span class="time">${new Date(item.created_at).toLocaleTimeString()}</span>
+          </div>
+        </div>
+      `).join('')}
+    `;
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error loading comments:", err);
     historyDiv.innerHTML = '<div>Error loading comments</div>';
   }
 }
 
+
 async function saveRemarks() {
   const row = _remarksTarget.closest('tr');
-  const stageId = row.getAttribute('data-stage-id');
   const text = document.getElementById('remarksText').value.trim();
-
-  console.log("Stage ID:", stageId);
-  console.log("Comment:", text);
-
-  if (!stageId) {
-    alert("⚠️ Please save stage first");
-    return;
-  }
 
   if (!text) {
     alert("⚠️ Enter comment");
     return;
   }
 
-  try {
-    const res = await fetch('/api/stage-comments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        stage_id: stageId,
-        comment_text: text,
-        user_id: 1
-      })
-    });
+  if (!row._comments) row._comments = [];
 
-    if (!res.ok) throw new Error();
+  row._comments.push({
+    comment_text: text,
+    created_at: new Date(),
+    user_name: 'You'
+  });
 
-    alert("Saved ✅");
-    closeRemarksPopup();
+  // ✅ UPDATE INPUT FIELD (IMPORTANT)
+  _remarksTarget.value = text;
 
-  } catch (err) {
-    console.error(err);
-  }
+  document.getElementById('remarksText').value = '';
+  closeRemarksPopup();
 }
-
 
 // 🔹 Load Project
 async function loadProject() {
@@ -1293,9 +1371,8 @@ function getParamsFromUrl() {
     partId: parts[3] || null    
   };
 }
-
-
 function collectStages() {
+
   const sections = [
     { id: 'tbody-dfm', title: 'DFM Checking' },
     { id: 'tbody-mfg', title: 'Manufacturing' },
@@ -1307,36 +1384,69 @@ function collectStages() {
   const stages = [];
 
   sections.forEach(sec => {
+
     const rows = document.querySelectorAll(`#${sec.id} tr`);
-rows.forEach(row => {
-  const stage_name = row.children[0].querySelector('input')?.value.trim();
-  const stage_date = row.children[1].querySelector('input')?.value;
-  const achieve_date = row.children[2].querySelector('input')?.value;
-  const assigned_user_id = row.children[6].querySelector('select')?.value;
 
-  // ✅ STRICT FILTER (FINAL)
-  if (
-    !stage_name &&
-    !stage_date &&
-    !achieve_date &&
-    (!assigned_user_id || assigned_user_id === 'Select Verifier')
-  ) {
-    return; // ❌ skip empty row
+    rows.forEach(row => {
+
+
+      let inputVal = row.children[0].querySelector('input')?.value.trim() || '';
+
+      let stage_name = inputVal;
+      let section_title = sec.title;
+
+      const stage_date = row.children[1].querySelector('input')?.value;
+      const achieve_date = row.children[2].querySelector('input')?.value;
+      const inward = row.querySelector('.inward')?.value || null;
+      const outward = row.querySelector('.outward')?.value || null;
+      const assigned_user_id = row.children[6].querySelector('select')?.value;
+      const remarks = row.querySelector('.remarks-input')?.value || '';
+
+      if (sec.title === 'Inspection') {
+
+  const inputVal = row.children[0].querySelector('input')?.value.trim();
+
+  if (inputVal.includes('-')) {
+
+    const parts = inputVal.split('-').map(s => s.trim());
+
+    stage_name = parts[1];       
+    section_title = 'Inspection'; 
+
+  } else {
+
+    stage_name = inputVal;        
+    section_title = 'Inspection'; 
   }
+}
+      if (
+        !inputVal &&
+        !stage_date &&
+        !achieve_date &&
+        (!assigned_user_id || assigned_user_id === 'Select Verifier')
+      ) {
+        return;
+      }
 
-  stages.push({
-    product_id: partId,
-    stage_name,
-    section_title: sec.title,
-    stage_date: stage_date || null,
-    achieve_date: achieve_date || null,
-    remarks: remarks || '',
-    assigned_user_id:
-      assigned_user_id === 'Select Verifier' ? null : assigned_user_id,
-    saved_by_user_id: 1,
-    status: 'pending'
-  });
-});
+      console.log("FINAL SAVE:", stage_name, section_title);
+
+      stages.push({
+        product_id: partId,
+        stage_name,
+        section_title,
+        stage_date: stage_date || null,
+        achieve_date: achieve_date || null,
+        inward,
+        outward,
+        remarks,
+        assigned_user_id:
+          assigned_user_id === 'Select Verifier' ? null : assigned_user_id,
+        saved_by_user_id: 1,
+        status: 'closed'  
+      });
+
+    });
+
   });
 
   return stages;
@@ -1448,82 +1558,187 @@ function showSavedMsg() {
   setTimeout(() => msg.remove(), 2000);
 }
 async function loadStages() {
+
   const { partId } = getParamsFromUrl();
   if (!partId) return;
 
   try {
-    //  CLEAR OLD TABLE DATA
+
+    // ============================
+    // RESET TABLES
+    // ============================
     ['tbody-dfm','tbody-mfg','tbody-insp','tbody-disp'].forEach(id => {
       const tbody = document.getElementById(id);
       if (tbody) tbody.innerHTML = '';
     });
 
-    //  REBUILD DEFAULT ROWS
     initStages();
 
     const res = await fetch(`/api/stages/${partId}`);
     const stages = await res.json();
 
+    // ============================
+    // 🔥 SECTION STATUS (FROM DB ONLY)
+    // ============================
+    const sectionStatus = {};
+
+    // ============================
+    // BUILD ROWS
+    // ============================
     stages.forEach(stage => {
 
-  let tbodyId = '';
+      let tbodyId = '';
 
-  if (stage.section_title === 'DFM Checking') tbodyId = 'tbody-dfm';
-  else if (stage.section_title === 'Manufacturing') tbodyId = 'tbody-mfg';
-  else if (stage.section_title === 'Dispatch') tbodyId = 'tbody-disp';
-  else if (stage.stage_name === 'Inspection') tbodyId = 'tbody-insp';
+      if (stage.section_title === 'DFM Checking') tbodyId = 'tbody-dfm';
+      else if (stage.section_title === 'Manufacturing') tbodyId = 'tbody-mfg';
+      else if (stage.section_title === 'Dispatch') tbodyId = 'tbody-disp';
+      else if (stage.section_title === 'Inspection') tbodyId = 'tbody-insp';
 
-  const tbody = document.getElementById(tbodyId);
-  if (!tbody) return;
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
 
-  let row = [...tbody.querySelectorAll('tr')].find(tr => {
+      let row = null;
+
+
+if (stage.section_title === 'Inspection') {
+  row = null;
+} else {
+  row = [...tbody.querySelectorAll('tr')].find(tr => {
     const name = tr.children[0].querySelector('input')?.value.trim();
     return name && (
-  name === stage.section_title || 
-  name.includes(stage.stage_name)
+      name === stage.section_title || 
+      name.includes(stage.stage_name)
     );
   });
+}   
 
-  if (!row) {
+      if (!row) {
 
-    const emptyRow = [...tbody.querySelectorAll('tr')].find(tr => {
-      const val = tr.children[0].querySelector('input')?.value.trim();
-      return !val;
+        const emptyRow = [...tbody.querySelectorAll('tr')].find(tr => {
+          const val = tr.children[0].querySelector('input')?.value.trim();
+          return !val;
+        });
+
+        if (emptyRow) emptyRow.remove();
+
+        if (stage.section_title === 'Inspection') {
+
+          row = buildRow('Inspection');
+          row.dataset.variant = stage.section_title;
+
+          row.children[0].querySelector('input').value =
+    `Inspection - ${stage.stage_name}`;
+
+        } else {
+          row = buildRow(stage.stage_name);
+        }
+
+        tbody.appendChild(row);
+      }
+
+      row.querySelector('[name="stage_date"]').value = stage.stage_date?.split('T')[0] || '';
+      row.querySelector('[name="achieve_date"]').value = stage.achieve_date?.split('T')[0] || '';
+      row.querySelector('.inward').value = stage.inward || '';
+      row.querySelector('.outward').value = stage.outward || '';
+      row.querySelector('.remarks-input').value = stage.remarks || '';
+
+      const select = row.children[6].querySelector('select');
+      if (select && stage.assigned_user_id) {
+        select.value = stage.assigned_user_id;
+      }
+
+      row.dataset.edited = 'false';
+
+      if (stage.status === 'closed') {
+
+        row.dataset.status = 'closed';
+
+        row.querySelectorAll('input, select').forEach(el => {
+          el.disabled = true;
+        });
+
+      } else {
+
+        row.dataset.status = 'active';
+      }
+
+let key;
+
+// map EXACT section
+if (stage.section_title === 'DFM Checking') key = 'DFM Checking';
+else if (stage.section_title === 'Manufacturing') key = 'Manufacturing';
+else if (stage.section_title === 'Dispatch') key = 'Dispatch';
+else if (stage.section_title === 'Inspection') key = 'Inspection';
+
+// safety fallback
+if (!key) return;
+
+if (!(key in sectionStatus)) {
+  sectionStatus[key] = true; // assume closed
+}
+
+if (stage.status !== 'closed') {
+  sectionStatus[key] = false; // any active → open
+}
+
     });
 
-    if (emptyRow) emptyRow.remove();
+    const map = {
+      'DFM Checking': 'section-dfm',
+      'Manufacturing': 'section-mfg',
+      'Inspection': 'section-insp',
+      'Dispatch': 'section-disp'
+    };
 
-    if (stage.stage_name === 'Inspection') {
+    Object.keys(map).forEach(title => {
 
-      row = buildRow('Inspection');
-      row.dataset.variant = stage.section_title;
+      const section = document.getElementById(map[title]);
+      if (!section) return;
 
-      row.children[0].querySelector('input').value =
-        `Inspection - ${stage.section_title}`;
+      const wrap = section.querySelector('.stage-table-wrap');
+      const btn = section.querySelector('.btn-close-section');
 
-    } else {
+      // 🔍 DEBUG (remove later)
+      console.log("SECTION:", title, "STATUS:", sectionStatus[title]);
 
-      row = buildRow(stage.stage_name);
+      if (sectionStatus[title] === true) {
 
-    }
+        // ✅ FREEZE (ONLY WHEN TRUE)
+        wrap.dataset.frozen = 'true';
+        wrap.style.opacity = '0.6';
+        wrap.style.pointerEvents = 'none';
 
-    tbody.appendChild(row);
-  }
+        wrap.querySelectorAll('input, select, button').forEach(el => {
+          el.disabled = true;
+        });
 
-  row.querySelector('[name="stage_date"]').value = stage.stage_date?.split('T')[0] || '';
-  row.querySelector('[name="achieve_date"]').value = stage.achieve_date?.split('T')[0] || '';
-  row.querySelector('.inward').value = stage.inward || '';
-  row.querySelector('.outward').value = stage.outward || '';
-  row.querySelector('.remarks-input').value = stage.remarks || '';
+        if (btn) {
+          btn.innerHTML = '✅ Section Completed';
+          btn.disabled = true;
+        }
 
-  const select = row.children[6].querySelector('select');
-  if (select && stage.assigned_user_id) {
-    select.value = stage.assigned_user_id;
-  }
+      } else {
 
-  row.dataset.edited = 'false';
-});
+        // 🔄 OPEN
+        wrap.dataset.frozen = 'false';
+        wrap.style.opacity = '';
+        wrap.style.pointerEvents = '';
 
+        wrap.querySelectorAll('input, select, button').forEach(el => {
+          el.disabled = false;
+        });
+
+        if (btn) {
+          btn.innerHTML = 'Close Section';
+          btn.disabled = false;
+        }
+      }
+
+    });
+
+    // ============================
+    // NEXT SECTION LOGIC
+    // ============================
     updateAllStageStates();
 
   } catch (err) {
@@ -1676,7 +1891,21 @@ async function saveSingleRowWithFiles(icon) {
     return;
   }
 
-  // upload files
+  if (row._comments && row._comments.length) {
+    for (const c of row._comments) {
+      await fetch('/api/stage-comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stage_id: stageId,
+          comment_text: c.comment_text,
+          user_id: 1
+        })
+      });
+    }
+    row._comments = [];
+  }
+
   if (row._files && row._files.length) {
     for (const f of row._files) {
       const formData = new FormData();
@@ -1693,8 +1922,13 @@ async function saveSingleRowWithFiles(icon) {
     row._files = [];
   }
 
+  row.dataset.edited = 'false';   
+  row.dataset.status = 'closed'; 
+
   alert("Saved successfully ✅");
 }
+
+
 
 async function saveSingleRow(row) {
 
@@ -1702,24 +1936,22 @@ async function saveSingleRow(row) {
 
   let stageName = row.children[0].querySelector('input').value.trim();
 
-  
-  if (stageName.startsWith('Inspection')) {
-    stageName = 'Inspection';
-  }
-
   const stageDate = row.querySelector('[name="stage_date"]').value;
   const achieveDate = row.querySelector('[name="achieve_date"]').value;
   const inward = row.querySelector('.inward').value;
   const outward = row.querySelector('.outward').value;
   const assignedUser = row.children[6].querySelector('select').value;
+  const comments = row._comments || [];
+  const commentText = comments.map(c => c.comment_text).join('\n');
 
-  // 🔥 Decide section title
-  const isInspection = row.closest('#section-insp');
+  let sectionTitle;
 
-  const sectionTitle = isInspection
-    ? (row.dataset.variant || 'Inspection')
-    : row.closest('.stage-section')
-        .querySelector('.stage-section-title').innerText.trim();
+  if (row.closest('#section-insp')) {
+    sectionTitle = 'Inspection';
+  } else {
+    sectionTitle = row.closest('.stage-section')
+      .querySelector('.stage-section-title').innerText.trim();
+  }
 
   const payload = {
     stages: [{
@@ -1732,7 +1964,7 @@ async function saveSingleRow(row) {
       outward,
       assigned_user_id: assignedUser,
       saved_by_user_id: 1,
-      status: 1
+      status: 'active',
     }]
   };
 
@@ -1742,7 +1974,6 @@ async function saveSingleRow(row) {
     body: JSON.stringify(payload)
   });
 
-  // 🔥 get ID again
   const getRes = await fetch(`/api/stages/${partId}`);
   const stages = await getRes.json();
 
@@ -1751,8 +1982,16 @@ async function saveSingleRow(row) {
     s.section_title === sectionTitle
   );
 
-  return found?.id || null;
+  const stageId = found?.id || null;
+
+  if (stageId) {
+    row.setAttribute('data-stage-id', stageId);
+  }
+
+  return stageId;
 }
+
+
 
 function handleMfgVariantFiles(input, variant) {
   if (!_uploadTrigger) return;
@@ -1834,3 +2073,4 @@ function setInspVariant(value) {
     }
   });
 }
+
