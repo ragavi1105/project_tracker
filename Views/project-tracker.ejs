@@ -351,14 +351,17 @@
   </div>
 
   <!-- ===== ADDED: REMARKS POPUP (positioned near clicked field via JS) ===== -->
-  <div id="remarksOverlay" class="remarks-overlay-bg"></div>
-  <div id="remarksPopup" style="height: 140px;" class="remarks-popup">
-    <textarea id="remarksText" placeholder="Enter remarks..."></textarea>
-    <div class="remarks-popup-actions">
-      <button class="remarks-btn-cancel" onclick="closeRemarksPopup()">Cancel</button>
-      <button class="remarks-btn-save" onclick="saveRemarks()">Save</button>
-    </div>
+ <div id="remarksOverlay" class="remarks-overlay-bg"></div>
+
+<div id="remarksPopup" class="remarks-popup" style="display:none; height:auto;">
+
+  <div id="remarksHistory"></div>
+
+  <div class="remarks-popup-actions">
+    <button class="remarks-btn-cancel" onclick="closeRemarksPopup()">Cancel</button>
   </div>
+
+</div>
 
   <!-- ===== ADDED: UPLOAD FILES POPUP ===== -->
   <div class="upload-popup-overlay" id="uploadPopupOverlay" onclick="closeUploadPopup()"></div>

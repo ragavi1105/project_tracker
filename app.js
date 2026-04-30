@@ -369,7 +369,6 @@ app.get('/api/files/:productId', (req, res) => {
 });
 
 //part file count
-
 async function updatePartFileCount() {
   const { partId } = getParamsFromUrl();
 
@@ -381,7 +380,7 @@ async function updatePartFileCount() {
 
     const countSpan = document.querySelector('.part-files-text .file-count');
     if (countSpan) {
-      countSpan.textContent = files.length; // ✅ DB count
+      countSpan.textContent = files.length; 
     }
 
   } catch (err) {
@@ -399,9 +398,10 @@ app.get('/api/stage-users', (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    res.json(result); // ✅ returns array
+    res.json(result); 
   });
 });
+
 
 //post upload for stages
 
@@ -430,6 +430,7 @@ app.post('/api/upload-stage-file', upload.single('file'), (req, res) => {
   });
 });
 
+
 app.get('/api/stage-files/:stageId', (req, res) => {
   const stageId = req.params.stageId;
 
@@ -449,6 +450,7 @@ app.get('/api/stage-files/:stageId', (req, res) => {
     res.json(result);
   });
 });
+
 
 //stage files for  document
 app.get('/api/stage-files-by-part/:productId', (req, res) => {
@@ -476,7 +478,6 @@ app.get('/api/stage-files-by-part/:productId', (req, res) => {
     res.json(result);
   });
 });
-
 
 
 //section close
@@ -525,21 +526,21 @@ app.post('/api/stage-comments', (req, res) => {
 app.get('/api/stage-comments/:stageId', (req, res) => {
   const stageId = req.params.stageId;
 
-  const sql = `
-    SELECT 
-      sc.comment_text,
-      sc.created_at,
-      u.name AS user_name
-    FROM stage_comments sc
-    LEFT JOIN users u ON sc.user_id = u.user_id
-    WHERE sc.stage_id = ?
-    ORDER BY sc.created_at DESC
-  `;
+ const sql = `
+  SELECT 
+    sc.comment_text,
+    sc.created_at,
+    u.name AS user_name
+  FROM stage_comments sc
+  LEFT JOIN users u ON sc.user_id = u.id
+  WHERE sc.stage_id = ?
+  ORDER BY sc.created_at ASC
+`;
 
   db.query(sql, [stageId], (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'DB error' });
+      return res.status(500).json([]);
     }
 
     res.json(result);
@@ -559,6 +560,55 @@ app.get('/project-tracker/:poId', (req, res) => {
 app.get('/', (req, res) => {
   res.redirect('/project-tracker/1');
 });
+
+
+// GET mfg files
+app.get('/api/mfg-files/:poId', async (req, res) => {
+  try {
+    console.log("poId received:", req.params.poId);
+
+    db.query(
+      `SELECT * FROM stage_varients WHERE products_po_id = ? ORDER BY created_at DESC`,
+      [req.params.poId],
+      (err, rows) => {                    
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: err.message });
+        }
+        console.log("rows found:", rows.length);
+        res.json(rows);
+      }
+    );
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// POST upload mfg file
+app.post('/api/upload-mfg-file', upload.single('file'), async (req, res) => {
+  try {
+    const { user_id, stage_varient, product_id } = req.body;
+    const file_name = req.file.originalname;
+    const file_type = req.file.originalname.split('.').pop().toUpperCase();
+
+    console.log("Saving with products_po_id:", product_id);
+
+    await db.query(
+      `INSERT INTO stage_varients (user_id, products_po_id, stage_varient, file_name, file_type, created_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [user_id, product_id, stage_varient, file_name, file_type]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("DB Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 
 // START

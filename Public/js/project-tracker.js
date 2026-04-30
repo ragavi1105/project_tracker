@@ -70,8 +70,8 @@ async function loadStageUsers() {
 
   const uploadTrigger = tr.querySelector('.stage-upload-trigger');
 
-uploadTrigger.addEventListener('click', () => {
-  _uploadTrigger = tr;
+  uploadTrigger.addEventListener('click', () => {
+  uploadTrigger = tr;
 
   document.getElementById('uploadPopup').classList.add('active');
   document.getElementById('uploadPopupOverlay').classList.add('active');
@@ -85,22 +85,26 @@ uploadTrigger.addEventListener('click', () => {
 }
 
 function addRow(tbodyId) {
-
   const sectionId = getSectionIdForTbody(tbodyId);
+
+  // ✅ Block if THIS section is already frozen
+  if (sectionId && isSectionFrozen(sectionId)) {
+    return; // silently do nothing — button is visually disabled anyway
+  }
 
   // 🔒 Block if previous section not closed
   if (sectionId) {
     const prev = getPreviousSectionId(sectionId);
-
     if (prev && !isSectionFrozen(prev)) {
       alert('Please close previous section first');
       return;
     }
   }
 
+
   const tbody = document.getElementById(tbodyId);
-  if (!tbody) return;
-if (tbodyId === 'tbody-insp') {
+    if (!tbody) return;
+    if (tbodyId === 'tbody-insp') {
 
   const sel = document.getElementById('inspVariantSelect');
   const selectedValue = sel ? sel.value : '';
@@ -122,36 +126,36 @@ if (tbodyId === 'tbody-insp') {
     row.children[0].querySelector('input').value = 'Inspection';
   }
 
-  tbody.appendChild(row);
+    tbody.appendChild(row);
 
-  if (sel) sel.value = '';
-  return;
-}
-
-// ✅ NORMAL ROW
-tbody.appendChild(buildRow(''));
-}
-
-    // ── Remove a row ──
-    function removeRow(icon) {
-  const tr = icon.closest('tr');
-
-  if (tr.classList.contains('default-row')) {
-    alert('This row cannot be deleted');
+    if (sel) sel.value = '';
     return;
   }
 
-  tr.remove();
-}
+  // ✅ NORMAL ROW
+    tbody.appendChild(buildRow(''));
+  }
+
+    // ── Remove a row ──
+function removeRow(icon) {
+      const tr = icon.closest('tr');
+
+      if (tr.classList.contains('default-row')) {
+        alert('This row cannot be deleted');
+        return;
+      }
+
+      tr.remove();
+    }
 
     // ── Update file count ──
-    function updateCount(input) {
+function updateCount(input) {
       const span = input.closest('.upload-cell').querySelector('.file-count');
       span.textContent = input.files.length;
     }
 
     // ── Init default rows ──
-  function initStages() {
+function initStages() {
 
   // DFM → 2 default rows (NON-DELETABLE)
   const dfm = document.getElementById('tbody-dfm');
@@ -166,7 +170,7 @@ tbody.appendChild(buildRow(''));
   dfm.appendChild(dfm2);
 
   // OTHER SECTIONS → 1 compulsory row (NON-DELETABLE)
-// Mfg and Disp get default row, Inspection starts empty
+  // Mfg and Disp get default row, Inspection starts empty
   ['tbody-mfg', 'tbody-disp'].forEach(id => {
     const row = buildRow('', null, true);
     row.classList.add('default-row');
@@ -177,19 +181,19 @@ tbody.appendChild(buildRow(''));
   updateAllStageStates();
 
   // ✅ Set initial button states
-['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach((id, index) => {
-  const section = document.getElementById(id);
-  const btn = section.querySelector('.btn-close-section');
+  ['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach((id, index) => {
+    const section = document.getElementById(id);
+    const btn = section.querySelector('.btn-close-section');
 
-  if (index === 0) {
-    btn.innerHTML = 'Close Section';
-    btn.disabled = false;
-  } else {
-    btn.innerHTML = '🔒 Complete previous section to unlock';
-    btn.disabled = true;
+    if (index === 0) {
+      btn.innerHTML = 'Close Section';
+      btn.disabled = false;
+    } else {
+      btn.innerHTML = '↑ Complete previous section to unlock';
+      btn.disabled = true;
+    }
+  });
   }
-});
-}
 
 function getSectionIdForTbody(tbodyId) {
   return {
@@ -227,7 +231,6 @@ function isPreviousStageFrozen(sectionId) {
   if (!prevSectionId) return true;
   return isSectionFrozen(prevSectionId);
 }
-
 function updateStageSectionState(sectionId) {
   const section = document.getElementById(sectionId);
   if (!section) return;
@@ -236,32 +239,30 @@ function updateStageSectionState(sectionId) {
   const btn = section.querySelector('.btn-close-section');
   if (!wrap || !btn) return;
 
+  // ✅ Don't touch sections already frozen or already manually unlocked
+  if (wrap.dataset.frozen === 'true') return;
+
   const enabled = sectionId === 'section-dfm' || isPreviousStageFrozen(sectionId);
 
-  // Enable/disable inputs
   wrap.querySelectorAll('input, select').forEach(el => {
     if (!el.classList.contains('remarks-input')) {
       el.disabled = !enabled;
     }
   });
 
-  // UI state
   if (!enabled) {
     wrap.style.opacity = '0.6';
     wrap.style.pointerEvents = 'none';
-
     if (addBtn) addBtn.disabled = true;
     btn.disabled = true;
-    btn.innerHTML = '🔒 Complete previous section to unlock';
+    btn.innerHTML = '↑ Complete previous section to unlock';
   } else {
     wrap.style.opacity = '';
     wrap.style.pointerEvents = '';
-
     if (addBtn) addBtn.disabled = false;
-
     if (wrap.dataset.frozen !== 'true') {
       btn.disabled = false;
-      btn.innerHTML = 'Close Section';
+      btn.innerHTML = '✕ Close Section';
     }
   }
 }
@@ -269,13 +270,18 @@ function updateStageSectionState(sectionId) {
 function updateAllStageStates() {
   ['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach(updateStageSectionState);
 }
-async function toggleSection(sectionId) {
 
+async function toggleSection(sectionId) {
   const section = document.getElementById(sectionId);
   const wrap = section.querySelector('.stage-table-wrap');
   const btn = section.querySelector('.btn-close-section');
+  const addBtn = section.querySelector('.btn-add');
+if (addBtn) {
+  addBtn.disabled = true;
+  addBtn.style.opacity = '0.4';
+  addBtn.style.cursor = 'not-allowed';
+}
 
-  // 🚫 already closed
   if (wrap.dataset.frozen === 'true') return;
 
   const rows = section.querySelectorAll('tbody tr');
@@ -284,7 +290,6 @@ async function toggleSection(sectionId) {
   // 🔴 STEP 1: VALIDATION
   // ============================
   for (const row of rows) {
-
     const stageName = row.children[0].querySelector('input')?.value.trim();
     const stageDate = row.querySelector('[name="stage_date"]')?.value;
     const verifier = row.children[6].querySelector('select')?.value;
@@ -298,20 +303,14 @@ async function toggleSection(sectionId) {
       alert("⚠️ Please click Save (💾) before closing");
       return;
     }
-
-    if (row._files && row._files.length) {
-      alert("⚠️ Please save uploaded files before closing");
-      return;
-    }
   }
 
   // ============================
   // 🧩 STEP 2: UPDATE DB
   // ============================
-
   const sectionMap = {
-    'section-dfm': 'DFM Checking',
-    'section-mfg': 'Manufacturing',
+    'section-dfm':  'DFM Checking',
+    'section-mfg':  'Manufacturing',
     'section-insp': 'Inspection',
     'section-disp': 'Dispatch'
   };
@@ -332,9 +331,8 @@ async function toggleSection(sectionId) {
   }
 
   // ============================
-  // 🔒 STEP 3: FREEZE UI
+  // 🔒 STEP 3: FREEZE CURRENT SECTION
   // ============================
-
   wrap.dataset.frozen = 'true';
   wrap.style.opacity = '0.6';
   wrap.style.pointerEvents = 'none';
@@ -343,25 +341,63 @@ async function toggleSection(sectionId) {
     el.disabled = true;
   });
 
-  btn.innerHTML = '✅ Section Completed';
+  btn.innerHTML = '✓ Section Completed. Closed stage comments are available for review!';
   btn.disabled = true;
+  btn.style.opacity = '0.6';
+
+  rows.forEach(row => { row.dataset.status = 'closed'; });
 
   // ============================
-  // ➡️ STEP 4: UNLOCK NEXT
+  // ➡️ STEP 4: UNLOCK NEXT SECTION
   // ============================
-
   const nextSectionId = getNextSectionId(sectionId);
+
   if (nextSectionId) {
-    updateStageSectionState(nextSectionId);
+    const nextSection  = document.getElementById(nextSectionId);
+    const nextWrap     = nextSection.querySelector('.stage-table-wrap');
+    const nextBtn      = nextSection.querySelector('.btn-close-section');
+    const nextAddBtn   = nextSection.querySelector('.btn-add');
+
+    // ✅ Clear ALL frozen/disabled styles
+    nextWrap.dataset.frozen    = 'false';
+    nextWrap.style.opacity     = '1';
+    nextWrap.style.pointerEvents = '';
+    nextWrap.style.filter      = '';
+    nextWrap.style.transition  = 'all 0.3s ease';
+
+    nextWrap.querySelectorAll('input, select').forEach(el => {
+      if (!el.classList.contains('remarks-input')) {
+        el.disabled = false;
+      }
+    });
+
+    if (nextAddBtn) {
+      nextAddBtn.disabled = false;
+      nextAddBtn.style.opacity = '';
+      nextAddBtn.style.pointerEvents = '';
+    }
+
+    if (nextBtn) {
+      nextBtn.disabled = false;
+      nextBtn.style.opacity = '';
+      nextBtn.innerHTML = '✕ Close Section';
+    }
+
+    // ✅ Scroll to next section smoothly
+    setTimeout(() => {
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+    // ✅ Highlight flash on next section
+    nextSection.style.transition = 'box-shadow 0.3s ease';
+    nextSection.style.boxShadow = '0 0 0 3px #3b82f6bb';
+    setTimeout(() => {
+      nextSection.style.boxShadow = '';
+    }, 1800);
   }
 
-  // ============================
-  // 🧠 STEP 5: MARK ROW STATUS (UI ONLY)
-  // ============================
-
-  rows.forEach(row => {
-    row.dataset.status = 'closed';
-  });
+  // ✅ Call AFTER manually setting frozen=true so it doesn't fight Step 4
+  updateAllStageStates();
 }
 
 
@@ -890,6 +926,59 @@ async function insertPartFiles() {
   closeUploadPopup();
 }
 
+function handleMfgVariantFiles(input, variant) {
+  if (!_uploadTrigger) return;
+  if (!_uploadTrigger._files) _uploadTrigger._files = [];
+  Array.from(input.files).forEach(f => {
+    _uploadTrigger._files.push({
+      file: f,                                    // ✅ store actual File object
+      name: f.name,
+      ext: f.name.split('.').pop().toUpperCase(),
+      variant: variant,
+      url: URL.createObjectURL(f),
+      remarks: ''
+    });
+  });
+  input.value = '';
+  renderUploadTable(_uploadTrigger._files);
+}
+
+// ✅ Must be at TOP LEVEL — not inside any other function
+async function insertMfgFiles() {
+  if (!_uploadTrigger || !_uploadTrigger._files || !_uploadTrigger._files.length) {
+    alert("⚠️ No files to upload");
+    return;
+  }
+
+  try {
+    const { poId } = getParamsFromUrl();   // ✅ poId
+
+    for (const f of _uploadTrigger._files) {
+      const formData = new FormData();
+      formData.append('user_id', '1');
+      formData.append('product_id', poId);  // ✅ maps to products_po_id
+      formData.append('stage_varient', f.variant);
+      formData.append('file', f.file, f.name);
+
+      const res = await fetch('/api/upload-mfg-file', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) throw new Error(`Failed for ${f.name}`);
+    }
+
+    alert("Manufacturing files saved ✅");
+    _uploadTrigger._files = [];
+    renderUploadTable([]);
+    closeUploadPopup();
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error uploading files");
+  }
+}
+
 function insertFiles() {
   if (!_uploadTrigger) return;
 
@@ -903,6 +992,7 @@ function insertFiles() {
 }
 
 
+
     // ── Sync the file count badge on the upload trigger icon ──
     function syncUploadCount() {
       if (!_uploadTrigger) return;
@@ -911,9 +1001,6 @@ function insertFiles() {
       if (span) span.textContent = count;
     }
 
-    // =====================================================
-    // FIND PROJECT MODAL
-    // =====================================================
 
     // ── Close the find project modal and reset fields ──
     function closeFindModal() {
@@ -1048,59 +1135,57 @@ function isRemarksFrozen(input) {
   return wrap?.dataset.frozen === 'true';
 }
 
+
 async function renderRemarksHistory() {
   if (!_remarksTarget) return;
 
   const row = _remarksTarget.closest('tr');
   if (!row) return;
 
-  const stageId = row.getAttribute('data-stage-id');
+  const stageId = row.dataset.stageId;
   const historyDiv = document.getElementById('remarksHistory');
 
-  // ✅ Safety check
   if (!historyDiv) {
     console.error("❌ remarksHistory div not found");
     return;
   }
 
-  // ==========================================
-  // ✍️ EDIT MODE (TEXTBOX CLICK)
-  // ==========================================
+
   if (_remarksMode === 'edit') {
-    historyDiv.innerHTML = `
-      <div class="remarks-history-header">Add Comment</div>
+  historyDiv.innerHTML = `
+    <div class="remarks-history-header">Add Comment</div>
+    <textarea id="remarksText"
+      placeholder="Enter comment..."
+      style="width:100%;height:80px;margin-bottom:6px;padding:8px;border:1px solid #ddd;border-radius:6px;"></textarea>
+    <div style="text-align:right;margin-bottom:4px;">
+      <button onclick="saveRemarks()"
+        style="background:#3b82f6;color:#fff;padding:5px 14px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">
+        Save
+      </button>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('remarksText')?.focus(), 50);
+  return;
+}
 
-      <textarea id="remarksText"
-        placeholder="Enter comment..."
-        style="width:100%;height:80px;margin-bottom:8px;padding:8px;border:1px solid #ddd;border-radius:6px;"></textarea>
 
-      <div style="text-align:right;">
-        <button onclick="saveRemarks()"
-          style="background:#3b82f6;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">
-          Save
-        </button>
-      </div>
-    `;
+  const localComments = row._comments || [];
 
-    // ✅ auto focus
-    setTimeout(() => {
-      const el = document.getElementById('remarksText');
-      if (el) el.focus();
-    }, 50);
-
-    return;
-  }
-
-  // ==========================================
-  // 💬 HISTORY MODE (ICON CLICK)
-  // ==========================================
-
-  // 🔴 BEFORE SAVE → LOCAL COMMENTS
   if (!stageId) {
-    const localComments = row._comments || [];
-
     if (!localComments.length) {
-      historyDiv.innerHTML = '<div>No comments yet</div>';
+      historyDiv.innerHTML = `
+  <div style="
+    border: 1px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 3px;
+    background-color: #f0f8ff;
+    color: #6b7280;
+    text-align: center;
+    font-size: 14px;
+  ">
+    No comments yet
+  </div>
+`;
       return;
     }
 
@@ -1121,26 +1206,28 @@ async function renderRemarksHistory() {
     return;
   }
 
-  // 🟢 AFTER SAVE → FETCH FROM DB
   try {
-    const res = await fetch(`/api/stage-comments/${stageId}`);
+    historyDiv.innerHTML = 'Loading...';
 
+    const res = await fetch(`/api/stage-comments/${stageId}`);
     if (!res.ok) throw new Error("API failed");
 
-    const comments = await res.json();
+    const dbComments = await res.json();
 
-    if (!comments || !comments.length) {
+    const allComments = [...dbComments, ...localComments];
+
+    if (!allComments.length) {
       historyDiv.innerHTML = '<div>No comments yet</div>';
       return;
     }
 
     historyDiv.innerHTML = `
       <div class="remarks-history-header">Comments</div>
-      ${comments.map(item => `
+      ${allComments.map(item => `
         <div class="remarks-history-item">
           <div class="comment-text">${item.comment_text}</div>
           <div class="timestamp">
-            <span class="user">${item.user_name || 'User'}</span>
+            <span class="user">${item.user_name || 'You'}</span>
             <span class="dot">•</span>
             <span class="date">${new Date(item.created_at).toLocaleDateString()}</span>
             <span class="time">${new Date(item.created_at).toLocaleTimeString()}</span>
@@ -1156,6 +1243,8 @@ async function renderRemarksHistory() {
 }
 
 
+
+
 async function saveRemarks() {
   const row = _remarksTarget.closest('tr');
   const text = document.getElementById('remarksText').value.trim();
@@ -1165,24 +1254,55 @@ async function saveRemarks() {
     return;
   }
 
-  if (!row._comments) row._comments = [];
+  const stageId = row.dataset.stageId;
 
-  row._comments.push({
-    comment_text: text,
-    created_at: new Date(),
-    user_name: 'You'
-  });
+  if (stageId) {
+    try {
+      await fetch('/api/stage-comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stage_id: stageId,
+          comment_text: text,
+          user_id: 1
+        })
+      });
 
-  // ✅ UPDATE INPUT FIELD (IMPORTANT)
+      alert("Comment saved ✅");
+
+    } catch (err) {
+      console.error(err);
+      alert("Error saving comment");
+      return;
+    }
+  } 
+
+  else {
+    if (!row._comments) row._comments = [];
+
+    row._comments.push({
+      comment_text: text,
+      created_at: new Date(),
+      user_name: 'You'
+    });
+
+    alert("Comment saved locally (save stage to persist)");
+  }
+
+  // ✅ update input field
   _remarksTarget.value = text;
 
   document.getElementById('remarksText').value = '';
   closeRemarksPopup();
 }
 
+
+
+
+
 // 🔹 Load Project
 async function loadProject() {
-  const { poId } = getParamsFromUrl();  // OR use pathname method
+  const { poId } = getParamsFromUrl(); 
 
   try {
     const res = await fetch(`/api/project/${poId}`);
@@ -1266,18 +1386,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (partId) {
     loadSinglePart(partId);
-    await loadStages();            // ✅ now valid
-    await updatePartFileCount();   // ✅ now valid
+    await loadStages();            
+    await updatePartFileCount();   
   }
 });
-
-// 🔹 Find Project (redirect)
-function findProject() {
-  const id = prompt('Enter Purchase Order ID:');
-  if (!id) return;
-
-  window.location.href = `/project-tracker/${id}`;
-}
 
 
 
@@ -1557,6 +1669,9 @@ function showSavedMsg() {
 
   setTimeout(() => msg.remove(), 2000);
 }
+
+
+
 async function loadStages() {
 
   const { partId } = getParamsFromUrl();
@@ -1564,9 +1679,6 @@ async function loadStages() {
 
   try {
 
-    // ============================
-    // RESET TABLES
-    // ============================
     ['tbody-dfm','tbody-mfg','tbody-insp','tbody-disp'].forEach(id => {
       const tbody = document.getElementById(id);
       if (tbody) tbody.innerHTML = '';
@@ -1577,14 +1689,9 @@ async function loadStages() {
     const res = await fetch(`/api/stages/${partId}`);
     const stages = await res.json();
 
-    // ============================
-    // 🔥 SECTION STATUS (FROM DB ONLY)
-    // ============================
     const sectionStatus = {};
 
-    // ============================
-    // BUILD ROWS
-    // ============================
+
     stages.forEach(stage => {
 
       let tbodyId = '';
@@ -1598,6 +1705,7 @@ async function loadStages() {
       if (!tbody) return;
 
       let row = null;
+      
 
 
 if (stage.section_title === 'Inspection') {
@@ -1633,14 +1741,18 @@ if (stage.section_title === 'Inspection') {
           row = buildRow(stage.stage_name);
         }
 
+
         tbody.appendChild(row);
       }
+
+      row.dataset.stageId = stage.id;
 
       row.querySelector('[name="stage_date"]').value = stage.stage_date?.split('T')[0] || '';
       row.querySelector('[name="achieve_date"]').value = stage.achieve_date?.split('T')[0] || '';
       row.querySelector('.inward').value = stage.inward || '';
       row.querySelector('.outward').value = stage.outward || '';
       row.querySelector('.remarks-input').value = stage.remarks || '';
+      
 
       const select = row.children[6].querySelector('select');
       if (select && stage.assigned_user_id) {
@@ -1674,11 +1786,11 @@ else if (stage.section_title === 'Inspection') key = 'Inspection';
 if (!key) return;
 
 if (!(key in sectionStatus)) {
-  sectionStatus[key] = true; // assume closed
+  sectionStatus[key] = true; 
 }
 
 if (stage.status !== 'closed') {
-  sectionStatus[key] = false; // any active → open
+  sectionStatus[key] = false; 
 }
 
     });
@@ -1698,12 +1810,10 @@ if (stage.status !== 'closed') {
       const wrap = section.querySelector('.stage-table-wrap');
       const btn = section.querySelector('.btn-close-section');
 
-      // 🔍 DEBUG (remove later)
       console.log("SECTION:", title, "STATUS:", sectionStatus[title]);
 
       if (sectionStatus[title] === true) {
 
-        // ✅ FREEZE (ONLY WHEN TRUE)
         wrap.dataset.frozen = 'true';
         wrap.style.opacity = '0.6';
         wrap.style.pointerEvents = 'none';
@@ -1713,13 +1823,12 @@ if (stage.status !== 'closed') {
         });
 
         if (btn) {
-          btn.innerHTML = '✅ Section Completed';
+          btn.innerHTML = '✓ Section Completed. Closed stage comments are available for review!';
           btn.disabled = true;
         }
 
       } else {
 
-        // 🔄 OPEN
         wrap.dataset.frozen = 'false';
         wrap.style.opacity = '';
         wrap.style.pointerEvents = '';
@@ -1736,9 +1845,6 @@ if (stage.status !== 'closed') {
 
     });
 
-    // ============================
-    // NEXT SECTION LOGIC
-    // ============================
     updateAllStageStates();
 
   } catch (err) {
@@ -1757,22 +1863,26 @@ function getProjectFromURL() {
 
 async function renderDocuments() {
   const container = document.getElementById('documentsContainer');
-  const { partId } = getParamsFromUrl();
+  const { partId, poId } = getParamsFromUrl();
 
   if (!partId) {
     container.innerHTML = `<p>No Part Selected</p>`;
     return;
   }
 
+  _projectFilesSnapshot = [];
+  _stageFilesSnapshot = [];
+
   try {
-    // BOTH API CALLS
-    const [partRes, stageRes] = await Promise.all([
+    const [partRes, stageRes, mfgRes] = await Promise.all([
       fetch(`/api/files/${partId}`),
-      fetch(`/api/stage-files-by-part/${partId}`)
+      fetch(`/api/stage-files-by-part/${partId}`),
+      fetch(`/api/mfg-files/${poId}`)
     ]);
 
-    const partFiles = await partRes.json();
+    const partFiles  = await partRes.json();
     const stageFiles = await stageRes.json();
+    const mfgFiles   = await mfgRes.json();
 
     let html = '';
 
@@ -1781,35 +1891,105 @@ async function renderDocuments() {
     // ===========================
     if (partFiles.length) {
       html += `
-        <h3>📁 Part Files</h3>
-        <table class="docs-table">
-          <thead>
-            <tr>
-              <th>Sl</th>
-              <th>File Name</th>
-              <th>Type</th>
-              <th>Remarks</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
+        <h3 class="upload-file">Project Files</h3>
+        <div class="table-wrap">
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Sl</th>
+                <th>File Name</th>
+                <th>Type</th>
+                <th>Remarks</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
       `;
 
       partFiles.forEach((f, i) => {
+        const fileType = f.file_type || f.original_name?.split('.').pop().toUpperCase() || '-';
         html += `
           <tr>
             <td>${i + 1}</td>
-            <td>${f.original_name}</td>
-            <td>${f.file_type}</td>
+            <td>
+              ${f.original_name.length > 50
+                ? `<span>${f.original_name.substring(0, 50)}...</span>
+                   <i class="fa-solid fa-circle-exclamation"
+                      title="${f.original_name}"
+                      onclick="showFullFileName(this, '${f.original_name.replace(/'/g, "\\'")}')"
+                      style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
+                : f.original_name
+              }
+            </td>
+            <td>${fileType}</td>
             <td>${f.remarks || '-'}</td>
             <td>${new Date(f.uploaded_at).toLocaleString()}</td>
-            <td><button onclick="viewFile('${f.file_url}')">👁️</button></td>
+            <td class="doc-actions">
+              <i class="fa-solid fa-eye action-icon view" onclick="viewFile('${f.file_url}')" title="View"></i>
+              <i class="fa-solid fa-download action-icon download" title="Download"></i>
+            </td>
           </tr>
         `;
       });
 
-      html += `</tbody></table>`;
+      html += `</tbody></table></div>`;
+    }
+
+    // ===========================
+    // 🏭 MANUFACTURING VARIANT FILES
+    // ===========================
+    if (mfgFiles.length) {
+      html += `
+        <h3 class="upload-file">Stage Variant</h3>
+        <div class="table-wrap">
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Sl</th>
+                <th>File Name</th>
+                <th>File Type</th>
+                <th>Variant</th>
+                <th>Uploaded Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      mfgFiles.forEach((f, i) => {
+        const isRM = f.stage_varient === 'RM';
+        html += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>
+              ${f.file_name.length > 50
+                ? `<span>${f.file_name.substring(0, 50)}...</span>
+                   <i class="fa-solid fa-circle-exclamation"
+                      title="${f.file_name}"
+                      onclick="showFullFileName(this, '${f.file_name.replace(/'/g, "\\'")}')"
+                      style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
+                : f.file_name
+              }
+            </td>
+            <td><span class="upload-type-badge">${f.file_type || '-'}</span></td>
+            <td>
+              <span style="background:${isRM ? '#dbeafe' : '#dcfce7'};
+                           color:${isRM ? '#1d4ed8' : '#166534'};
+                           font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;">
+                ${f.stage_varient}
+              </span>
+            </td>
+            <td>${new Date(f.created_at).toLocaleString()}</td>
+            <td class="doc-actions">
+              <i class="fa-solid fa-eye action-icon view" onclick="viewFile('/uploads/${f.file_name}')" title="View"></i>
+              <i class="fa-solid fa-download action-icon download" title="Download"></i>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
     }
 
     // ===========================
@@ -1817,44 +1997,77 @@ async function renderDocuments() {
     // ===========================
     if (stageFiles.length) {
       html += `
-        <h3 style="margin-top:20px;">📦 Stage Files</h3>
-        <table class="docs-table">
-          <thead>
-            <tr>
-              <th>Stage</th>
-              <th>File Name</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
+        <h3 class="upload-file">Stage Files</h3>
+        <div class="table-wrap">
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Sl</th>
+                <th>File Name</th>
+                <th>Stage Name</th>
+                <th>Section</th>
+                <th>Uploaded Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
       `;
 
-      stageFiles.forEach((f) => {
+      stageFiles.forEach((f, i) => {
+        const fileType = f.file_type || f.original_name?.split('.').pop().toUpperCase() || '-';
         html += `
           <tr>
+            <td>${i + 1}</td>
+            <td>
+              ${f.original_name.length > 50
+                ? `<span>${f.original_name.substring(0, 50)}...</span>
+                   <i class="fa-solid fa-circle-exclamation"
+                      title="${f.original_name}"
+                      onclick="showFullFileName(this, '${f.original_name.replace(/'/g, "\\'")}')"
+                      style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
+                : f.original_name
+              }
+            </td>
             <td>${f.stage_name}</td>
-            <td>${f.original_name}</td>
-            <td>${f.file_type}</td>
+            <td>
+              <span class="upload-type-badge">${fileType}</span>
+            </td>
             <td>${new Date(f.uploaded_at).toLocaleString()}</td>
-            <td><button onclick="viewFile('${f.file_url}')">👁️</button></td>
+            <td class="doc-actions">
+              <i class="fa-solid fa-eye action-icon view" onclick="viewFile('${f.file_url}')" title="View"></i>
+              <i class="fa-solid fa-download action-icon download" title="Download"></i>
+            </td>
           </tr>
         `;
       });
 
-      html += `</tbody></table>`;
+      html += `</tbody></table></div>`;
     }
 
+    // ===========================
+    // EMPTY STATE
+    // ===========================
     if (!html) {
-      html = `<p style="text-align:center;">No Documents Uploaded</p>`;
+      html = `
+        <div style="display:flex;flex-direction:column;align-items:center;
+                    justify-content:center;padding:60px 20px;color:#9ca3af;">
+          <i class="fa-solid fa-folder-open"
+             style="font-size:56px;color:#d1d5db;margin-bottom:16px;"></i>
+          <p style="font-size:15px;font-weight:600;color:#6b7280;margin:0 0 6px;">
+            No Documents Uploaded
+          </p>
+          <p style="font-size:13px;color:#9ca3af;margin:0;">
+            Upload files from the stages to see them here.
+          </p>
+        </div>
+      `;
     }
 
     container.innerHTML = html;
 
   } catch (err) {
     console.error(err);
-    container.innerHTML = `<p>Error loading documents</p>`;
+    container.innerHTML = `<p style="color:red;">Error loading documents</p>`;
   }
 }
 
@@ -1998,6 +2211,7 @@ function handleMfgVariantFiles(input, variant) {
   if (!_uploadTrigger._files) _uploadTrigger._files = [];
   Array.from(input.files).forEach(f => {
     _uploadTrigger._files.push({
+      file: f,                                    // ✅ store actual File object
       name: f.name,
       ext: f.name.split('.').pop().toUpperCase(),
       variant: variant,

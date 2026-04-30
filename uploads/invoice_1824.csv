@@ -1,3 +1,0 @@
-"S.No","Invoice Number","Client Name","GST Number","Client Type","Currency","Invoice Type","Net Amount","CGST Rate (%)","SGST Rate (%)","IGST Rate (%)","Gross Amount","Gross Amount (INR)","Invoice Created At","Product Name","HSN/SAC Code","Quantity","Unit Price","Total Price"
-1,"HNV/26-27/90","AMIDC Automation Technologies Pvt Ltd","29AARCA5712H1ZE","domestic","INR","Tax Invoice",5999.99,9,9,0,7079.99,7079.99,"2026-04-20 11:06:43","SM CE XT_LITE Mudguard LH - Sheet metal","732690",1,3000,3000
-"","HNV/26-27/90","AMIDC Automation Technologies Pvt Ltd","29AARCA5712H1ZE","domestic","INR","Tax Invoice",5999.99,9,9,0,7079.99,7079.99,"2026-04-20 11:06:43","SM CE XT_LITE Mudguard RH - Sheet metal","732690",1,2999.99,2999.99
