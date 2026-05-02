@@ -340,7 +340,6 @@ app.post('/api/upload-file', upload.single('file'), (req, res) => {
 });
 
 
-
 //getting files for a part
 
 app.get('/api/files/:productId', (req, res) => {
@@ -557,6 +556,10 @@ app.get('/project-tracker/:poId', (req, res) => {
   res.render('project-tracker');
 });
 
+app.get('/search-project', (req, res) => {
+  res.render('search-project');
+});
+
 app.get('/', (req, res) => {
   res.redirect('/project-tracker/1');
 });
@@ -585,7 +588,6 @@ app.get('/api/mfg-files/:poId', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // POST upload mfg file
 app.post('/api/upload-mfg-file', upload.single('file'), async (req, res) => {
