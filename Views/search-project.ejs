@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Portal | White Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary-pink: #ff2e63;
+            --pink-hover: #e62959;
+            --pink-light: #fff0f3;
+            
+            /* Clean White Palette */
+            --bg-main: #fcfcfd;
+            --surface: #ffffff;
+            --border-soft: #f1f5f9;
+            --input-focus: #ff2e631a;
+            
+            /* Text Hierarchy */
+            --text-heading: #0f172a;
+            --text-body: #64748b;
+            --text-placeholder: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-main);
+            /* Soft, organic background shapes */
+            background-image: 
+                radial-gradient(at 0% 0%, #fff1f2 0px, transparent 50%),
+                radial-gradient(at 100% 100%, #f5f3ff 0px, transparent 50%);
+            padding: 20px;
+        }
+
+        .search-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--surface);
+            padding: 50px 40px;
+            border-radius: 32px;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04), 
+                        0 10px 15px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Modern Abstract Icon Container */
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: var(--pink-light);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            transform: rotate(-3deg);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .search-card:hover .icon-circle {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .icon-circle svg {
+            width: 36px;
+            height: 36px;
+            color: var(--primary-pink);
+        }
+
+        h1 {
+            color: var(--text-heading);
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+        }
+
+        p {
+            color: var(--text-body);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 24px;
+            background: #f8fafc;
+            border: 2px solid #f1f5f9;
+            border-radius: 18px;
+            color: var(--text-heading);
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary-pink);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px var(--input-focus);
+        }
+
+        /* Refined Alert Tag */
+        #alertMsg {
+            height: 24px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        #alertMsg.active {
+            opacity: 1;
+        }
+
+        .msg-error { color: #e11d48; }
+        .msg-success { color: #059669; }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-main {
+            background: var(--primary-pink);
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 46, 99, 0.15);
+        }
+
+        .btn-main:hover {
+            background: var(--pink-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(255, 46, 99, 0.25);
+        }
+
+        .btn-sec {
+            background: transparent;
+            color: var(--text-body);
+            border: 2px solid var(--border-soft);
+        }
+
+        .btn-sec:hover {
+            background: #f8fafc;
+            color: var(--text-heading);
+            border-color: #e2e8f0;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 480px) {
+            .search-card { padding: 40px 24px; }
+            .actions { flex-direction: column-reverse; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-card">
+        <div class="icon-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+
+        <h1>Project Search</h1>
+        <p>Enter your Project Number or POM reference below to view the latest status.</p>
+
+        <div class="input-container">
+            <input type="text" id="searchInput" placeholder="Search reference..." autocomplete="off">
+        </div>
+
+        <div id="alertMsg"></div>
+
+        <div class="actions">
+            <button class="btn-sec" onclick="clearField()">Cancel</button>
+            <button class="btn-main" onclick="performSearch()">Search Now</button>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('searchInput');
+        const alertBox = document.getElementById('alertMsg');
+
+        function setAlert(text, isError) {
+            alertBox.textContent = text;
+            alertBox.className = isError ? 'msg-error active' : 'msg-success active';
+            
+            if (!isError) {
+                setTimeout(() => { alertBox.classList.remove('active'); }, 3000);
+            }
+        }
+
+        function performSearch() {
+            const val = input.value.trim();
+            if (!val) {
+                setAlert("Please enter a reference number", true);
+                input.focus();
+            } else {
+                setAlert("Locating project " + val + "...", false);
+                console.log("Searching for:", val);
+            }
+        }
+
+        function clearField() {
+            input.value = "";
+            alertBox.classList.remove('active');
+            input.focus();
+        }
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+    </script>
+</body>
+</html>

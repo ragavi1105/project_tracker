@@ -15,10 +15,10 @@
       <h1>Project Tracker</h1>
       <p>Track, manage and deliver projects efficiently</p>
     </div>
-    <button class="btn-find" onclick="findProject()">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      Find Your Project
-    </button>
+    <button class="btn-find" onclick="window.location.href='/search-project'">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  Find Your Project
+</button>
     <div class="user-pill">
       <i class="fa-solid fa-user-astronaut"></i>
       <span>Welcome,<br><label class="user-name" id="userName">Divya Dharshini</label></span>
@@ -424,6 +424,117 @@
       <button class="find-modal-cancel-btn" onclick="closeFindModal()">Cancel</button>
     </div>
   </div>
+
+  <!-- Alert Popup Overlay -->
+<div id="alertPopupOverlay"></div>
+
+<!-- Alert Popup -->
+<div id="alertPopup">
+
+  <!-- Header -->
+  <div class="popup-header">
+    <div class="popup-title">
+      <i class="fa-solid fa-circle-exclamation alert-icon"></i>
+      <span>Verify Stage</span>
+    </div>
+    <i class="fa-solid fa-xmark popup-close" onclick="closeAlertPopup()"></i>
+  </div>
+
+  <!-- Body -->
+  <div class="popup-body">
+
+    <!-- Approver -->
+    <div class="popup-field">
+      <label>
+        Approver Name 
+      </label>
+      <input 
+        type="text" 
+        id="alertApproverInput"
+        placeholder="Enter approver name..."
+      />
+    </div>
+
+    <!-- Remarks -->
+    <div class="popup-field">
+      <label>
+        Remarks 
+      </label>
+      <textarea 
+        id="alertRemarksInput"
+        placeholder="Enter remarks..."
+        rows="3"
+      ></textarea>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="verify-popup-footer">
+    <button onclick="closeAlertPopup()" class="btn-cancel">
+      Cancel
+    </button>
+    <button onclick="saveAlertPopup()" class="verify-btn-save">
+      Save Alert
+    </button>
+  </div>
+</div>
+
+<div id="verifyConfirmOverlay" class="verify-overlay"></div>
+
+<div id="verifyConfirmPopup" class="verify-popup">
+
+  <!-- Header -->
+  <div class="verify-header">
+    <div class="verify-title">
+      Project ID
+      <span class="verify-po">(AM110-AP)</span>
+    </div>
+
+    <button class="verify-close" onclick="closeVerifyConfirmPopup()">
+      &times;
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="verify-body">
+
+    <!-- <div class="verify-created">
+      Created by Vishwanath Patil
+    </div> -->
+
+    <div class="verify-approved">
+      Verified by <span id="verifyConfirmApprover">—</span>
+    </div>
+
+    <div class="verify-label">Verifier Remarks</div>
+
+    <div id="verifyConfirmRemarks" class="verify-remarks">
+      —
+    </div>
+  </div>
+  <!-- Footer -->
+  <div class="verify-footer">
+    <button class="verify-btn" onclick="closeVerifyConfirmPopup()">
+      Close
+    </button>
+  </div>
+</div>
+
+<!-- ===== SUCCESS POPUP ===== -->
+<div id="verifySuccessOverlay"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;"></div>
+
+  <div style="font-size:17px;font-weight:600;color:#111;margin-bottom:8px;">Stage Verified Successfully</div>
+  <div style="font-size:13px;color:#777;margin-bottom:24px;">
+    The alert has been saved and the stage is now marked as verified.
+  </div>
+  <button onclick="closeSuccessPopup()"
+    style="padding:10px 36px;border-radius:6px;border:none;background:#e05c5c;
+           color:#fff;cursor:pointer;font-size:14px;font-weight:500;">
+    OK
+  </button>
+</div>
 
   <script src="/js/project-tracker.js"></script>
 </body>

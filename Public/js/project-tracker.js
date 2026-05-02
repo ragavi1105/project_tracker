@@ -48,7 +48,7 @@ async function loadStageUsers() {
     <td>
       <div class="status-icons">
         <i class="fa-solid fa-floppy-disk" title="Save" onclick="saveSingleRowWithFiles(this)"></i>
-        <i class="fa-solid fa-circle-exclamation" title="Alert"></i>
+        <i class="fa-solid fa-circle-exclamation" title="Alert" onclick="openAlertPopup(this)"></i>
         ${isDefault 
           ? `<i class="fa-regular fa-circle-xmark disabled" title="Cannot delete"></i>` 
           : `<i class="fa-regular fa-circle-xmark" title="Remove" onclick="removeRow(this)"></i>`
@@ -507,14 +507,6 @@ if (addBtn) {
       el.style.display = 'flex';
       setTimeout(() => { el.style.display = 'none'; }, 3000);
     }
-
-    // ── Find Project — opens modal instead of prompt ──
-    function findProject() {
-      document.getElementById('findModal').classList.add('active');
-      document.getElementById('findModalOverlay').classList.add('active');
-      setTimeout(() => document.getElementById('findModalInput').focus(), 50);
-    }
-
 
 
     function setSelectValue(id, value) {
@@ -2288,3 +2280,87 @@ function setInspVariant(value) {
   });
 }
 
+let _alertTargetRow = null;
+
+function openAlertPopup(icon) {
+  _alertTargetRow = icon.closest('tr');
+
+  // ── Pre-fill if already saved on this row ──
+  document.getElementById('alertApproverInput').value = _alertTargetRow._alertApprover || '';
+  document.getElementById('alertRemarksInput').value  = _alertTargetRow._alertRemarks  || '';
+
+  document.getElementById('alertPopup').style.display        = 'block';
+  document.getElementById('alertPopupOverlay').style.display = 'block';
+}
+
+function closeAlertPopup() {
+  document.getElementById('alertPopup').style.display        = 'none';
+  document.getElementById('alertPopupOverlay').style.display = 'none';
+  _alertTargetRow = null;
+}
+
+function saveAlertPopup() {
+  const approver = document.getElementById('alertApproverInput').value.trim();
+  const remarks  = document.getElementById('alertRemarksInput').value.trim();
+
+  if (!approver) {
+    document.getElementById('alertApproverInput').style.borderColor = '#ef4444';
+    document.getElementById('alertApproverInput').focus();
+    return;
+  }
+
+  if (!remarks) {
+    document.getElementById('alertRemarksInput').style.borderColor = '#ef4444';
+    document.getElementById('alertRemarksInput').focus();
+    return;
+  }
+
+  // ── Store on the row for reference ──
+  if (_alertTargetRow) {
+    _alertTargetRow._alertApprover = approver;
+    _alertTargetRow._alertRemarks  = remarks;
+
+    // ── Turn icon yellow/amber to show alert is set ──
+    const icon = _alertTargetRow.querySelector('.fa-circle-exclamation');
+    if (icon) {
+      icon.style.color  = '#616bff';
+      icon.title = `Alert set — Approver: ${approver}`;
+    }
+  }
+ openVerifyConfirmPopup();
+  closeAlertPopup();
+}
+
+// ── Close on overlay click ──
+document.getElementById('alertPopupOverlay')
+  .addEventListener('click', closeAlertPopup);
+
+// ── Close on Escape ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAlertPopup();
+});
+
+function openVerifyConfirmPopup(row) {
+  const target = row || _alertTargetRow;
+
+  if (!target) return;
+
+  document.getElementById('verifyConfirmApprover').textContent =
+    target._alertApprover || '—';
+
+  document.getElementById('verifyConfirmRemarks').textContent =
+    target._alertRemarks || '—';
+
+  document.getElementById('verifyConfirmPopup').style.display = 'block';
+  document.getElementById('verifyConfirmOverlay').style.display = 'block';
+}
+
+function closeVerifyConfirmPopup() {
+  document.getElementById('verifyConfirmPopup').style.display   = 'none';
+  document.getElementById('verifyConfirmOverlay').style.display = 'none';
+}
+
+function closeSuccessPopup() {
+  document.getElementById('verifySuccessPopup').style.display   = 'none';
+  document.getElementById('verifySuccessOverlay').style.display = 'none';
+}
