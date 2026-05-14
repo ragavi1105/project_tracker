@@ -6,14 +6,18 @@
   <title>Project Tracker</title>
   <link rel="stylesheet" href="/css/project-tracker.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/x-icon" href="/assets/project_tracker.png">
+  <link rel="icon" type="image/x-icon" href="https://i.ibb.co/FkSK8vZQ/Tracker-light-removebg-preview.png">
 </head>
 <body>
 
   <header class="topbar">
     <div class="logo">
-      <h1>Project Tracker</h1>
-      <p>Track, manage and deliver projects efficiently</p>
+      <img src="https://i.ibb.co/Cfm8QDG/Hanav-Logo-Symbol-removebg-preview.png" alt="Project Tracker Logo" class="tracker-logo"/>
+      
+      <div class="logo-text">
+        <h1>Project Tracker</h1>
+        <p>Track, manage and deliver projects efficiently</p>
+      </div>
     </div>
     <button class="btn-find" onclick="window.location.href='/search-project'">
   <i class="fa-solid fa-magnifying-glass"></i>
@@ -86,7 +90,7 @@
           </div>
         </div>
         <div class="person-row">
-          <span class="person-label">Project Engineer</span>
+          <span class="person-label">Development Manager</span>
           <div class="person-select-wrap">
             <select id="peSelect">
             </select>
@@ -94,9 +98,8 @@
         </div>
         <div class="person-row">
           <span class="person-label">Engineer</span>
-          <div class="person-select-wrap">
-            <select id="engSelect">
-            </select>
+          <div class="person-input-wrap">
+            <input type="text" id="engineerInput" class="engineer-input"placeholder="Enter engineer name..."/>
           </div>
         </div>
         <div class="people-action save-people-btn">
@@ -125,8 +128,10 @@
           <th>Part Number</th>
           <th>Part Name</th>
           <th>Order Quantity</th>
+          <th>Required Date</th>
           <th>Status</th>
           <th>Actions</th>
+          <th>Route Card</th>
         </tr>
       </thead>
       <tbody id="partsTableBody"></tbody>
@@ -163,6 +168,15 @@
       <label>Order Quantity: </label>
       <p id="partQty">-</p>
     </div>
+    <div class="part-col">
+  <label>Required Date: </label>
+  <input
+    type="date" class="required-date"
+    id="requiredDate"/> <i class="fa-brands fa-square-xing date-save" onclick="saveRequiredDate()" title="Save Required Date"
+    style="cursor:pointer;"></i>
+</div>
+
+    <!-- <i class="fa-solid fa-circle-check date-save"></i> -->
 
     <div class="part-col">
   <label>Upload File: </label>
@@ -212,22 +226,42 @@
                 </tbody>
               </table>
             </div>
-            <div class="stage-footer">
-              <button class="btn-close-section" onclick="toggleSection('section-dfm')">
-                Close Section <i class="fa-solid fa-arrow-up"></i>
+          </div>
+
+          <!-- STAGE 2: RM Stage -->
+          <div class="stage-section" id="section-rm">
+            <div class="stage-section-header">
+              <span class="stage-section-title">RM Stage</span>
+              <button class="btn-add" onclick="addRow('tbody-rm')">
+                <i class="fa-solid fa-plus"></i> Add
               </button>
+            </div>
+            <div class="stage-table-wrap">
+              <table class="stage-tbl">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Target Date</th>
+                    <th>Actual Date</th>
+                    <th>Inward</th>
+                    <th>Outward</th>
+                    <th>Upload</th>
+                    <th>Verifier</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-rm"></tbody>
+              </table>
+            </div>
+            <div class="stage-footer">
             </div>
           </div>
 
-          <!-- STAGE 2: Manufacturing — 1 row -->
+          <!-- STAGE 3: Manufacturing — 1 row -->
       <div class="stage-section" id="section-mfg">
         <div class="stage-section-header">
-          <span class="stage-section-title">
-            Manufacturing
-            <i class="fa-solid fa-folder-plus mfg-files-icon" 
-              title="Upload Manufacturing Files" 
-              style="margin-left:8px; color:#fa788d; cursor:pointer; font-size:14px;">
-            </i>
+          <span class="stage-section-title">Manufacturing</span>
           </span>
     <button class="btn-add" onclick="addRow('tbody-mfg')">
       <i class="fa-solid fa-plus"></i> Add
@@ -252,14 +286,9 @@
                 </tbody>
               </table>
             </div>
-            <div class="stage-footer">
-              <button class="btn-close-section" onclick="toggleSection('section-mfg')">
-                Close Section <i class="fa-solid fa-arrow-up"></i>
-              </button>
-            </div>
           </div>
 
-          <!-- STAGE 3: Inspection — 1 row -->
+          <!-- STAGE 4: Inspection — 1 row -->
          <div class="stage-section" id="section-insp">
   <div class="stage-section-header">
     <span class="stage-section-title">
@@ -267,7 +296,7 @@
       <select id="inspVariantSelect""
   style="margin-left:10px; font-size:12px; padding:4px 8px; border:1px solid #e5e7eb;
          border-radius:4px; background:#f9fafb; color:#111; outline:none; cursor:pointer;">
-  <option value="">Default</option>
+  <option value="" disabled selected>Select Type</option>
   <option value="FAI">FAI</option>
   <option value="PPAP I">PPAP I</option>
   <option value="PPAP II">PPAP II</option>
@@ -275,7 +304,7 @@
   <option value="PPAP IV">PPAP IV</option>
 </select>
     </span>
-    <button class="btn-add" onclick="addRow('tbody-insp')">
+    <button class="btn-add" onclick="addRow('tbody-insp')" disabled style="opacity:0.4;cursor:not-allowed;">
       <i class="fa-solid fa-plus"></i> Add
     </button>
   </div>
@@ -298,11 +327,6 @@
                 <tbody id="tbody-insp">
                 </tbody>
               </table>
-            </div>
-            <div class="stage-footer">
-              <button class="btn-close-section" onclick="toggleSection('section-insp')">
-                Close Section <i class="fa-solid fa-arrow-up"></i>
-              </button>
             </div>
           </div>
 
@@ -332,11 +356,6 @@
                 <tbody id="tbody-disp">
                 </tbody>
               </table>
-            </div>
-            <div class="stage-footer">
-              <button class="btn-close-section" onclick="toggleSection('section-disp')">
-                Close Section <i class="fa-solid fa-arrow-up"></i>
-              </button>
             </div>
           </div>
 
@@ -441,99 +460,86 @@
   </div>
 
   <!-- Body -->
-  <div class="popup-body">
+<div class="popup-body">
 
-    <!-- Approver -->
-    <div class="popup-field">
-      <label>
-        Approver Name 
-      </label>
-      <input 
-        type="text" 
-        id="alertApproverInput"
-        placeholder="Enter approver name..."
-      />
-    </div>
-
-    <!-- Remarks -->
-    <div class="popup-field">
-      <label>
-        Remarks 
-      </label>
-      <textarea 
-        id="alertRemarksInput"
-        placeholder="Enter remarks..."
-        rows="3"
-      ></textarea>
-    </div>
-
+  <div class="project-id">
+    <label>Project ID:</label>
+    <span id="alertProjectId">(AM110-AP)</span>
   </div>
 
-  <!-- Footer -->
-  <div class="verify-popup-footer">
-    <button onclick="closeAlertPopup()" class="btn-cancel">
-      Cancel
-    </button>
-    <button onclick="saveAlertPopup()" class="verify-btn-save">
-      Save Alert
-    </button>
-  </div>
-</div>
+          <!-- Approver -->
+          <div class="popup-field">
+            <label>
+              Approver Name 
+            </label>
+            <input 
+              type="text" 
+              id="alertApproverInput"
+              placeholder="Enter approver name..."
+            />
+          </div>
 
+          <!-- Remarks -->
+          <div class="popup-field">
+            <label>
+              Remarks 
+            </label>
+            <textarea 
+              id="alertRemarksInput"
+              placeholder="Enter remarks..."
+              rows="3"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="verify-popup-footer">
+          <button onclick="closeAlertPopup()" class="btn-cancel">
+            Cancel
+          </button>
+          <button onclick="saveAlertPopup()" class="verify-btn-save">
+            Save Alert
+          </button>
+        </div>
+
+      </div>
+      
 <div id="verifyConfirmOverlay" class="verify-overlay"></div>
 
 <div id="verifyConfirmPopup" class="verify-popup">
-
-  <!-- Header -->
   <div class="verify-header">
     <div class="verify-title">
-      Project ID
-      <span class="verify-po">(AM110-AP)</span>
-    </div>
-
-    <button class="verify-close" onclick="closeVerifyConfirmPopup()">
-      &times;
-    </button>
-  </div>
-
-  <!-- Body -->
-  <div class="verify-body">
-
-    <!-- <div class="verify-created">
-      Created by Vishwanath Patil
-    </div> -->
-
-    <div class="verify-approved">
       Verified by <span id="verifyConfirmApprover">—</span>
     </div>
+    <button class="verify-close" onclick="closeVerifyConfirmPopup()">&times;</button>
+  </div>
+   <div class="project-id" style="margin:10px 0 5px 15px;">
+    <label>Project ID:</label>
+    <span id="alertProjectId">(AM110-AP)</span>
+  </div>
 
+  <div class="verify-body">
     <div class="verify-label">Verifier Remarks</div>
-
-    <div id="verifyConfirmRemarks" class="verify-remarks">
-      —
-    </div>
+    <div id="verifyConfirmRemarks" class="verify-remarks">—</div>
   </div>
-  <!-- Footer -->
-  <div class="verify-footer">
-    <button class="verify-btn" onclick="closeVerifyConfirmPopup()">
-      Close
-    </button>
-  </div>
+  <!-- <div class="verify-footer">
+    <button class="verify-btn" onclick="closeVerifyConfirmPopup()">Close</button>
+  </div> -->
 </div>
 
-<!-- ===== SUCCESS POPUP ===== -->
-<div id="verifySuccessOverlay"
-     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;"></div>
-
+<!-- SUCCESS POPUP -->
+<div id="verifySuccessOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;"></div>
+<div id="verifySuccessPopup" style="display:none;position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);background:#fff;border-radius:10px;padding:32px 28px;
+  text-align:center;z-index:9999;width:320px;box-shadow:0 10px 40px rgba(0,0,0,0.18);">
   <div style="font-size:17px;font-weight:600;color:#111;margin-bottom:8px;">Stage Verified Successfully</div>
   <div style="font-size:13px;color:#777;margin-bottom:24px;">
     The alert has been saved and the stage is now marked as verified.
   </div>
   <button onclick="closeSuccessPopup()"
     style="padding:10px 36px;border-radius:6px;border:none;background:#e05c5c;
-           color:#fff;cursor:pointer;font-size:14px;font-weight:500;">
-    OK
-  </button>
+           color:#fff;cursor:pointer;font-size:14px;font-weight:500;">OK</button>
 </div>
 
   <script src="/js/project-tracker.js"></script>

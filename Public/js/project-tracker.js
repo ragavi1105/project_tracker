@@ -1,3 +1,4 @@
+
 let stageUsers = [];
 
 async function loadStageUsers() {
@@ -49,15 +50,24 @@ async function loadStageUsers() {
       <div class="status-icons">
         <i class="fa-solid fa-floppy-disk" title="Save" onclick="saveSingleRowWithFiles(this)"></i>
         <i class="fa-solid fa-circle-exclamation" title="Alert" onclick="openAlertPopup(this)"></i>
-        ${isDefault 
-          ? `<i class="fa-regular fa-circle-xmark disabled" title="Cannot delete"></i>` 
+        ${isDefault
+          ? `<span title="Cannot delete" style="
+                display:inline-flex;align-items:center;justify-content:center;
+                width:16px;height:16px;border-radius:50%;
+                border:2px solid #ef4444;position:relative;
+                cursor:not-allowed;opacity:0.55;flex-shrink:0;">
+              <span style="position:absolute;width:140%;height:2px;
+                background:#ef4444;transform:rotate(45deg);
+                top:50%;left:-20%;margin-top:-1px;">
+              </span>
+            </span>`
           : `<i class="fa-regular fa-circle-xmark" title="Remove" onclick="removeRow(this)"></i>`
         }
       </div>
     </td>
   `;
 
-  // 🔥 NOW attach listeners (IMPORTANT)
+  //  NOW attach listeners
   tr.querySelectorAll('input, select').forEach(el => {
     el.addEventListener('input', () => {
       tr.dataset.edited = 'true';
@@ -86,45 +96,22 @@ async function loadStageUsers() {
 
 function addRow(tbodyId) {
   const sectionId = getSectionIdForTbody(tbodyId);
-
-  // ✅ Block if THIS section is already frozen
-  if (sectionId && isSectionFrozen(sectionId)) {
-    return; // silently do nothing — button is visually disabled anyway
-  }
-
-  // 🔒 Block if previous section not closed
-  if (sectionId) {
-    const prev = getPreviousSectionId(sectionId);
-    if (prev && !isSectionFrozen(prev)) {
-      alert('Please close previous section first');
-      return;
-    }
-  }
-
-
   const tbody = document.getElementById(tbodyId);
-    if (!tbody) return;
-    if (tbodyId === 'tbody-insp') {
+  if (!tbody) return;
 
-  const sel = document.getElementById('inspVariantSelect');
-  const selectedValue = sel ? sel.value : '';
+  if (tbodyId === 'tbody-insp') {
+    const sel = document.getElementById('inspVariantSelect');
+    const selectedValue = sel ? sel.value : '';
 
-  const row = buildRow('Inspection');
+    const row = buildRow('Inspection');
 
-  // ✅ If variant selected → use it
-  if (selectedValue) {
-    row.dataset.variant = selectedValue;
-
-    // ✅ SHOW ONLY FAI / PPAP
-    row.children[0].querySelector('input').value = selectedValue;
-
-  } else {
-    // ✅ DEFAULT CASE
-    row.dataset.variant = 'Inspection';
-
-    // ✅ SHOW ONLY Inspection
-    row.children[0].querySelector('input').value = 'Inspection';
-  }
+    if (selectedValue) {
+      row.dataset.variant = selectedValue;
+      row.children[0].querySelector('input').value = selectedValue;
+    } else {
+      row.dataset.variant = 'Inspection';
+      row.children[0].querySelector('input').value = 'Inspection';
+    }
 
     tbody.appendChild(row);
 
@@ -132,9 +119,8 @@ function addRow(tbodyId) {
     return;
   }
 
-  // ✅ NORMAL ROW
-    tbody.appendChild(buildRow(''));
-  }
+  tbody.appendChild(buildRow(''));
+}
 
     // ── Remove a row ──
 function removeRow(icon) {
@@ -169,36 +155,52 @@ function initStages() {
   dfm.appendChild(dfm1);
   dfm.appendChild(dfm2);
 
-  // OTHER SECTIONS → 1 compulsory row (NON-DELETABLE)
+  // Make Inward and Outward readonly for DFM rows
+  [dfm1, dfm2].forEach(row => {
+    ['.inward', '.outward'].forEach(cls => {
+      const el = row.querySelector(cls);
+      el.readOnly = true;
+      el.tabIndex = -1;
+      el.style.cursor = 'not-allowed';
+      el.style.userSelect = 'none';
+      // block typing but keep pointer events so cursor shows
+      el.addEventListener('keydown', e => e.preventDefault());
+      el.addEventListener('mousedown', e => e.preventDefault());
+    });
+  });
+
+ 
   // Mfg and Disp get default row, Inspection starts empty
-  ['tbody-mfg', 'tbody-disp'].forEach(id => {
+  ['tbody-mfg', 'tbody-rm', 'tbody-disp'].forEach(id => {
     const row = buildRow('', null, true);
     row.classList.add('default-row');
     document.getElementById(id).appendChild(row);
   });
-  // Inspection → no default row, only added on Add click
+ 
+  // Inspection → 1 default row, stage name driven by dropdown
+  const inspRow = buildRow('Inspection', null, true);
+  inspRow.classList.add('default-row');
+  document.getElementById('tbody-insp').appendChild(inspRow);
 
-  updateAllStageStates();
-
-  // ✅ Set initial button states
-  ['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach((id, index) => {
-    const section = document.getElementById(id);
-    const btn = section.querySelector('.btn-close-section');
-
-    if (index === 0) {
-      btn.innerHTML = 'Close Section';
-      btn.disabled = false;
-    } else {
-      btn.innerHTML = '↑ Complete previous section to unlock';
-      btn.disabled = true;
-    }
-  });
+  // Wire up the dropdown to update default row stage name only
+  const inspSel = document.getElementById('inspVariantSelect');
+  if (inspSel) {
+    inspSel.addEventListener('change', function () {
+      const val = this.value;
+      const defaultRow = document.querySelector('#tbody-insp tr.default-row');
+      if (defaultRow) {
+        defaultRow.children[0].querySelector('input').value = val || 'Inspection';
+        defaultRow.dataset.edited = 'true';
+      }
+    });
   }
+}
 
 function getSectionIdForTbody(tbodyId) {
   return {
-    'tbody-dfm': 'section-dfm',
-    'tbody-mfg': 'section-mfg',
+    'tbody-dfm':  'section-dfm',
+    'tbody-rm':   'section-rm',
+    'tbody-mfg':  'section-mfg',
     'tbody-insp': 'section-insp',
     'tbody-disp': 'section-disp'
   }[tbodyId];
@@ -212,197 +214,8 @@ function getPreviousSectionId(sectionId) {
   }[sectionId];
 }
 
-function getNextSectionId(sectionId) {
-  return {
-    'section-dfm': 'section-mfg',
-    'section-mfg': 'section-insp',
-    'section-insp': 'section-disp'
-  }[sectionId];
-}
 
-function isSectionFrozen(sectionId) {
-  const section = document.getElementById(sectionId);
-  const wrap = section.querySelector('.stage-table-wrap');
-  return wrap.dataset.frozen === 'true';
-}
-
-function isPreviousStageFrozen(sectionId) {
-  const prevSectionId = getPreviousSectionId(sectionId);
-  if (!prevSectionId) return true;
-  return isSectionFrozen(prevSectionId);
-}
-function updateStageSectionState(sectionId) {
-  const section = document.getElementById(sectionId);
-  if (!section) return;
-  const wrap = section.querySelector('.stage-table-wrap');
-  const addBtn = section.querySelector('.btn-add');
-  const btn = section.querySelector('.btn-close-section');
-  if (!wrap || !btn) return;
-
-  // ✅ Don't touch sections already frozen or already manually unlocked
-  if (wrap.dataset.frozen === 'true') return;
-
-  const enabled = sectionId === 'section-dfm' || isPreviousStageFrozen(sectionId);
-
-  wrap.querySelectorAll('input, select').forEach(el => {
-    if (!el.classList.contains('remarks-input')) {
-      el.disabled = !enabled;
-    }
-  });
-
-  if (!enabled) {
-    wrap.style.opacity = '0.6';
-    wrap.style.pointerEvents = 'none';
-    if (addBtn) addBtn.disabled = true;
-    btn.disabled = true;
-    btn.innerHTML = '↑ Complete previous section to unlock';
-  } else {
-    wrap.style.opacity = '';
-    wrap.style.pointerEvents = '';
-    if (addBtn) addBtn.disabled = false;
-    if (wrap.dataset.frozen !== 'true') {
-      btn.disabled = false;
-      btn.innerHTML = '✕ Close Section';
-    }
-  }
-}
-
-function updateAllStageStates() {
-  ['section-dfm', 'section-mfg', 'section-insp', 'section-disp'].forEach(updateStageSectionState);
-}
-
-async function toggleSection(sectionId) {
-  const section = document.getElementById(sectionId);
-  const wrap = section.querySelector('.stage-table-wrap');
-  const btn = section.querySelector('.btn-close-section');
-  const addBtn = section.querySelector('.btn-add');
-if (addBtn) {
-  addBtn.disabled = true;
-  addBtn.style.opacity = '0.4';
-  addBtn.style.cursor = 'not-allowed';
-}
-
-  if (wrap.dataset.frozen === 'true') return;
-
-  const rows = section.querySelectorAll('tbody tr');
-
-  // ============================
-  // 🔴 STEP 1: VALIDATION
-  // ============================
-  for (const row of rows) {
-    const stageName = row.children[0].querySelector('input')?.value.trim();
-    const stageDate = row.querySelector('[name="stage_date"]')?.value;
-    const verifier = row.children[6].querySelector('select')?.value;
-
-    if (!stageName || !stageDate || !verifier) {
-      alert("⚠️ Fill all required fields before closing this section");
-      return;
-    }
-
-    if (row.dataset.edited === 'true') {
-      alert("⚠️ Please click Save (💾) before closing");
-      return;
-    }
-  }
-
-  // ============================
-  // 🧩 STEP 2: UPDATE DB
-  // ============================
-  const sectionMap = {
-    'section-dfm':  'DFM Checking',
-    'section-mfg':  'Manufacturing',
-    'section-insp': 'Inspection',
-    'section-disp': 'Dispatch'
-  };
-
-  try {
-    await fetch('/api/close-section', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        product_id: getParamsFromUrl().partId,
-        section_title: sectionMap[sectionId]
-      })
-    });
-  } catch (err) {
-    console.error(err);
-    alert("Error updating section status");
-    return;
-  }
-
-  // ============================
-  // 🔒 STEP 3: FREEZE CURRENT SECTION
-  // ============================
-  wrap.dataset.frozen = 'true';
-  wrap.style.opacity = '0.6';
-  wrap.style.pointerEvents = 'none';
-
-  wrap.querySelectorAll('input, select, button').forEach(el => {
-    el.disabled = true;
-  });
-
-  btn.innerHTML = '✓ Section Completed. Closed stage comments are available for review!';
-  btn.disabled = true;
-  btn.style.opacity = '0.6';
-
-  rows.forEach(row => { row.dataset.status = 'closed'; });
-
-  // ============================
-  // ➡️ STEP 4: UNLOCK NEXT SECTION
-  // ============================
-  const nextSectionId = getNextSectionId(sectionId);
-
-  if (nextSectionId) {
-    const nextSection  = document.getElementById(nextSectionId);
-    const nextWrap     = nextSection.querySelector('.stage-table-wrap');
-    const nextBtn      = nextSection.querySelector('.btn-close-section');
-    const nextAddBtn   = nextSection.querySelector('.btn-add');
-
-    // ✅ Clear ALL frozen/disabled styles
-    nextWrap.dataset.frozen    = 'false';
-    nextWrap.style.opacity     = '1';
-    nextWrap.style.pointerEvents = '';
-    nextWrap.style.filter      = '';
-    nextWrap.style.transition  = 'all 0.3s ease';
-
-    nextWrap.querySelectorAll('input, select').forEach(el => {
-      if (!el.classList.contains('remarks-input')) {
-        el.disabled = false;
-      }
-    });
-
-    if (nextAddBtn) {
-      nextAddBtn.disabled = false;
-      nextAddBtn.style.opacity = '';
-      nextAddBtn.style.pointerEvents = '';
-    }
-
-    if (nextBtn) {
-      nextBtn.disabled = false;
-      nextBtn.style.opacity = '';
-      nextBtn.innerHTML = '✕ Close Section';
-    }
-
-    // ✅ Scroll to next section smoothly
-    setTimeout(() => {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-
-    // ✅ Highlight flash on next section
-    nextSection.style.transition = 'box-shadow 0.3s ease';
-    nextSection.style.boxShadow = '0 0 0 3px #3b82f6bb';
-    setTimeout(() => {
-      nextSection.style.boxShadow = '';
-    }, 1800);
-  }
-
-  // ✅ Call AFTER manually setting frozen=true so it doesn't fight Step 4
-  updateAllStageStates();
-}
-
-
-
-    function viewPart(btn) {
+  function viewPart(btn) {
   const row = btn.closest('tr');
 
   const partId = row.getAttribute('data-id');
@@ -471,17 +284,17 @@ if (addBtn) {
   }
 }
    async function savePeople() {
-  const { poId } = getParamsFromUrl();   
+  const { poId } = getParamsFromUrl();  
 
   const payload = {
     projectId: poId,
     projectManager: document.getElementById('pmSelect').value,
     qualityManager: document.getElementById('qmSelect').value,
     projectEngineer: document.getElementById('peSelect').value,
-    engineer: document.getElementById('engSelect').value
+    engineer: document.getElementById('engineerInput').value
   };
 
-  console.log("Sending:", payload); 
+  console.log("Sending:", payload);
 
   try {
     const res = await fetch('/api/project/save-people', {
@@ -491,7 +304,7 @@ if (addBtn) {
     });
 
     const data = await res.json();
-    console.log("Response:", data); 
+    console.log("Response:", data);
 
     if (!res.ok) throw new Error();
 
@@ -510,11 +323,23 @@ if (addBtn) {
 
 
     function setSelectValue(id, value) {
-      if (!value) return;
-      const el = document.getElementById(id);
-      if (!el) return;
-      [...el.options].forEach(o => { o.selected = o.value === value || o.text === value; });
-    }
+
+  if (!value) return;
+
+  const el = document.getElementById(id);
+
+  if (!el) return;
+
+  const strValue = String(value);
+
+  [...el.options].forEach(option => {
+
+    option.selected =
+      String(option.value) === strValue;
+
+  });
+
+}
 
     // =====================================================
     // REMARKS POPUP — positioned near clicked field
@@ -602,14 +427,14 @@ if (addBtn) {
       }
     });
 
-    
-let _uploadTrigger = null; 
+   
+let _uploadTrigger = null;
 
 document.addEventListener('click', function (e) {
 
   const partTrigger = e.target.closest('.part-files-text');
 
-  if (partTrigger) {
+ if (partTrigger) {
     _uploadTrigger = partTrigger;
     _uploadTrigger._type = 'part';
 
@@ -618,11 +443,12 @@ document.addEventListener('click', function (e) {
     }
 
     renderUploadTable(_uploadTrigger._files);
+    setUploadPopupTitle('Project Files');
 
     document.getElementById('uploadPopup').classList.add('active');
     document.getElementById('uploadPopupOverlay').classList.add('active');
 
-    return; 
+    return;
   }
 
   // ─────────────────────────────────────
@@ -637,6 +463,7 @@ document.addEventListener('click', function (e) {
     _uploadTrigger = mfgIcon;
 
     renderUploadTable(_uploadTrigger._files);
+    setUploadPopupTitle('Stage Files');
 
     document.getElementById('uploadPopup').classList.add('active');
     document.getElementById('uploadPopupOverlay').classList.add('active');
@@ -646,19 +473,23 @@ document.addEventListener('click', function (e) {
   // ─────────────────────────────────────
   // 🔹 STAGE FILES
   // ─────────────────────────────────────
-  const trigger = e.target.closest('.stage-upload-trigger');
+const trigger = e.target.closest('.stage-upload-trigger');
 
-  if (!trigger) return;
+if (!trigger) return;
 
-  const row = trigger.closest('tr');
+const row = trigger.closest('tr');
 
-  if (!row) {
-    console.error("Row not found for upload trigger");
-    return;
-  }
+if (!row) {
+  console.error("Row not found for upload trigger");
+  return;
+}
 
-  _uploadTrigger = row;
-  _uploadTrigger._type = 'stage';
+_uploadTrigger = row;
+
+// Check if this row belongs to the Dispatch section
+const isDispatchRow = !!row.closest('#section-disp');
+const isRmRow = !!row.closest('#section-rm');
+_uploadTrigger._type = isDispatchRow ? 'disp' : isRmRow ? 'rm' : 'stage';
 
   if (!_uploadTrigger._files) {
     _uploadTrigger._files = [];
@@ -668,10 +499,16 @@ document.addEventListener('click', function (e) {
   console.log("Stage ID:", _uploadTrigger.getAttribute('data-stage-id'));
 
   renderUploadTable(_uploadTrigger._files);
+  setUploadPopupTitle('Stage Files');
 
   document.getElementById('uploadPopup').classList.add('active');
   document.getElementById('uploadPopupOverlay').classList.add('active');
 });
+
+function setUploadPopupTitle(title) {
+  const titleEl = document.querySelector('.upload-popup-title span');
+  if (titleEl) titleEl.textContent = title;
+}
 
 
     function closeUploadPopup() {
@@ -706,10 +543,15 @@ document.addEventListener('click', function (e) {
   tbody.innerHTML = '';
 
   const isStage = _uploadTrigger?._type === 'stage';
-  const isMfg = _uploadTrigger?._type === 'mfg';      // ← ADD THIS LINE
+  const isMfg   = _uploadTrigger?._type === 'mfg';
+  const isDisp  = _uploadTrigger?._type === 'disp';
+  const isRm    = _uploadTrigger?._type === 'rm';
 
   if (isMfg) {
-    // ── TWO UPLOAD ZONES ──
+    // ── Hide dispatch zones if open ──
+    const dispZonesEl = document.getElementById('dispZones');
+    if (dispZonesEl) dispZonesEl.style.display = 'none';
+
     document.querySelector('.upload-drop-zone').style.display = 'none';
 
     let zonesDiv = document.getElementById('mfgZones');
@@ -753,11 +595,212 @@ document.addEventListener('click', function (e) {
         <th>Variant</th>
         <th>Action</th>
       </tr>`;
+ } 
 
-  } else {
-    // ── Hide mfg zones if switching back ──
+ else if (isRm) {
+    // Hide other zones
+    const mfgZonesEl = document.getElementById('mfgZones');
+    if (mfgZonesEl) mfgZonesEl.style.display = 'none';
+    const dispZonesEl = document.getElementById('dispZones');
+    if (dispZonesEl) dispZonesEl.style.display = 'none';
+
+    document.querySelector('.upload-drop-zone').style.display = 'none';
+
+    let rmZones = document.getElementById('rmZones');
+    if (!rmZones) {
+      rmZones = document.createElement('div');
+      rmZones.id = 'rmZones';
+      rmZones.style.cssText = 'display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;';
+      rmZones.innerHTML = `
+        <div style="flex:1;min-width:130px;border:2px dashed #e5e7eb;border-radius:7px;padding:16px;
+                    text-align:center;cursor:pointer;"
+             onmouseover="this.style.borderColor='#fa788d'"
+             onmouseout="this.style.borderColor='#e5e7eb'"
+             onclick="document.getElementById('rmRmPicker').click()">
+          <i class="fa-solid fa-boxes-stacked" style="font-size:20px;color:#fa788d;display:block;margin-bottom:6px;"></i>
+          <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 3px;">RM</p>
+          <span style="font-size:11px;color:#aaa;">Click to upload</span>
+          <input type="file" id="rmRmPicker" multiple style="display:none;"
+                 onchange="handleRmVariantFiles(this,'RM')" />
+        </div>
+        <div style="flex:1;min-width:130px;border:2px dashed #e5e7eb;border-radius:7px;padding:16px;
+                    text-align:center;cursor:pointer;"
+             onmouseover="this.style.borderColor='#fa788d'"
+             onmouseout="this.style.borderColor='#e5e7eb'"
+             onclick="document.getElementById('rmRmtcPicker').click()">
+          <i class="fa-solid fa-file-shield" style="font-size:20px;color:#fa788d;display:block;margin-bottom:6px;"></i>
+          <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 3px;">RMTC</p>
+          <span style="font-size:11px;color:#aaa;">Click to upload</span>
+          <input type="file" id="rmRmtcPicker" multiple style="display:none;"
+                 onchange="handleRmVariantFiles(this,'RMTC')" />
+        </div>
+      `;
+      document.querySelector('.upload-popup-body').prepend(rmZones);
+    } else {
+      rmZones.style.display = 'flex';
+    }
+
+    thead.innerHTML = `
+      <tr>
+        <th>File Name</th>
+        <th>File Type</th>
+        <th>Variant</th>
+        <th>Action</th>
+      </tr>`;
+
+    // Render files with variant badge — same style as dispatch
+    if (!files || files.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="upload-empty-cell">No files added yet</td></tr>`;
+      return;
+    }
+
+    const variantColors = {
+      'RM':   { bg: '#dbeafe', color: '#1d4ed8' },
+      'RMTC': { bg: '#dcfce7', color: '#166534' }
+    };
+
+    files.forEach((f, i) => {
+      const vc = variantColors[f.variant] || { bg: '#f3f4f6', color: '#374151' };
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="upload-file-name">
+          <i class="fa-solid fa-file-lines"></i>
+          ${f.name.length > 50
+            ? `<span>${f.name.substring(0, 50)}...</span>
+               <i class="fa-solid fa-circle-exclamation"
+                  title="${f.name}"
+                  onclick="showFullFileName(this, '${f.name.replace(/'/g, "\\'")}')"
+                  style="color:#f59e0b;cursor:pointer;font-size:13px;margin-left:4px;"></i>`
+            : f.name}
+        </td>
+        <td><span class="upload-type-badge">${f.ext}</span></td>
+        <td>
+          <span style="background:${vc.bg};color:${vc.color};
+                       font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;">
+            ${f.variant}
+          </span>
+        </td>
+        <td class="upload-actions-cell">
+          <button class="upload-btn-del" onclick="deleteUploadFile(${i})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    return;
+  }
+
+else if (isDisp) {
+    const mfgZonesEl = document.getElementById('mfgZones');
+    if (mfgZonesEl) mfgZonesEl.style.display = 'none';
+    const rmZonesEl = document.getElementById('rmZones');
+    if (rmZonesEl) rmZonesEl.style.display = 'none';
+
+    document.querySelector('.upload-drop-zone').style.display = 'none';
+
+    let dispZones = document.getElementById('dispZones');
+    if (!dispZones) {
+      dispZones = document.createElement('div');
+      dispZones.id = 'dispZones';
+      dispZones.style.cssText = 'display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;';
+      dispZones.innerHTML = `
+        <div style="flex:1;min-width:130px;border:2px dashed #e5e7eb;border-radius:7px;padding:16px;
+                    text-align:center;cursor:pointer;"
+             onmouseover="this.style.borderColor='#fa788d'"
+             onmouseout="this.style.borderColor='#e5e7eb'"
+             onclick="document.getElementById('dispPartPicker').click()">
+          <i class="fa-solid fa-camera" style="font-size:20px;color:#fa788d;display:block;margin-bottom:6px;"></i>
+          <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 3px;">Part Photo</p>
+          <span style="font-size:11px;color:#aaa;">Click to upload</span>
+          <input type="file" id="dispPartPicker" multiple accept="image/*" style="display:none;"
+                 onchange="handleDispVariantFiles(this,'Part Photo')" />
+        </div>
+        <div style="flex:1;min-width:130px;border:2px dashed #e5e7eb;border-radius:7px;padding:16px;
+                    text-align:center;cursor:pointer;"
+             onmouseover="this.style.borderColor='#fa788d'"
+             onmouseout="this.style.borderColor='#e5e7eb'"
+             onclick="document.getElementById('dispPackingPicker').click()">
+          <i class="fa-solid fa-box" style="font-size:20px;color:#fa788d;display:block;margin-bottom:6px;"></i>
+          <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 3px;">Packing Photo</p>
+          <span style="font-size:11px;color:#aaa;">Click to upload</span>
+          <input type="file" id="dispPackingPicker" multiple accept="image/*" style="display:none;"
+                 onchange="handleDispVariantFiles(this,'Packing Photo')" />
+        </div>
+        <div style="flex:1;min-width:130px;border:2px dashed #e5e7eb;border-radius:7px;padding:16px;
+                    text-align:center;cursor:pointer;"
+             onmouseover="this.style.borderColor='#fa788d'"
+             onmouseout="this.style.borderColor='#e5e7eb'"
+             onclick="document.getElementById('dispListPicker').click()">
+          <i class="fa-solid fa-list-check" style="font-size:20px;color:#fa788d;display:block;margin-bottom:6px;"></i>
+          <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 3px;">Packing List</p>
+          <span style="font-size:11px;color:#aaa;">Click to upload</span>
+          <input type="file" id="dispListPicker" multiple style="display:none;"
+                 onchange="handleDispVariantFiles(this,'Packing List')" />
+        </div>
+      `;
+      document.querySelector('.upload-popup-body').prepend(dispZones);
+    } else {
+      dispZones.style.display = 'flex';
+    }
+
+    thead.innerHTML = `
+      <tr>
+        <th>File Name</th>
+        <th>File Type</th>
+        <th>Variant</th>
+        <th>Actions</th>
+      </tr>`;
+
+    // Render files with variant color badges
+    if (!files || files.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="upload-empty-cell">No files added yet</td></tr>`;
+      return;
+    }
+
+    const variantColors = {
+      'Part Photo':    { bg: '#fef3c7', color: '#92400e' },
+      'Packing Photo': { bg: '#dbeafe', color: '#1d4ed8' },
+      'Packing List':  { bg: '#dcfce7', color: '#166534' }
+    };
+
+    files.forEach((f, i) => {
+      const vc = variantColors[f.variant] || { bg: '#f3f4f6', color: '#374151' };
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="upload-file-name">
+          <i class="fa-solid fa-file-lines"></i>
+          ${f.name.length > 50
+            ? `<span>${f.name.substring(0, 50)}...</span>
+               <i class="fa-solid fa-circle-exclamation"
+                  title="${f.name}"
+                  onclick="showFullFileName(this, '${f.name.replace(/'/g, "\\'")}')"
+                  style="color:#f59e0b;cursor:pointer;font-size:13px;margin-left:4px;"></i>`
+            : f.name}
+        </td>
+        <td><span class="upload-type-badge">${f.ext}</span></td>
+        <td>
+          <span style="background:${vc.bg};color:${vc.color};
+                       font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;">
+            ${f.variant}
+          </span>
+        </td>
+        <td class="upload-actions-cell">
+          <button class="upload-btn-del" onclick="deleteUploadFile(${i})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    return;
+}
+else {
+    // ── Hide mfg/disp/rm zones if switching back ──
     const zonesDiv = document.getElementById('mfgZones');
     if (zonesDiv) zonesDiv.style.display = 'none';
+    const dispZonesEl = document.getElementById('dispZones');
+    if (dispZonesEl) dispZonesEl.style.display = 'none';
+    const rmZonesEl = document.getElementById('rmZones');
+    if (rmZonesEl) rmZonesEl.style.display = 'none';
     document.querySelector('.upload-drop-zone').style.display = '';
 
     if (isStage) {
@@ -775,7 +818,7 @@ document.addEventListener('click', function (e) {
   files.forEach((f, i) => {
     const tr = document.createElement('tr');
 
-    if (isMfg) {
+    if (isMfg || isDisp) {
       tr.innerHTML = `
         <td class="upload-file-name">
   <i class="fa-solid fa-file-lines"></i>
@@ -873,17 +916,60 @@ document.addEventListener('click', function (e) {
         else alert('Preview not available.');
       }
     }
-    
 
- //insert stage files
+  function insertFiles() {
+  if (!_uploadTrigger) return;
 
+  if (_uploadTrigger._type === 'stage') {
+    insertStageFiles();
+  } else if (_uploadTrigger._type === 'disp') {
+    insertDispFiles();
+  } else if (_uploadTrigger._type === 'part') {
+    insertPartFiles();
+  } else if (_uploadTrigger._type === 'mfg') {
+    insertMfgFiles();
+  } else if (_uploadTrigger._type === 'rm') {
+    insertRmFiles();
+  }
+}
+
+//insert stage files
 async function insertStageFiles() {
   if (!_uploadTrigger || !_uploadTrigger._files) return;
 
   const row = _uploadTrigger;
+  const stageId = row.dataset?.stageId;
 
+  if (stageId) {
+    // Row already saved — upload immediately
+    for (const f of row._files) {
+      const formData = new FormData();
+      formData.append('file', f.file);
+      formData.append('stage_id', stageId);
+      formData.append('user_id', 1);
+      formData.append('file_type', 'stage');
+      if (f.variant) formData.append('variant', f.variant);
 
-  alert("Files added. Click Save to store in DB ✅");
+      await fetch('/api/upload-stage-file', {
+        method: 'POST',
+        body: formData
+      });
+    }
+
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) {
+      const existing = parseInt(countSpan.textContent) || 0;
+      countSpan.textContent = existing + row._files.length;
+    }
+
+    row._files = [];
+    alert("Files saved ✅");
+  } else {
+    // Row not yet saved — keep locally, save on row Save click
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) countSpan.textContent = row._files.length;
+    alert("Files added. Click Save (💾) on the row to store in DB ✅");
+  }
 
   closeUploadPopup();
 }
@@ -904,6 +990,7 @@ async function insertPartFiles() {
     formData.append('product_id', partId);
     formData.append('remarks', f.remarks || '');
 
+    formData.append('file_type', 'project');
     await fetch('/api/upload-file', {
       method: 'POST',
       body: formData
@@ -918,12 +1005,30 @@ async function insertPartFiles() {
   closeUploadPopup();
 }
 
-function handleMfgVariantFiles(input, variant) {
+function handleDispVariantFiles(input, variant) {
   if (!_uploadTrigger) return;
   if (!_uploadTrigger._files) _uploadTrigger._files = [];
   Array.from(input.files).forEach(f => {
     _uploadTrigger._files.push({
-      file: f,                                    // ✅ store actual File object
+      file: f,
+      name: f.name,
+      ext: f.name.split('.').pop().toUpperCase(),
+      variant: variant,
+      url: URL.createObjectURL(f),
+      remarks: ''
+    });
+  });
+  input.value = '';
+  renderUploadTable(_uploadTrigger._files);
+}
+
+
+function handleRmVariantFiles(input, variant) {
+  if (!_uploadTrigger) return;
+  if (!_uploadTrigger._files) _uploadTrigger._files = [];
+  Array.from(input.files).forEach(f => {
+    _uploadTrigger._files.push({
+      file: f,
       name: f.name,
       ext: f.name.split('.').pop().toUpperCase(),
       variant: variant,
@@ -943,13 +1048,16 @@ async function insertMfgFiles() {
   }
 
   try {
-    const { poId } = getParamsFromUrl();   // ✅ poId
+    const { poId } = getParamsFromUrl();  
 
     for (const f of _uploadTrigger._files) {
       const formData = new FormData();
       formData.append('user_id', '1');
-      formData.append('product_id', poId);  // ✅ maps to products_po_id
+      formData.append('product_id', poId);  
       formData.append('stage_varient', f.variant);
+
+      formData.append('file_type', 'variant');
+
       formData.append('file', f.file, f.name);
 
       const res = await fetch('/api/upload-mfg-file', {
@@ -971,18 +1079,88 @@ async function insertMfgFiles() {
   }
 }
 
-function insertFiles() {
-  if (!_uploadTrigger) return;
 
-  if (_uploadTrigger._type === 'stage') {
-    insertStageFiles();
-  } else if (_uploadTrigger._type === 'part') {
-    insertPartFiles();
-  } else if (_uploadTrigger._type === 'mfg') {
-    insertMfgFiles(); // optional if needed
+async function insertRmFiles() {
+  if (!_uploadTrigger || !_uploadTrigger._files || !_uploadTrigger._files.length) {
+    alert("⚠️ No files to upload");
+    return;
   }
+
+  const row = _uploadTrigger;
+  const stageId = row.dataset?.stageId;
+
+  if (stageId) {
+    for (const f of row._files) {
+      const formData = new FormData();
+      formData.append('file', f.file);
+      formData.append('stage_id', stageId);
+      formData.append('user_id', 1);
+      formData.append('file_type', 'stage');
+      formData.append('variant', f.variant);
+
+      await fetch('/api/upload-stage-file', {
+        method: 'POST',
+        body: formData
+      });
+    }
+
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) {
+      const existing = parseInt(countSpan.textContent) || 0;
+      countSpan.textContent = existing + row._files.length;
+    }
+
+    row._files = [];
+    alert("RM/RMTC files saved ✅");
+  } else {
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) countSpan.textContent = row._files.length;
+    alert("Files added. Click Save (💾) on the row to store in DB ✅");
+  }
+
+  closeUploadPopup();
 }
 
+async function insertDispFiles() {
+  if (!_uploadTrigger || !_uploadTrigger._files || !_uploadTrigger._files.length) {
+    alert("⚠️ No files to upload");
+    return;
+  }
+
+  const row = _uploadTrigger;
+  const stageId = row.dataset?.stageId;
+
+  if (stageId) {
+    for (const f of row._files) {
+      const formData = new FormData();
+      formData.append('file', f.file);
+      formData.append('stage_id', stageId);
+      formData.append('user_id', 1);
+      formData.append('file_type', 'stage');
+      formData.append('variant', f.variant);
+
+      await fetch('/api/upload-stage-file', {
+        method: 'POST',
+        body: formData
+      });
+    }
+
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) {
+      const existing = parseInt(countSpan.textContent) || 0;
+      countSpan.textContent = existing + row._files.length;
+    }
+
+    row._files = [];
+    alert("Dispatch files saved ✅");
+  } else {
+    const countSpan = row.querySelector('.stage-upload-trigger .file-count');
+    if (countSpan) countSpan.textContent = row._files.length;
+    alert("Files added. Click Save (💾) on the row to store in DB ✅");
+  }
+
+  closeUploadPopup();
+}
 
 
     // ── Sync the file count badge on the upload trigger icon ──
@@ -1003,16 +1181,54 @@ function insertFiles() {
     }
 
     // ── Navigate to the searched project page ──
-    function doFindProject() {
-      const q = document.getElementById('findModalInput').value.trim();
-      const errEl = document.getElementById('findModalError');
-      if (!q) {
-        errEl.textContent = 'Please enter a Project ID or PO Number.';
-        return;
-      }
-      errEl.textContent = '';
-      window.location.href = `/project-tracker/po?id=${encodeURIComponent(q)}`;
+    async function doFindProject() {
+
+  const q = document.getElementById('findModalInput').value.trim();
+
+  const errEl = document.getElementById('findModalError');
+
+  if (!q) {
+
+    errEl.textContent =
+      'Please enter a Project ID or PO Number.';
+
+    return;
+  }
+
+  errEl.textContent = '';
+
+  try {
+
+    const res = await fetch(
+      `/api/project/search?q=${encodeURIComponent(q)}`
+    );
+
+    if (!res.ok) throw new Error();
+
+    const data = await res.json();
+
+    const firstProject = data.results?.[0];
+
+    if (!firstProject) {
+
+      errEl.textContent = 'No Project Found';
+
+      return;
     }
+
+    // ✅ Open using purchase_orders.id
+    window.location.href =
+      `/project-tracker/${firstProject.id}`;
+
+  } catch (err) {
+
+    console.error(err);
+
+    errEl.textContent = 'Error finding project';
+  }
+}
+
+
 
     // ── Close modals/popups on Escape key ──
     document.addEventListener('keydown', function(e) {
@@ -1040,7 +1256,7 @@ function insertFiles() {
     let _stageFilesSnapshot = [];
 
     // ── Render the documents tab with project and stage file tables ──
-    
+   
     // ── Delete a document from the Documents tab (Delete Option 3) ──
     function deleteDoc(index, type) {
       const snapshot = type === 'project' ? _projectFilesSnapshot : _stageFilesSnapshot;
@@ -1049,12 +1265,12 @@ function insertFiles() {
 
       const trigger = entry.trigger;
       if (trigger._files) {
-        trigger._files.splice(entry.fileIndex, 1);  // ── Remove from the source trigger's file array ──
-        syncUploadCount();                            // ── Update the upload badge count ──
+        trigger._files.splice(entry.fileIndex, 1);  
+        syncUploadCount();                            
       }
 
-      renderDocuments();                             // ── Re-render the documents tab ──
-      showToast('Deleted successfully');             // ── TOAST: shown after document deleted from list ──
+      renderDocuments();                            
+      showToast('Deleted successfully');            
     }
 
     // =====================================================
@@ -1150,8 +1366,7 @@ async function renderRemarksHistory() {
       placeholder="Enter comment..."
       style="width:100%;height:80px;margin-bottom:6px;padding:8px;border:1px solid #ddd;border-radius:6px;"></textarea>
     <div style="text-align:right;margin-bottom:4px;">
-      <button onclick="saveRemarks()"
-        style="background:#3b82f6;color:#fff;padding:5px 14px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">
+      <button onclick="saveRemarks()">
         Save
       </button>
     </div>
@@ -1255,8 +1470,7 @@ async function saveRemarks() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           stage_id: stageId,
-          comment_text: text,
-          user_id: 1
+          comment_text: text
         })
       });
 
@@ -1267,7 +1481,7 @@ async function saveRemarks() {
       alert("Error saving comment");
       return;
     }
-  } 
+  }
 
   else {
     if (!row._comments) row._comments = [];
@@ -1294,62 +1508,114 @@ async function saveRemarks() {
 
 // 🔹 Load Project
 async function loadProject() {
-  const { poId } = getParamsFromUrl(); 
+
+  const { poId } = getParamsFromUrl();
 
   try {
+
+    // ✅ LOAD USERS FIRST
+    await loadUsers();
+
     const res = await fetch(`/api/project/${poId}`);
-    if (!res.ok) throw new Error('Not found');
+
+    if (!res.ok) {
+      throw new Error('Not found');
+    }
 
     const data = await res.json();
 
     console.log("Loaded:", data);
 
-    // Project info
-    document.getElementById('projectId').textContent = data.projectId || '';
-    document.getElementById('projectStatus').textContent = data.status || '';
-    document.getElementById('createdAt').textContent = data.createdAt || '';
+    // =================================================
+    // PROJECT INFO
+    // =================================================
 
-    // ✅ IMPORTANT: Dates
-    document.getElementById('startDate').value = data.startDate || '';
-    document.getElementById('reqDate').value = data.reqDate || '';
-  // 🔒 lock individually
-if (data.startDate) {
-  document.getElementById('startDate').disabled = true;
-}
+    document.getElementById('projectId').textContent =
+      data.projectId || '';
 
-if (data.reqDate) {
-  document.getElementById('reqDate').disabled = true;
-}
-    // Users
-    document.getElementById('userName').textContent = data.user?.name || 'User';
+    document.getElementById('projectStatus').textContent =
+      data.status || '';
 
-    setSelectValue('pmSelect', data.projectManager);
-    setSelectValue('qmSelect', data.qualityManager);
-    setSelectValue('peSelect', data.projectEngineer);
-    setSelectValue('engSelect', data.engineer);
+    document.getElementById('createdAt').textContent =
+      data.createdAt || '';
 
-    // 🔒 LOCK USERS
-if (data.projectManager) {
-  document.getElementById('pmSelect').disabled = true;
-}
+    // =================================================
+    // DATES
+    // =================================================
 
-if (data.qualityManager) {
-  document.getElementById('qmSelect').disabled = true;
-}
+    document.getElementById('startDate').value =
+      data.startDate || '';
 
-if (data.projectEngineer) {
-  document.getElementById('peSelect').disabled = true;
-}
+    document.getElementById('reqDate').value =
+      data.reqDate || '';
 
-if (data.engineer) {
-  document.getElementById('engSelect').disabled = true;
-}
+    // 🔒 Lock dates individually
+
+    if (data.startDate) {
+      document.getElementById('startDate').disabled = true;
+    }
+
+    if (data.reqDate) {
+      document.getElementById('reqDate').disabled = true;
+    }
+
+    document.getElementById('userName').textContent =
+      data.user?.name || 'User';
+
+   setTimeout(() => {
+
+  setSelectValue('pmSelect', data.projectManager);
+
+  setSelectValue('qmSelect', data.qualityManager);
+
+  setSelectValue('peSelect', data.projectEngineer);
+
+}, 200);
+    // =================================================
+    // ENGINEER INPUT
+    // =================================================
+
+    document.getElementById('engineerInput').value =
+      data.engineer || '';
+
+    // =================================================
+    // LOCK USERS
+    // =================================================
+
+    if (data.projectManager) {
+
+      document.getElementById('pmSelect').disabled = true;
+
+    }
+
+    if (data.qualityManager) {
+
+      document.getElementById('qmSelect').disabled = true;
+
+    }
+
+    if (data.projectEngineer) {
+
+      document.getElementById('peSelect').disabled = true;
+
+    }
+
+    if (data.engineer) {
+
+      document.getElementById('engineerInput').disabled = true;
+
+    }
 
   } catch (err) {
+
     console.error(err);
+
     alert('Project not found');
+
   }
 }
+
+
 document.addEventListener('DOMContentLoaded', async () => {
 
   await loadUsers();
@@ -1379,47 +1645,74 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (partId) {
     loadSinglePart(partId);
     await loadStages();            
-    await updatePartFileCount();   
+    await updatePartFileCount();  
   }
 });
 
 
-
 async function loadUsers() {
+
   try {
+
     const res = await fetch('/api/users');
+
     const users = await res.json();
+
+    console.log("Loaded users:", users);
 
     const pm = document.getElementById('pmSelect');
     const qm = document.getElementById('qmSelect');
     const pe = document.getElementById('peSelect');
-    const eng = document.getElementById('engSelect');
 
-    // Clear dropdowns
-    pm.innerHTML = '<option value="">Select</option>';
-    qm.innerHTML = '<option value="">Select</option>';
-    pe.innerHTML = '<option value="">Select</option>';
-    eng.innerHTML = '<option value="">Select</option>';
+    if (!pm || !qm || !pe) {
+      console.error("Dropdown elements not found");
+      return;
+    }
+
+    // RESET
+    pm.innerHTML = '<option value="">Select PM</option>';
+    qm.innerHTML = '<option value="">Select QM</option>';
+    pe.innerHTML = '<option value="">Select DM</option>';
 
     users.forEach(user => {
+
+      const role =
+        user.roles
+          ? user.roles.trim().toLowerCase()
+          : '';
+
+      console.log(user.name, role);
+
       const option = document.createElement('option');
-      option.value = user.user_id;     
+
+      option.value = user.id;
+
       option.textContent = user.name;
 
-      // ✅ Add same user to ALL dropdowns
-      pm.appendChild(option.cloneNode(true));
-      qm.appendChild(option.cloneNode(true));
-      pe.appendChild(option.cloneNode(true));
-      eng.appendChild(option.cloneNode(true));
-    });
+      const rolesArray = role
+  .split(',')
+  .map(r => r.trim().toLowerCase());
 
+
+// PM
+if (rolesArray.includes('pm')) {
+  pm.appendChild(option.cloneNode(true));
+}if (rolesArray.includes('qm')) {qm.appendChild(option.cloneNode(true));}
+// DM
+if (rolesArray.includes('dm')) {
+  pe.appendChild(option.cloneNode(true));}
+});
+    console.log("PM options:", pm.innerHTML);
+    console.log("QM options:", qm.innerHTML);
+    console.log("DM options:", pe.innerHTML);
   } catch (err) {
     console.error('Error loading users:', err);
   }
 }
 
+
 async function loadParts() {
-  const { poId } = getParamsFromUrl(); 
+  const { poId } = getParamsFromUrl();
 
   try {
     const res = await fetch(`/api/parts/${poId}`);
@@ -1432,13 +1725,38 @@ async function loadParts() {
       const row = `
         <tr data-id="${part.id}" onclick="openPart(${part.id})" style="cursor:pointer;">
           <td>${String(index + 1).padStart(2, '0')}</td>
-          <td>${part.part_number}</td>
-          <td>${part.product_name}</td>
+         <td>
+          ${part.part_number.length > 20
+            ? `
+              ${part.part_number.substring(0, 20)}....
+              <span 
+                class="info-icon"
+                title="${part.part_number}"
+                style="cursor:pointer;">
+                <i class="fa-solid fa-circle-info" style="display:none;"></i>
+              </span>
+            `
+            : part.part_number
+          }
+        </td>
+
+<td title="${part.product_name}">
+  ${part.product_name.length > 25
+    ? part.product_name.substring(0, 25) + "...."
+    : part.product_name
+  }
+</td>
           <td>${part.quantity}</td>
+          <td>${part.required_date ? new Date(part.required_date).toLocaleDateString() : '-'}</td>
           <td><span class="status in-progress">In Progress</span></td>
           <td>
             <button class="btn-action view"onclick="event.stopPropagation(); viewPart(this)"> <i class="fa-solid fa-list-check"></i>
               View
+            </button>
+          </td>
+          <td>
+            <button class="route-card-btn" onclick="generateRouteCard(this)">
+              <i class="fa-solid fa-file-export"></i> Generate
             </button>
           </td>
         </tr>
@@ -1461,7 +1779,42 @@ async function loadSinglePart(partId) {
 
     document.getElementById("viewPanel").classList.add("active");
     document.getElementById("overlay").classList.add("active");
+    const requiredDateInput =
+  document.getElementById('requiredDate');
 
+const saveIcon =
+  document.querySelector('.date-save');
+
+if (part.required_date) {
+
+  const d = new Date(part.required_date);
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+
+  requiredDateInput.value =
+    `${year}-${month}-${day}`;
+
+  // ✅ Freeze field
+  requiredDateInput.disabled = true;
+
+  // ✅ Disable save icon
+  saveIcon.style.pointerEvents = 'none';
+  saveIcon.style.opacity = '0.4';
+
+} else {
+
+  requiredDateInput.value = '';
+
+  // ✅ Editable
+  requiredDateInput.disabled = false;
+
+  // ✅ Enable save icon
+  saveIcon.style.pointerEvents = 'auto';
+  saveIcon.style.opacity = '1';
+
+}
   } catch (err) {
     console.error(err);
   }
@@ -1469,12 +1822,15 @@ async function loadSinglePart(partId) {
 
 function getParamsFromUrl() {
   const parts = window.location.pathname.split('/');
-  
+ 
   return {
     poId: parts[2] || null,    
     partId: parts[3] || null    
   };
 }
+
+
+
 function collectStages() {
 
   const sections = [
@@ -1514,13 +1870,13 @@ function collectStages() {
 
     const parts = inputVal.split('-').map(s => s.trim());
 
-    stage_name = parts[1];       
-    section_title = 'Inspection'; 
+    stage_name = parts[1];      
+    section_title = 'Inspection';
 
   } else {
 
     stage_name = inputVal;        
-    section_title = 'Inspection'; 
+    section_title = 'Inspection';
   }
 }
       if (
@@ -1545,7 +1901,6 @@ function collectStages() {
         remarks,
         assigned_user_id:
           assigned_user_id === 'Select Verifier' ? null : assigned_user_id,
-        saved_by_user_id: 1,
         status: 'closed'  
       });
 
@@ -1584,7 +1939,6 @@ async function saveStages() {
     outward: numbers[1]?.value || null,
 
     assigned_user_id: verifier,
-    saved_by_user_id: 1,
     status: 'Pending'
   });
 });
@@ -1671,7 +2025,7 @@ async function loadStages() {
 
   try {
 
-    ['tbody-dfm','tbody-mfg','tbody-insp','tbody-disp'].forEach(id => {
+    ['tbody-dfm','tbody-rm','tbody-mfg','tbody-insp','tbody-disp'].forEach(id => {
       const tbody = document.getElementById(id);
       if (tbody) tbody.innerHTML = '';
     });
@@ -1681,6 +2035,13 @@ async function loadStages() {
     const res = await fetch(`/api/stages/${partId}`);
     const stages = await res.json();
 
+    // ✅ If there are saved inspection rows, remove the default placeholder
+    const hasInspection = stages.some(s => s.section_title === 'Inspection');
+    if (hasInspection) {
+      const inspDefaultRow = document.querySelector('#tbody-insp tr.default-row');
+      if (inspDefaultRow) inspDefaultRow.remove();
+    }
+
     const sectionStatus = {};
 
 
@@ -1689,6 +2050,7 @@ async function loadStages() {
       let tbodyId = '';
 
       if (stage.section_title === 'DFM Checking') tbodyId = 'tbody-dfm';
+      else if (stage.section_title === 'RM Stage') tbodyId = 'tbody-rm';
       else if (stage.section_title === 'Manufacturing') tbodyId = 'tbody-mfg';
       else if (stage.section_title === 'Dispatch') tbodyId = 'tbody-disp';
       else if (stage.section_title === 'Inspection') tbodyId = 'tbody-insp';
@@ -1697,7 +2059,7 @@ async function loadStages() {
       if (!tbody) return;
 
       let row = null;
-      
+     
 
 
 if (stage.section_title === 'Inspection') {
@@ -1706,11 +2068,11 @@ if (stage.section_title === 'Inspection') {
   row = [...tbody.querySelectorAll('tr')].find(tr => {
     const name = tr.children[0].querySelector('input')?.value.trim();
     return name && (
-      name === stage.section_title || 
+      name === stage.section_title ||
       name.includes(stage.stage_name)
     );
   });
-}   
+}  
 
       if (!row) {
 
@@ -1744,7 +2106,7 @@ if (stage.section_title === 'Inspection') {
       row.querySelector('.inward').value = stage.inward || '';
       row.querySelector('.outward').value = stage.outward || '';
       row.querySelector('.remarks-input').value = stage.remarks || '';
-      
+     
 
       const select = row.children[6].querySelector('select');
       if (select && stage.assigned_user_id) {
@@ -1778,11 +2140,11 @@ else if (stage.section_title === 'Inspection') key = 'Inspection';
 if (!key) return;
 
 if (!(key in sectionStatus)) {
-  sectionStatus[key] = true; 
+  sectionStatus[key] = true;
 }
 
 if (stage.status !== 'closed') {
-  sectionStatus[key] = false; 
+  sectionStatus[key] = false;
 }
 
     });
@@ -1793,51 +2155,6 @@ if (stage.status !== 'closed') {
       'Inspection': 'section-insp',
       'Dispatch': 'section-disp'
     };
-
-    Object.keys(map).forEach(title => {
-
-      const section = document.getElementById(map[title]);
-      if (!section) return;
-
-      const wrap = section.querySelector('.stage-table-wrap');
-      const btn = section.querySelector('.btn-close-section');
-
-      console.log("SECTION:", title, "STATUS:", sectionStatus[title]);
-
-      if (sectionStatus[title] === true) {
-
-        wrap.dataset.frozen = 'true';
-        wrap.style.opacity = '0.6';
-        wrap.style.pointerEvents = 'none';
-
-        wrap.querySelectorAll('input, select, button').forEach(el => {
-          el.disabled = true;
-        });
-
-        if (btn) {
-          btn.innerHTML = '✓ Section Completed. Closed stage comments are available for review!';
-          btn.disabled = true;
-        }
-
-      } else {
-
-        wrap.dataset.frozen = 'false';
-        wrap.style.opacity = '';
-        wrap.style.pointerEvents = '';
-
-        wrap.querySelectorAll('input, select, button').forEach(el => {
-          el.disabled = false;
-        });
-
-        if (btn) {
-          btn.innerHTML = 'Close Section';
-          btn.disabled = false;
-        }
-      }
-
-    });
-
-    updateAllStageStates();
 
   } catch (err) {
     console.error("Load stages error:", err);
@@ -1855,7 +2172,7 @@ function getProjectFromURL() {
 
 async function renderDocuments() {
   const container = document.getElementById('documentsContainer');
-  const { partId, poId } = getParamsFromUrl();
+  const { partId } = getParamsFromUrl();
 
   if (!partId) {
     container.innerHTML = `<p>No Part Selected</p>`;
@@ -1866,20 +2183,18 @@ async function renderDocuments() {
   _stageFilesSnapshot = [];
 
   try {
-    const [partRes, stageRes, mfgRes] = await Promise.all([
+    const [partRes, stageRes] = await Promise.all([
       fetch(`/api/files/${partId}`),
-      fetch(`/api/stage-files-by-part/${partId}`),
-      fetch(`/api/mfg-files/${poId}`)
+      fetch(`/api/stage-files-by-part/${partId}`)
     ]);
 
     const partFiles  = await partRes.json();
     const stageFiles = await stageRes.json();
-    const mfgFiles   = await mfgRes.json();
 
     let html = '';
 
     // ===========================
-    // 📁 PART FILES TABLE
+    // 📁 PROJECT FILES TABLE
     // ===========================
     if (partFiles.length) {
       html += `
@@ -1900,81 +2215,24 @@ async function renderDocuments() {
       `;
 
       partFiles.forEach((f, i) => {
-        const fileType = f.file_type || f.original_name?.split('.').pop().toUpperCase() || '-';
+        const fileType = f.original_name?.split('.').pop().toUpperCase() || '-';
         html += `
           <tr>
             <td>${i + 1}</td>
-            <td>
+            <td style="color:var(--primary);font-weight:500;">
               ${f.original_name.length > 50
                 ? `<span>${f.original_name.substring(0, 50)}...</span>
                    <i class="fa-solid fa-circle-exclamation"
                       title="${f.original_name}"
                       onclick="showFullFileName(this, '${f.original_name.replace(/'/g, "\\'")}')"
                       style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
-                : f.original_name
-              }
+                : f.original_name}
             </td>
-            <td>${fileType}</td>
-            <td>${f.remarks || '-'}</td>
+            <td><span class="upload-type-badge">${fileType}</span></td>
+            <td>${f.remarks || '—'}</td>
             <td>${new Date(f.uploaded_at).toLocaleString()}</td>
             <td class="doc-actions">
               <i class="fa-solid fa-eye action-icon view" onclick="viewFile('${f.file_url}')" title="View"></i>
-              <i class="fa-solid fa-download action-icon download" title="Download"></i>
-            </td>
-          </tr>
-        `;
-      });
-
-      html += `</tbody></table></div>`;
-    }
-
-    // ===========================
-    // 🏭 MANUFACTURING VARIANT FILES
-    // ===========================
-    if (mfgFiles.length) {
-      html += `
-        <h3 class="upload-file">Stage Variant</h3>
-        <div class="table-wrap">
-          <table class="docs-table">
-            <thead>
-              <tr>
-                <th>Sl</th>
-                <th>File Name</th>
-                <th>File Type</th>
-                <th>Variant</th>
-                <th>Uploaded Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      mfgFiles.forEach((f, i) => {
-        const isRM = f.stage_varient === 'RM';
-        html += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>
-              ${f.file_name.length > 50
-                ? `<span>${f.file_name.substring(0, 50)}...</span>
-                   <i class="fa-solid fa-circle-exclamation"
-                      title="${f.file_name}"
-                      onclick="showFullFileName(this, '${f.file_name.replace(/'/g, "\\'")}')"
-                      style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
-                : f.file_name
-              }
-            </td>
-            <td><span class="upload-type-badge">${f.file_type || '-'}</span></td>
-            <td>
-              <span style="background:${isRM ? '#dbeafe' : '#dcfce7'};
-                           color:${isRM ? '#1d4ed8' : '#166534'};
-                           font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;">
-                ${f.stage_varient}
-              </span>
-            </td>
-            <td>${new Date(f.created_at).toLocaleString()}</td>
-            <td class="doc-actions">
-              <i class="fa-solid fa-eye action-icon view" onclick="viewFile('/uploads/${f.file_name}')" title="View"></i>
               <i class="fa-solid fa-download action-icon download" title="Download"></i>
             </td>
           </tr>
@@ -1996,8 +2254,10 @@ async function renderDocuments() {
               <tr>
                 <th>Sl</th>
                 <th>File Name</th>
+                <th>File Type</th>
                 <th>Stage Name</th>
                 <th>Section</th>
+                <th>Variant</th>
                 <th>Uploaded Date</th>
                 <th>Actions</th>
               </tr>
@@ -2006,24 +2266,38 @@ async function renderDocuments() {
       `;
 
       stageFiles.forEach((f, i) => {
-        const fileType = f.file_type || f.original_name?.split('.').pop().toUpperCase() || '-';
+        const fileType = f.original_name?.split('.').pop().toUpperCase() || '-';
+        const variantColors = {
+          'Part Photo':    { bg: '#fef3c7', color: '#92400e' },
+          'Packing Photo': { bg: '#dbeafe', color: '#1d4ed8' },
+          'Packing List':  { bg: '#dcfce7', color: '#166534' },
+          'RM':            { bg: '#dbeafe', color: '#1d4ed8' },
+          'RMTC':          { bg: '#dcfce7', color: '#166534' }
+        };
+        const vc = f.variant ? (variantColors[f.variant] || { bg: '#f3f4f6', color: '#374151' }) : null;
+
         html += `
           <tr>
             <td>${i + 1}</td>
-            <td>
+            <td style="color:var(--primary);font-weight:500;">
               ${f.original_name.length > 50
                 ? `<span>${f.original_name.substring(0, 50)}...</span>
                    <i class="fa-solid fa-circle-exclamation"
                       title="${f.original_name}"
                       onclick="showFullFileName(this, '${f.original_name.replace(/'/g, "\\'")}')"
                       style="color:var(--primary);cursor:pointer;font-size:13px;margin-left:4px;"></i>`
-                : f.original_name
-              }
+                : f.original_name}
             </td>
-            <td>${f.stage_name}</td>
-            <td>
-              <span class="upload-type-badge">${fileType}</span>
-            </td>
+            <td><span class="upload-type-badge">${fileType}</span></td>
+            <td>${f.stage_name || '—'}</td>
+            <td>${f.section_title || '—'}</td>
+            <td>${vc
+              ? `<span style="background:${vc.bg};color:${vc.color};
+                             font-size:11px;font-weight:700;
+                             padding:2px 8px;border-radius:4px;">
+                   ${f.variant}
+                 </span>`
+              : '—'}</td>
             <td>${new Date(f.uploaded_at).toLocaleString()}</td>
             <td class="doc-actions">
               <i class="fa-solid fa-eye action-icon view" onclick="viewFile('${f.file_url}')" title="View"></i>
@@ -2064,9 +2338,8 @@ async function renderDocuments() {
 }
 
 function viewFile(url) {
-  window.open(url, '_blank'); 
+  window.open(url, '_blank');
 }
-
 
 async function updatePartFileCount() {
   const { partId } = getParamsFromUrl();
@@ -2111,13 +2384,14 @@ async function saveSingleRowWithFiles(icon) {
     row._comments = [];
   }
 
-  if (row._files && row._files.length) {
+ if (row._files && row._files.length) {
     for (const f of row._files) {
       const formData = new FormData();
       formData.append('file', f.file);
       formData.append('stage_id', stageId);
       formData.append('user_id', 1);
-
+      formData.append('file_type', 'stage');
+      if (f.variant) formData.append('variant', f.variant); // ✅ sends RM or RMTC tag
       await fetch('/api/upload-stage-file', {
         method: 'POST',
         body: formData
@@ -2127,20 +2401,15 @@ async function saveSingleRowWithFiles(icon) {
     row._files = [];
   }
 
-  row.dataset.edited = 'false';   
-  row.dataset.status = 'closed'; 
+  row.dataset.edited = 'false';  
+  row.dataset.status = 'closed';
 
   alert("Saved successfully ✅");
 }
 
-
-
 async function saveSingleRow(row) {
-
   const { partId } = getParamsFromUrl();
-
   let stageName = row.children[0].querySelector('input').value.trim();
-
   const stageDate = row.querySelector('[name="stage_date"]').value;
   const achieveDate = row.querySelector('[name="achieve_date"]').value;
   const inward = row.querySelector('.inward').value;
@@ -2192,10 +2461,8 @@ async function saveSingleRow(row) {
   if (stageId) {
     row.setAttribute('data-stage-id', stageId);
   }
-
   return stageId;
 }
-
 
 
 function handleMfgVariantFiles(input, variant) {
@@ -2203,7 +2470,7 @@ function handleMfgVariantFiles(input, variant) {
   if (!_uploadTrigger._files) _uploadTrigger._files = [];
   Array.from(input.files).forEach(f => {
     _uploadTrigger._files.push({
-      file: f,                                    // ✅ store actual File object
+      file: f,                                    
       name: f.name,
       ext: f.name.split('.').pop().toUpperCase(),
       variant: variant,
@@ -2280,16 +2547,25 @@ function setInspVariant(value) {
   });
 }
 
-let _alertTargetRow = null;
-
 function openAlertPopup(icon) {
-  _alertTargetRow = icon.closest('tr');
+  const row = icon.closest('tr');
 
-  // ── Pre-fill if already saved on this row ──
-  document.getElementById('alertApproverInput').value = _alertTargetRow._alertApprover || '';
-  document.getElementById('alertRemarksInput').value  = _alertTargetRow._alertRemarks  || '';
+  // ✅ If already saved → open VERIFY popup
+  if (row._alertSaved) {
+    openVerifyConfirmPopup(row);
+    return;
+  }
 
-  document.getElementById('alertPopup').style.display        = 'block';
+  // ✅ First time → open Alert popup
+  _alertTargetRow = row;
+
+  document.getElementById('alertApproverInput').value = '';
+  document.getElementById('alertRemarksInput').value  = '';
+
+  document.getElementById('alertPopup').style.display = 'block';
+
+
+  
   document.getElementById('alertPopupOverlay').style.display = 'block';
 }
 
@@ -2298,6 +2574,8 @@ function closeAlertPopup() {
   document.getElementById('alertPopupOverlay').style.display = 'none';
   _alertTargetRow = null;
 }
+
+let _alertTargetRow = null;
 
 function saveAlertPopup() {
   const approver = document.getElementById('alertApproverInput').value.trim();
@@ -2308,41 +2586,34 @@ function saveAlertPopup() {
     document.getElementById('alertApproverInput').focus();
     return;
   }
-
   if (!remarks) {
     document.getElementById('alertRemarksInput').style.borderColor = '#ef4444';
     document.getElementById('alertRemarksInput').focus();
     return;
   }
 
-  // ── Store on the row for reference ──
   if (_alertTargetRow) {
     _alertTargetRow._alertApprover = approver;
     _alertTargetRow._alertRemarks  = remarks;
+    _alertTargetRow._alertSaved    = true;
 
-    // ── Turn icon yellow/amber to show alert is set ──
     const icon = _alertTargetRow.querySelector('.fa-circle-exclamation');
     if (icon) {
-      icon.style.color  = '#616bff';
-      icon.title = `Alert set — Approver: ${approver}`;
+      icon.style.color = '#f59e0b';   // ✅ turn amber when saved
+      icon.title = `Verified by: ${approver}`;
     }
   }
- openVerifyConfirmPopup();
-  closeAlertPopup();
+
+  const savedRow = _alertTargetRow;  // ✅ save ref before closing
+
+  closeAlertPopup();                 // ✅ close alert first
+  openVerifyConfirmPopup(savedRow);  // ✅ then open verify with saved row
 }
 
-// ── Close on overlay click ──
-document.getElementById('alertPopupOverlay')
-  .addEventListener('click', closeAlertPopup);
 
-// ── Close on Escape ──
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeAlertPopup();
-});
-
+//open comfirm popup
 function openVerifyConfirmPopup(row) {
   const target = row || _alertTargetRow;
-
   if (!target) return;
 
   document.getElementById('verifyConfirmApprover').textContent =
@@ -2351,12 +2622,13 @@ function openVerifyConfirmPopup(row) {
   document.getElementById('verifyConfirmRemarks').textContent =
     target._alertRemarks || '—';
 
+  // ✅ Use style.display not classList
   document.getElementById('verifyConfirmPopup').style.display = 'block';
   document.getElementById('verifyConfirmOverlay').style.display = 'block';
 }
 
 function closeVerifyConfirmPopup() {
-  document.getElementById('verifyConfirmPopup').style.display   = 'none';
+  document.getElementById('verifyConfirmPopup').style.display = 'none';
   document.getElementById('verifyConfirmOverlay').style.display = 'none';
 }
 
@@ -2364,3 +2636,57 @@ function closeSuccessPopup() {
   document.getElementById('verifySuccessPopup').style.display   = 'none';
   document.getElementById('verifySuccessOverlay').style.display = 'none';
 }
+
+//part required date 
+async function saveRequiredDate() {
+
+  const { partId } = getParamsFromUrl();
+
+  const requiredDateInput =
+    document.getElementById('requiredDate');
+
+  const saveIcon =
+    document.querySelector('.date-save');
+
+  const required_date =
+    requiredDateInput.value;
+
+  if (!required_date) {
+    alert("Select required date");
+    return;
+  }
+
+  try {
+
+    const res = await fetch('/api/part/save-required-date', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        partId,
+        required_date
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error();
+    }
+
+    // ✅ Freeze immediately
+    requiredDateInput.disabled = true;
+
+    saveIcon.style.pointerEvents = 'none';
+    saveIcon.style.opacity = '0.4';
+
+    showToast('Required date saved ✅');
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert('Save failed');
+
+  }
+}
+
