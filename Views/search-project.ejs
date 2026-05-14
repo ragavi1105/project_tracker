@@ -1,249 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Portal | White Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* Brand Colors */
-            --primary-pink: #ff2e63;
-            --pink-hover: #e62959;
-            --pink-light: #fff0f3;
-            
-            /* Clean White Palette */
-            --bg-main: #fcfcfd;
-            --surface: #ffffff;
-            --border-soft: #f1f5f9;
-            --input-focus: #ff2e631a;
-            
-            /* Text Hierarchy */
-            --text-heading: #0f172a;
-            --text-body: #64748b;
-            --text-placeholder: #94a3b8;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Project</title>
+  <link rel="stylesheet" href="/css/project-tracker.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/x-icon" href="https://i.ibb.co/FkSK8vZQ/Tracker-light-removebg-preview.png">
+  <style>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+    html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #f5f5f5;
+  }
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-main);
-            /* Soft, organic background shapes */
-            background-image: 
-                radial-gradient(at 0% 0%, #fff1f2 0px, transparent 50%),
-                radial-gradient(at 100% 100%, #f5f3ff 0px, transparent 50%);
-            padding: 20px;
-        }
+    
+    .search-box-card {
+    position: relative;
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 60px 40px; 
+    margin-bottom: 24px;
+    overflow: hidden;
 
-        .search-card {
-            width: 100%;
-            max-width: 460px;
-            background: var(--surface);
-            padding: 50px 40px;
-            border-radius: 32px;
-            border: 1px solid var(--border-soft);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04), 
-                        0 10px 15px rgba(0, 0, 0, 0.02);
-            text-align: center;
-            position: relative;
-        }
+    min-height: 260px;   
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    }
 
-        /* Modern Abstract Icon Container */
-        .icon-circle {
-            width: 80px;
-            height: 80px;
-            background: var(--pink-light);
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 32px;
-            transform: rotate(-3deg);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    .search-box-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), 
+        url("https://i.ibb.co/d48SzQ3s/premium-image-1.jpg");
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
 
-        .search-card:hover .icon-circle {
-            transform: rotate(0deg) scale(1.05);
-        }
+    .search-box-card > * {
+    position: relative;
+    z-index: 1;
+  }
 
-        .icon-circle svg {
-            width: 36px;
-            height: 36px;
-            color: var(--primary-pink);
-        }
+    .search-page-wrap {
+      padding: 40px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .search-page-title { font-size: 22px; font-weight: 600; color: #111; }
+    .search-page-sub { font-size: 13px; color: var(--accent); margin-top: 4px; margin-bottom: 28px; }
 
-        h1 {
-            color: var(--text-heading);
-            font-size: 1.75rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-            letter-spacing: -0.03em;
-        }
+    .search-box-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .search-input-row { display: flex; gap: 12px; align-items: center; }
+    .search-input-wrap { position: relative; flex: 1; }
+    .search-input-wrap i {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); color: var(--primary); font-size: 14px;
+    }
+    .search-input-wrap input {
+      width: 100%; padding: 15px 19px 15px 41px;
+      border: 1.5px solid #e5e7eb; border-radius: 5px;
+      font-size: 14px; font-family: "Gilroy", sans-serif;
+      outline: none; color: #111; background: #f9fafb;
+      box-sizing: border-box;
+    }
+    .search-input-wrap input:focus { border-color: var(--primary); background: #fff; }
 
-        p {
-            color: var(--text-body);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 35px;
-        }
+    .search-page-title {
+      margin-bottom: 6px;
+    }
 
-        .input-container {
-            position: relative;
-            margin-bottom: 8px;
-        }
+    .search-page-sub {
+      margin-bottom: 20px;
+    }
 
-        input {
-            width: 100%;
-            padding: 18px 24px;
-            background: #f8fafc;
-            border: 2px solid #f1f5f9;
-            border-radius: 18px;
-            color: var(--text-heading);
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.25s ease;
-        }
+    .btn-search {
+      background: var(--primary); color: #fff; border: none;
+      border-radius: 5px; padding: 15px 27px; font-size: 15px;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .btn-search:hover { background: #f05a72; }
 
-        input:focus {
-            border-color: var(--primary-pink);
-            background: var(--surface);
-            box-shadow: 0 0 0 4px var(--input-focus);
-        }
+    .search-error { font-size: 12px; color: #ef4444; margin-top: 8px; min-height: 16px; }
 
-        /* Refined Alert Tag */
-        #alertMsg {
-            height: 24px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
+    .recent-row {
+      margin-top: 14px; display: flex; gap: 8px;
+      flex-wrap: wrap; align-items: center;
+    }
+    .recent-label { font-size: 12px; color: var(--accent); }
+    .recent-chip {
+      background: #ffe4ff; color: var(--primary);
+      font-size: 12px; font-weight: 600; padding: 3px 12px;
+      border-radius: 20px;  border: 1px solid #ffaaff; cursor: pointer;  margin-left:3px;
+    }
+    .recent-chip:hover { background: #ffefff; }
 
-        #alertMsg.active {
-            opacity: 1;
-        }
+    .results-section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; border-bottom: 1px solid #e5e7eb;
+    }
+    .results-title { font-size: 15px; font-weight: 600; color: #111; }
 
-        .msg-error { color: #e11d48; }
-        .msg-success { color: #059669; }
+    .no-results {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 60px 20px; color: #9ca3af;
+    }
+    .no-results i { font-size: 48px; color: #d1d5db; margin-bottom: 14px; }
+    .no-results p { font-size: 14px; font-weight: 600; color: #6b7280; margin: 0 0 6px; }
+    .no-results span { font-size: 13px; }
 
-        .actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        button {
-            flex: 1;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
-        .btn-main {
-            background: var(--primary-pink);
-            color: white;
-            box-shadow: 0 10px 20px rgba(255, 46, 99, 0.15);
-        }
-
-        .btn-main:hover {
-            background: var(--pink-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(255, 46, 99, 0.25);
-        }
-
-        .btn-sec {
-            background: transparent;
-            color: var(--text-body);
-            border: 2px solid var(--border-soft);
-        }
-
-        .btn-sec:hover {
-            background: #f8fafc;
-            color: var(--text-heading);
-            border-color: #e2e8f0;
-        }
-
-        /* Mobile Optimization */
-        @media (max-width: 480px) {
-            .search-card { padding: 40px 24px; }
-            .actions { flex-direction: column-reverse; }
-        }
-    </style>
+    @media (max-width: 600px) {
+      .search-input-row { flex-direction: column; }
+      .btn-search { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="search-card">
-        <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+  <header class="topbar">
+    <div class="logo">
+      <h1>Project Tracker</h1>
+      <p>Track, manage and deliver projects efficiently</p>
+    </div>
+    <div class="user-pill">
+      <i class="fa-solid fa-user-astronaut"></i>
+      <span>Welcome,<br>
+        <label class="user-name" id="userName">Project<label>
+      </span>
+    </div>
+  </header>
+
+  <main class="search-page-wrap">
+
+
+    <div class="search-box-card">
+      <div class="search-page-title">Find Your Project</div>
+    <p class="search-page-sub">Search by Project ID or PO Number to view full progress</p>
+      <div class="search-input-row">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Enter Project ID or PO Number..."
+            onkeydown="if(event.key==='Enter') doSearch()"
+          />
         </div>
-
-        <h1>Project Search</h1>
-        <p>Enter your Project Number or POM reference below to view the latest status.</p>
-
-        <div class="input-container">
-            <input type="text" id="searchInput" placeholder="Search reference..." autocomplete="off">
-        </div>
-
-        <div id="alertMsg"></div>
-
-        <div class="actions">
-            <button class="btn-sec" onclick="clearField()">Cancel</button>
-            <button class="btn-main" onclick="performSearch()">Search Now</button>
-        </div>
+        <button class="btn-search" onclick="doSearch()">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+      </div>
+      <p class="search-error" id="searchError"></p>
+      <div class="recent-row" id="recentRow" style="display:none;">
+        <span class="recent-label">Recent:</span>
+        <div id="recentChips"></div>
+      </div>
     </div>
 
-    <script>
-        const input = document.getElementById('searchInput');
-        const alertBox = document.getElementById('alertMsg');
+    <div class="results-section" id="resultsSection" style="display:none;">
+      <div class="results-header">
+        <span class="results-title" id="resultsTitle">Results</span>
+        <span class="docs-count" id="resultsCount"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="docs-table" id="resultsTable">
+          <thead>
+            <tr>
+              <th>Project ID</th>
+              <th>Customer</th>
+              <th>Created</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTbody"></tbody>
+        </table>
+      </div>
+      <div class="no-results" id="noResults" style="display:none;">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No Project Found</p>
+        <span>Try a different Project ID or PO Number</span>
+      </div>
+    </div>
 
-        function setAlert(text, isError) {
-            alertBox.textContent = text;
-            alertBox.className = isError ? 'msg-error active' : 'msg-success active';
-            
-            if (!isError) {
-                setTimeout(() => { alertBox.classList.remove('active'); }, 3000);
-            }
+  </main>
+
+  <script>
+    // ── Load recent searches from localStorage ──
+    function loadRecent() {
+      const recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+      const row = document.getElementById('recentRow');
+      const chips = document.getElementById('recentChips');
+      if (!recent.length) { row.style.display = 'none'; return; }
+      row.style.display = 'flex';
+      chips.innerHTML = recent.map(id =>
+        `<button class="recent-chip" onclick="searchById('${id}')">${id}</button>`
+      ).join('');
+    }
+
+    function saveRecent(id) {
+      let recent = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+      recent = [id, ...recent.filter(r => r !== id)].slice(0, 5);
+      localStorage.setItem('recentSearches', JSON.stringify(recent));
+      loadRecent();
+    }
+
+    // ── Search handler ──
+    async function doSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      const errEl = document.getElementById('searchError');
+      if (!q) { errEl.textContent = 'Please enter a Project ID or PO Number.'; return; }
+      errEl.textContent = '';
+      await searchById(q);
+    }
+
+    async function searchById(id) {
+      document.getElementById('searchInput').value = id;
+      const section = document.getElementById('resultsSection');
+      const tbody = document.getElementById('resultsTbody');
+      const noResults = document.getElementById('noResults');
+      const table = document.getElementById('resultsTable');
+      const countEl = document.getElementById('resultsCount');
+      const titleEl = document.getElementById('resultsTitle');
+
+      section.style.display = 'block';
+      tbody.innerHTML = '';
+      noResults.style.display = 'none';
+      table.style.display = 'table';
+
+      try {
+        const res = await fetch(`/api/project/search?q=${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();  // expects { results: [...] }
+        const results = data.results || [];
+
+        if (!results.length) {
+          table.style.display = 'none';
+          noResults.style.display = 'flex';
+          countEl.textContent = '0 results';
+          return;
         }
 
-        function performSearch() {
-            const val = input.value.trim();
-            if (!val) {
-                setAlert("Please enter a reference number", true);
-                input.focus();
-            } else {
-                setAlert("Locating project " + val + "...", false);
-                console.log("Searching for:", val);
-            }
-        }
+        saveRecent(id);
+        titleEl.textContent = `Results for "${id}"`;
+        countEl.textContent = `${results.length} result${results.length > 1 ? 's' : ''}`;
 
-        function clearField() {
-            input.value = "";
-            alertBox.classList.remove('active');
-            input.focus();
-        }
-
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
+        results.forEach(p => {
+          const statusColor = p.status === 'Active' ? '#166534'
+            : p.status === 'Completed' ? '#166534'
+            : '#1D4ED8';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="part-num">${p.poReference}</td>
+            <td>${p.customer || '-'}</td>
+            <td>${p.createdAt || '-'}</td>
+            <td><span style="color:${statusColor};font-weight:700;font-size:12px;">● ${p.status}</span></td>
+            <td class="actions-cell">
+              <button class="btn-action view" onclick="goToProject('${p.id}')">
+                <i class="fa-solid fa-list-check"></i> View
+              </button>
+            </td>`;
+          tbody.appendChild(tr);
         });
-    </script>
+
+      } catch {
+        table.style.display = 'none';
+        noResults.style.display = 'flex';
+        countEl.textContent = '0 results';
+      }
+    }
+
+    function goToProject(id) {
+    window.location.href = `/project-tracker/${id}`;
+  }
+
+    document.addEventListener('DOMContentLoaded', loadRecent);
+  </script>
+
 </body>
 </html>
