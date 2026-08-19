@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Card - HV/SK02/2602/069</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shalimar&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/HTvCrRzg/route-card.png">
+
+    <style>
+         @font-face {
+            font-family: "Gilroy";
+            src: url("/fonts/Gilroy-Regular.woff2") format("woff2");
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: "Gilroy";
+            src: url("/fonts/Gilroy-Semibold.woff2") format("woff2");
+            font-weight: 600;
+        }
+
+        @font-face {
+            font-family: "Gilroy";
+            src: url("/fonts/Gilroy-Bold.woff2") format("woff2");
+            font-weight: 700;
+        }
+        
+        :root {
+            --bg-primary: #f8fafc;
+            --surface-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --accent: #2563eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Gilroy', sans-serif; }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.4;
+            padding: 2rem 1rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size:16px;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            max-width: 1050px;
+            margin: 0 auto 1.5rem auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background-color: white;
+        }
+        .btn-primary {
+            background-color: var(--text-main);
+            color: white;
+            border: none;
+        }
+
+        /* Toggle switch */
+        .qty-toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .qty-toggle-switch input { display: none; }
+        .qty-slider {
+            width: 36px; height: 20px;
+            background: #cbd5e1;
+            border-radius: 20px;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .qty-slider::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            background: white;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: transform 0.2s;
+        }
+        .qty-toggle-switch input:checked + .qty-slider { background: var(--text-main); }
+        .qty-toggle-switch input:checked + .qty-slider::after { transform: translateX(16px); }
+
+        /* ── Card ── */
+        .route-card-container {
+            background: var(--surface-card);
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Doc control */
+        .doc-control {
+            gap:150px;
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Header */
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .company-brand { display: flex; align-items: center; gap: 16px; }
+        .company-logo { height: 68px; object-fit: contain; }
+        .header-left h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+        .header-left p {
+            font-size: 18px; color: rgb(85, 85, 85);
+            margin-top: 0.35rem; font-weight: 550;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .doc-control p{
+            font-size: 23px; color: rgb(78, 78, 78); font-weight: 600;
+            letter-spacing: 0.5px; text-transform: uppercase; 
+        }
+
+        .qr-placeholder {
+            width: 85px; height: 85px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; background-color: #fff; flex-shrink: 0;
+        }
+        .qr-placeholder img { width: 80%; height: 80%; object-fit: contain; }
+
+        /* Meta grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .meta-item {
+            padding: 0.75rem;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            background-color: #fff;
+        }
+        .meta-label {
+            font-size: 0.7rem; color: var(--text-muted);
+            font-weight: 600; margin-bottom: 0.25rem; text-transform: uppercase;
+        }
+        .meta-value { font-size: 0.875rem; font-weight: 600; color: var(--text-main); }
+
+        /* ── Table Global Structuring ── */
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 1.5rem; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; min-width: 900px; table-layout: fixed; }
+        
+        /* Reduced uniform padding globally */
+        .data-table th, .data-table td {
+            border: 1px solid #b8c2cc;
+            padding: 0.7rem 0.15rem 0.7rem 0.35rem !important;
+            vertical-align: middle;
+            text-align: left;
+            font-family: 'Gilroy', sans-serif;
+        }
+
+        .col-loc {
+            padding: 0.8rem 0.5rem !important;
+        }
+
+
+        .data-table th {
+            background-color: #f1f5f9;
+            font-weight: 700; 
+            font-size: 0.75rem;
+            text-align: center !important;
+        }
+
+        /* ── Absolute Unified Table Styling & Sizing Rules ── */
+        .col-opn { width: 4%; font-weight: 700; text-align: center !important; }
+        .col-desc { width: 16%; font-weight: 400; }
+        .col-loc { width: 10%; font-weight: 400; }
+        .col-target-date { width: 9%; }
+        .col-start-date  { width: 9%; }
+        .col-end-date    { width: 9%; }
+        .col-sign        { width: 9%; }
+        .col-remarks     { width: 19%; }
+    
+
+        .col-proc,
+        .col-acc,
+        .col-rwk,
+        .col-rej {
+            width:4%;
+            text-align: center !important;
+            font-size: 0.85rem !important;
+        }
+
+
+        .center-text { text-align: center !important; }
+        .empty-cell { background-color: #ffffff; }
+
+        /* Section title */
+        .section-title {
+            font-size: 1rem; font-weight: 700;
+            margin-bottom: 0.5rem; margin-top: 1rem;
+            color: var(--text-main); text-transform: uppercase;
+            padding-left: 4px;
+        }
+        
+        .company-info {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color:rgb(155, 154, 154);
+        }
+
+        .table-legend {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: 500;
+        }
+
+        .table-legend b { color: #0f172a; }
+
+        /* Approval / Signatures */
+        .approval-wrapper { margin-top: 1rem; display: block; }
+        .signature-section {
+            display: flex; justify-content: space-between;
+            align-items: flex-end; gap: 30px; margin-top: 1.5rem;
+        }
+
+        .dispatch-section table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .dispatch-section th:nth-child(3),
+        .dispatch-section td:nth-child(3) {
+            width: 120px !important; /* Transaction Date */
+        }
+
+        .dispatch-section th:nth-child(4),
+        .dispatch-section td:nth-child(4) {
+            width: 80px !important; /* Shipped Qty */
+        }
+
+        .dispatch-section th:nth-child(5),
+        .dispatch-section td:nth-child(5) {
+            width: 300px !important; /* Remarks */
+        }
+
+        .signature-box { width: 250px; text-align: center; }
+        .signature-name { font-family: 'Shalimar', cursive; font-size: 30px; color: #111827; line-height: 1; }
+        .signature-box p { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .footer-note { margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted); padding-top: 0.5rem; }
+
+        @media screen and (max-width: 768px) {
+
+            .route-card-container {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .doc-control {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .doc-control p {
+                font-size: 20px;
+                text-align: center;
+                width: 100%;
+            }
+
+            .header-flex {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .company-brand {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .company-logo {
+                height: 55px;
+            }
+
+            .header-left p {
+                font-size: 14px;
+            }
+
+            .company-info {
+                font-size: 11px;
+            }
+
+            .meta-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .meta-item {
+                padding: 0.6rem;
+            }
+
+            .meta-label {
+                font-size: 0.65rem;
+            }
+
+            .meta-value {
+                font-size: 0.8rem;
+            }
+
+            .table-legend {
+                font-size: 11px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .data-table {
+                min-width: 900px;
+            }
+
+            .signature-section {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .signature-box {
+                width: 100%;
+            }
+        }
+
+        /* ── Print Media Uniform Standardization Rules ── */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 4mm 2mm 10mm 10mm;
+            }
+
+            body {
+                display: flex;
+                justify-content: center;
+            }
+
+            .dispatch-table th:nth-child(2),
+            .dispatch-table td:nth-child(2) {
+                width: 8%;
+            }
+
+            .dispatch-section th:nth-child(3),
+            .dispatch-section td:nth-child(3) {
+                width: 12% !important; /* Transaction Date */
+            }
+
+            .dispatch-section th:nth-child(4),
+            .dispatch-section td:nth-child(4) {
+                width: 9% !important; /* Shipped Qty */
+            }
+
+            .dispatch-section th:nth-child(5),
+            .dispatch-section td:nth-child(5) {
+                width: 35% !important; /* Remarks */
+            }
+
+            .toolbar { display: none !important; }
+
+            .route-card-container {
+            width: auto !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: #fff !important;
+            }
+
+            .doc-control {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                gap: 0 !important;
+                font-size: 7.5pt !important;
+                margin-bottom: 3px !important;
+                border-bottom: 1px solid #475569 !important;
+            }
+
+            .doc-control p {
+                flex: 1 !important;
+                margin-left: 70px !important;
+                font-size: 18pt !important;
+                font-weight: 600 !important;
+            }
+
+            .header-flex { margin-bottom: 3mm !important; }
+            .company-logo { height: 42px !important; }
+            .qr-placeholder { width: 50px !important; height: 50px !important; }
+
+            .meta-grid {
+                grid-template-columns: repeat(5, 1fr) !important;
+                margin-bottom: 3mm !important;
+                border: 1px solid #475569 !important;
+                border-radius: 0 !important;
+            }
+
+            .meta-item {
+                padding: 2mm 1.5mm !important;
+                border-right: 1px solid #475569 !important;
+                border-bottom: 1px solid #475569 !important;
+            }
+
+            .meta-label { font-size: 6.5pt !important; margin-bottom: 0.5mm !important; }
+            .meta-value { font-size: 8pt !important; }
+            .table-responsive { overflow: visible !important; margin-bottom: 3mm !important; }
+
+            .data-table {
+                width: 100% !important;
+                min-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            .data-table th {
+                background-color: #f1f5f9 !important;
+                font-size: 7pt !important;
+                padding: 1mm 0.3mm 1mm 0.8mm !important;
+                border: 1px solid #475569 !important;
+                text-align: center !important;
+            }
+
+            .data-table td {
+                font-size: 7.5pt !important;
+                padding:8px 6px 8px 5px !important;
+                border: 1px solid #475569 !important;
+                vertical-align: middle !important;
+            }
+
+            /* Hardlocked Print Column Width Scaling */
+            .col-opn         { width: 4% !important; }
+            .col-desc        { width: 16% !important; }
+            .col-loc         { width: 9% !important; }
+            .col-target-date { width: 9% !important; }
+            .col-start-date  { width: 9% !important; }
+            .col-proc        { width: 4% !important; }
+            .col-acc         { width: 4% !important; }
+            .col-rwk         { width: 4% !important; }
+            .col-rej         { width: 4% !important; }
+            .col-end-date    { width: 9% !important; }
+            .col-sign        { width: 7% !important; }
+            .col-remarks     { width: 17% !important; }
+
+            /* Fixed Uniform Font Rules across Print Engines */
+            .col-target-date,
+            .col-start-date,
+            .col-end-date,
+            .col-proc,
+            .col-acc,
+            .col-rwk,
+            .col-rej {
+                font-size: 7.5pt !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+            }
+            
+
+            .section-title {
+                font-size: 9pt !important;
+                margin-top: 3mm !important;
+                margin-bottom: 1mm !important;
+                padding-left: 2px !important;
+            }
+
+            .approval-wrapper { margin-top: 1mm !important; padding-top: 1mm !important; }
+            .signature-section { margin-top: 2mm !important; }
+            .signature-box { width: 180px !important; }
+            .signature-name { font-size: 22pt !important; margin-bottom: -4px !important; }
+            .signature-box p { font-size: 7.5pt !important; }
+
+            table, tr, td, th, .meta-grid, .signature-section {
+                page-break-inside: avoid !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <label class="qty-toggle-switch">
+            <input type="checkbox" id="qtyToggle" onchange="toggleQtyColumns()">
+            <span class="qty-slider"></span>
+            <span class="qty-label">Show Qty</span>
+        </label>
+        <button class="btn" onclick="window.print()">Download PDF</button>
+        <button class="btn btn-primary" onclick="window.print()">Print Route Card</button>
+    </div>
+
+    <div class="route-card-container">
+
+        <div class="doc-control">
+            <div>
+                <span>Doc. Ref: F/STR/02 &nbsp;|&nbsp; Rev. No: 00</span><br>
+                <span>Rev. Date: 01-07-2026</span>
+            </div>
+            <p>Production Route Card</p>
+        </div>
+
+        <div class="header-flex">
+            <div class="header-left">
+                <div class="company-brand">
+                    <img src="https://i.ibb.co/Gf2CPs3G/hanav-icon-pm-removebg-preview.png" alt="HanaV Logo" class="company-logo" onerror="this.style.display='none'">
+                    <div>    
+                        <p>HanaV Manufacturing and Business Private Limited</p>
+                        <h5 class="company-info"> An ISO 9001:2015 Certified & AS9100 Certified Company</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="qr-placeholder" title="Route Card QR Identity">
+                    <img id="routeQr" style="width:80px;" alt="QR Code">
+                </div>
+            </div>
+        </div>
+
+        <section class="meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Route Card No &amp; Date</div>
+                <div class="meta-value" id="routeCardNo"><br>  </div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Project No</div>
+                <div class="meta-value" id="projectNo">-</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Part Number &amp; Rev</div>
+                <div class="meta-value" id="partNumber">-</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Part Name</div>
+                <div class="meta-value" id="partName">-</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Material Spec. & Size</div>
+                <div class="meta-value" id="materialSpec"> </div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Material Test Certificate No</div>
+                <div class="meta-value" id="mtcNo">-</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Route Card Qty</div>
+                <div class="meta-value" id="routeQty">-</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Material Issued Date</div>
+                <div class="meta-value" id="materialIssuedDate"></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Project Manager</div>
+                <div class="meta-value" id="projectManager"></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Project Engineer</div>
+                <div class="meta-value" id="projectEngineer"></div>
+            </div>
+        </section>
+
+        <div class="table-legend">
+            <strong>Legend:</strong>
+            <span><b>Proc</b> - Processed |</span>
+            <span><b>Acc</b> - Accepted |</span>
+            <span><b>Rwk</b> - Rework |</span>
+            <span><b>Rej</b> - Rejected </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead> 
+
+                    <tr>
+                        <th class="col-opn">Opn</th>
+                        <th class="col-desc">Manufacturing Stage <br> Description</th>
+                        <th class="col-loc">Location / <br> Responsibility</th>
+                        <th class="col-target-date">Planned Date</th>
+                        <th class="col-start-date">Start Date</th>
+                        <th class="col-proc">Proc</th>
+                        <th class="col-acc">Acc</th>
+                        <th class="col-rwk">Rwk</th>
+                        <th class="col-rej">Rej</th>
+                        <th class="col-end-date">End Date</th>
+                        <th class="col-sign">Sign &amp; Date</th>
+                        <th class="col-remarks">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="routeStagesBody"></tbody>
+            </table>
+        </div>
+
+        <div class="approval-wrapper">
+            <div class="net-qty" style="font-size:12px;">
+                <strong>Total Finished Quantity: </strong>
+            </div>
+            <div class="signature-section">
+                <div class="signature-box">
+                    <div class="signature-name qty-sign-name" id="qualityManagerName"></div>
+                    <p>Quality Manager<br>Signature</p>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-name qty-sign-name" id="projectEngineerName"></div>
+                    <p>Development Manager<br>Signature</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="dispatch-section">
+            <h2 class="section-title">Dispatch Details</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;" class="center-text">Sl. No.</th>
+                            <th>Delivery Challan / Invoice No</th>
+                            <th>Transaction Date</th>
+                            <th style="width:120px;">Shipped Qty</th>
+                            <th>Remarks &amp; Notes</th>
+                            <th>Name &amp; Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="center-text">1</td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                            <td class="empty-cell"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr === '0000-00-00') return '';
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.toLocaleString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+
+        function populateMeta(first) {
+
+              document.title = `Route Card - ${first.rc_no}`;
+
+    document.getElementById('routeCardNo').innerHTML = `
+        ${first.rc_no}
+        <br>&amp; ${formatDate(first.po_reference_date)}
+    `;
+            document.getElementById('routeCardNo').innerHTML = `
+    ${first.rc_no}
+    <br>&amp; ${formatDate(first.po_reference_date)}
+`;
+            document.getElementById('partNumber').innerText = first.part_number || '-';
+            document.getElementById('partName').innerText = first.product_name || '-';
+            document.getElementById('materialSpec').innerText = first.materialSpec || '';
+            document.getElementById('mtcNo').innerText = first.mtcNo || '';
+            document.getElementById('routeQty').innerText = (first.quantity || 0) + ' Nos';
+            document.getElementById('projectNo').innerText = first.po_reference_name || '-';
+            document.getElementById('materialIssuedDate').innerText = formatDate(first.required_date);
+            document.getElementById('projectManager').innerText =
+    first.project_manager_name || '-';
+document.getElementById('projectEngineer').innerText =
+    first.engineer_name || '-';
+
+document.getElementById('qualityManagerName').innerText =
+    first.quality_manager_name || '';
+
+document.getElementById('projectEngineerName').innerText =
+    first.project_engineer_name || '';
+        }
+
+        function populateStages(data) {
+            const tbody = document.getElementById('routeStagesBody');
+            tbody.innerHTML = '';
+            let opn = 1;
+
+            data.forEach(stage => {
+                if (!stage.stage_name) return;
+
+                tbody.innerHTML += `
+                <tr>
+                    <td class="col-opn">${opn}</td>
+<td class="col-desc">${stage.stage_name}</td>
+<td class="col-loc"></td>
+
+<td class="col-target-date">
+    ${formatDate(stage.stage_date)}
+</td>
+
+<td class="col-start-date">
+    ${formatDate(stage.achieve_date)}
+</td>
+
+<td class="col-proc">${stage.inward || ''}</td>
+<td class="col-acc">${stage.outward || ''}</td>
+<td class="col-rwk"></td>
+<td class="col-rej"></td>
+
+<td class="col-end-date"></td>
+
+<td class="col-sign"></td>
+<td class="col-remarks"></td>
+                </tr>`;
+                opn++;
+            });
+        }
+
+      function loadQrCode() {
+    const parts =
+        window.location.pathname.split('/');
+    const poId =
+        parts[2];
+    const partId =
+        parts[3];
+    const routeUrl =
+        `https://hanav.tech/project-tracker/${poId}/${partId}`;
+
+    const qrUrl =
+        `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(routeUrl)}`;
+
+    console.log('QR URL:', routeUrl);
+
+    document.getElementById('routeQr').src =
+        qrUrl;
+}
+function toggleQtyColumns() {
+    const enabled = document.getElementById('qtyToggle').checked;
+
+    // Show/hide signature names
+    document.querySelectorAll('.qty-sign-name').forEach(el => {
+        el.style.visibility = enabled ? 'visible' : 'hidden';
+    });
+
+    document.querySelectorAll('#routeStagesBody tr').forEach(row => {
+
+        const plannedDate = row.querySelector('.col-target-date');
+        const startDate   = row.querySelector('.col-start-date');
+
+        const proc = row.querySelector('.col-proc');
+        const acc  = row.querySelector('.col-acc');
+        const rwk  = row.querySelector('.col-rwk');
+        const rej  = row.querySelector('.col-rej');
+        const end  = row.querySelector('.col-end-date');
+
+        // Hide Planned Date & Start Date values when Qty is ON
+        // Always keep Planned Date & Start Date values empty
+[plannedDate, startDate].forEach(cell => {
+    if (cell) {
+        cell.innerHTML = "";
+    }
+});
+
+        // Show/Hide Qty columns
+        [proc, acc, rwk, rej, end].forEach(cell => {
+            if (cell) {
+                cell.style.visibility = enabled ? 'visible' : 'hidden';
+            }
+        });
+
+    });
+}
+
+     (async function init() {
+
+    loadQrCode();
+
+    const partId =
+        window.location.pathname.split('/').pop();
+
+    const res =
+        await fetch(`/api/route-card/${partId}`);
+
+    const data =
+        await res.json();
+
+    if (!data.length) return;
+
+    populateMeta(data[0]);
+    populateStages(data);
+
+    document.getElementById('qtyToggle').checked = true;
+    toggleQtyColumns();
+
+})();
+
+
+    </script>
+</body>
+</html>

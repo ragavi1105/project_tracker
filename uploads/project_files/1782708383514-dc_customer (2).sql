@@ -1,0 +1,326 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jun 11, 2026 at 02:47 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `business_suite_database`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dc_customer`
+--
+
+CREATE TABLE `dc_customer` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `customer_name` varchar(255) NOT NULL,
+  `customer_gstin` varchar(50) DEFAULT NULL,
+  `customer_address_1` text DEFAULT NULL,
+  `customer_address_2` text DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `pincode` varchar(20) DEFAULT NULL,
+  `customer_phone` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dc_customer`
+--
+
+INSERT INTO `dc_customer` (`id`, `user_id`, `customer_name`, `customer_gstin`, `customer_address_1`, `customer_address_2`, `city`, `state`, `pincode`, `customer_phone`, `created_at`) VALUES
+(1, 1, 'Vision Technology', '', '190/7, Annai Sathya Nagar,   ', 'Mookandapalli,', 'Hosur', 'Tamil Nadu', '635126', '9087663066', '2026-04-21 01:37:33'),
+(2, 1, 'Indaco Metal Coats Pvt Ltd.', '', 'Sr. No. 430/2, Bhutaramanahatti,', 'Honaga', 'Belgaum', 'Karnataka', '591156', '9738401941', '2026-04-21 01:44:43'),
+(3, 1, 'Sri Vinayaka Engineering', '', 'Ground Floor, 12th \'A\' Main ,Kodichikkanahalli Main Road', 'Bommanahalli', 'Bengaluru', 'Karnataka', '560068', '8747064408', '2026-04-21 01:51:42'),
+(4, 1, 'V care Technologies', '', ' BJP Ramanna house, Lakshmisagara Rd,', ' Biotech Park, Chandapura, Bommasandra', 'Bengaluru', 'Karnataka', '560081', '', '2026-04-21 01:56:41'),
+(5, 1, 'Aqura Turn Tech', '', 'Hosur', '', 'Hosur', 'Tamil Nadu', '', '9894788840', '2026-04-21 01:58:55'),
+(6, 1, 'Maruthi Enterprises', '29CAGPR4990C1ZB', 'Plot no.20,First Floor, KSSIDC.INDL ESTATE', '2nd Stage , Bommasandra 4th Phase, Jigani Link Road', 'Bengaluru', 'Karnataka', '560099', '9019575996', '2026-04-21 02:04:05'),
+(7, 1, 'Surface Shoot Finisher', '29AAGCH6573A1ZJ', 'Ground Floor No.26, Rcc Premises, 7th main Road', 'Rajagopalan Nagar Main road  , Bengaluru', 'Bengaluru Urban', 'Karnataka', '560058', '9883615777', '2026-04-21 02:07:29'),
+(8, 1, 'Addlife Coating Systems Pvt Ltd', '29AAKCA0007C1Z9', 'No. 52 , KIADB Industrial Estate ', 'Bommasandra  , Jigani Link Road', 'Bengaluru', 'Karnataka', '560099', '9790906380', '2026-04-21 02:21:01'),
+(9, 1, 'HanaV Manufacturing and Business Private Limited (Unit 1)', '29AAGCH6573A1ZJ', '26, 7th Main Road, Rajagopal Nagar Main Road', ' Peenya, 2nd Stage, Laggere,', 'Peenya', 'Karnataka', ' 560058', '8073105418', '2026-04-21 02:33:00'),
+(10, 1, 'Raison Tech', '33AAVFR1377G1ZV', 'No.356/46/2,Balaji Nagar,Bedarapalli,', 'Sipcot', 'Hosur', 'Tamil Nadu', '635126', '+91 99868 77924 ', '2026-04-21 03:49:43'),
+(11, 1, 'Temple Private Limited', '07AADCU5528K1Z1', 'Ground Floor, Kila Number 20, Mustail,\n', 'Near Police Post, Dera MandiRetreat', '', 'Delhi', '110074', '9871300111', '2026-04-21 03:53:54'),
+(12, 1, 'RKS  Industries', '29HSTPS8446E1ZO', 'No.223-A/1 ,Bommasandra Industrial Area,', '3rd Phase , Hosur Main Road,', 'Bangalore', 'Karnataka', '560099', '9688399659', '2026-04-21 03:59:01'),
+(13, 1, 'HanaV Manufacturing and Business Private Limited (Unit 2)', '29AAGCH6573A1ZJ', '1/3, near Sollapuradamma Temple, ', 'Venkateswara Nagar, Sunkadakatte', 'Bengaluru,', 'Karnataka', '560091', '8891610879', '2026-04-21 04:06:09'),
+(14, 1, 'Karnataka Tools and Dies', '', 'c block, near Prerana motors,', ' Kannika Nagar Bommasandra Industrial Area', 'Bengaluru', 'Karnataka', '560099', '9035000515', '2026-04-21 04:09:19'),
+(15, 1, 'Averna Test India Private Limited', '32AAHCK1023F1Z7', 'First Floor, Padmanabham,', ' Techno Park Kazha koottam', 'TVM', 'Kerala', '695581', '+91-79072 98822', '2026-04-21 04:13:28'),
+(16, NULL, 'Able Innovation Inc', 'N/A', 'Unit 115 - 136 Geary Ave', 'Toronto, M6H 4H1', NULL, '', NULL, '1-888-898-3622', '2026-05-22 06:52:00'),
+(17, NULL, 'Ergotronix Inc', NULL, '6408 Parkland DrSarasota', 'FL - 34243, USA', NULL, '', NULL, ' 941-727-7600', '2026-05-22 06:52:00'),
+(18, NULL, 'Gen4 Manufacturing Pvt. Ltd.', '33AAICG0820B1ZD', 'No.3A', '4th Street, India', NULL, 'Tamil Nadu', NULL, '+91 7904059217', '2026-05-22 06:52:00'),
+(19, NULL, 'NORATEL INDIA POWER COMPONENTS PVT LTD', '29AAACT8702F1ZC', 'Plot No.31-C', 'II Cross Veerasandra Industrial Estate, Bangalore', NULL, 'Karnataka', '560 100', '7829449942', '2026-05-22 06:52:00'),
+(20, NULL, 'MayMaan Research, Inc.', NULL, '3904 N', '29th Avenue; Hollywood, FL 33020', NULL, '', NULL, '305-302-8652', '2026-05-22 06:52:00'),
+(21, NULL, 'ALLEGION INDIA PRIVATE LIMITED', '29AALCA9380M1ZT', 'Kalyani Magnum', 'Wing B, Karnataka ', NULL, 'Karnataka', '560076', '+91 8050807186', '2026-05-22 06:52:00'),
+(22, NULL, 'Ever Renew Energy Private Limited', '33AAFCE3309J1ZV ', '2nd Floor Block B. Plot No 4 and 5', 'Aneijas Tower', NULL, 'Tamil Nadu', '600096', '91 9047575665', '2026-05-22 06:52:00'),
+(23, NULL, 'I HUB for Robotics And Autonomous Systems  Innovation Foundation', '29AAFCI8082A1ZJ', 'SID Entrepreneurship Building', '', NULL, 'Karnataka', NULL, '+91 82773 61988', '2026-05-22 06:52:00'),
+(24, NULL, 'IEC Fabchem Limited', '33AAACI1630H1Z5', 'Registered Office & Works: K-32B', 'Sipcot Industrial Complex, Tiruvallur', NULL, 'Tamil Nadu', ' 601201', '91-9952552074', '2026-05-22 06:52:00'),
+(25, NULL, 'Neosky India Limited', '29AAHCN8098B1Z2', '3RD FLOOR', 'UNIT NO. 5M    659', NULL, 'Karnataka', '560043', '91 9958816024', '2026-05-22 06:52:00'),
+(26, NULL, 'Ametek, thermal process management,Universal Analyzers  Barben Analytical', '', '5200 Convair Drive', 'Carson City NV 89706 Phone: 775-883-2500', NULL, '', NULL, '7752835425', '2026-05-22 06:52:00'),
+(28, NULL, 'Epifeast India Private Limited', '29AAGCE6626F1ZI', '#17', '2nd Floor, Karnataka - 560038', NULL, 'Karnataka', NULL, '+91 80889 16110', '2026-05-22 06:52:00'),
+(29, NULL, 'Amptek.Inc', NULL, '14 DEANGELO DRIVE BEDFORD', 'MA 01730-2204 USA', NULL, '', NULL, '781-275-2242', '2026-05-22 06:52:00'),
+(30, NULL, 'Origin Biologics', 'N/A', 'Las Vegas', '6635 S Eastern Ave, United States', NULL, '', NULL, '1 (435)-232-8359', '2026-05-22 06:52:00'),
+(31, NULL, 'Dawson Manufacturing', 'N/A', '899 Airport Park Road ', 'Suite E, MD 21061 USA', NULL, '', NULL, '804- 8887768525 ', '2026-05-22 06:52:00'),
+(32, NULL, 'Time Warp Racing Pty Ltd', '', '23 Duchart Way', 'Coogee, Western Australia 6166  Australia', NULL, '', NULL, '+61 417923490', '2026-05-22 06:52:00'),
+(33, NULL, 'Rvxplor', 'N/A', '1369 Irving Avenue Clearwater', 'Florida 33756-3617', NULL, '', NULL, '(727) 441-3824', '2026-05-22 06:52:00'),
+(34, NULL, 'Wilder Technologies, LLC', '', '11201 NE 9th St.Vancouver', 'WA 98684 USA, WA 98684 USA', NULL, '', NULL, '(360) 859-3041', '2026-05-22 06:52:00'),
+(35, NULL, 'ReNfra EnerGy India Private Limited', '33AAICR5893B1ZB', 'No.122 (12)', 'Varthaga Nagar, Tenkasi ', NULL, 'Tamil Nadu', '627811', 'N/A', '2026-05-22 06:52:00'),
+(36, NULL, 'Hylio, Inc', '', 'Main 1020 agnes rd Richmond', ' TX 77469', NULL, '', NULL, '+1-877-495-4669', '2026-05-22 06:52:00'),
+(37, NULL, 'ACTIV MFG(accurate carbide)', '', '5655 North Westervelt Rd. Saginaw', 'MI 48604 United States', NULL, '', NULL, '9897550429', '2026-05-22 06:52:00'),
+(38, NULL, 'Entuple E-Mobility Private Limited', '29AAFCE4531Q1Z4', 'A-03', 'Diamond District, Bangalore ', NULL, 'Karnataka', '560008', '+91-9980130546 ', '2026-05-22 06:52:00'),
+(39, NULL, 'Gee Keyy Engineering Co', '33AHUPK9348N1ZE', '1/450-4', 'Kanavedan Kovil Road, Tamil Nadu', NULL, 'Tamil Nadu', NULL, '(+91) 9003915355', '2026-05-22 06:52:00'),
+(40, NULL, 'Tavisha Robotics', '33AAPFT6234N1ZM', 'TAVISHA ROBOTICS 247', 'UADAYAPURI COLONY', NULL, 'Tamil Nadu', '636004', '+91-9600584961', '2026-05-22 06:52:00'),
+(41, NULL, 'Adroid Tooling Solutions ', '29APDPA1039F1ZE', '13th Cross Rd', 'Kalika Nagar, Karnataka ', NULL, 'Karnataka', '560058', '+91 95911 50423 ', '2026-05-22 06:52:00'),
+(42, NULL, 'Zreyah Semiconductor Systems Pvt Ltd ', '29AAACZ2991E1Z1 ', '-', '-, -', NULL, 'Karnataka', NULL, '+91 80 25734631 ', '2026-05-22 06:52:00'),
+(43, NULL, 'Asteria aerosapace limited', '29AAJCA8708R1ZR', '3rd Floor', 'Tellus Spaces ', NULL, 'Karnataka', '560064', '+91 9164046145', '2026-05-22 06:52:00'),
+(44, NULL, 'Avay bioscience pvt ltd', '29AAGCT3031M1Z3', '3rd Floor', 'No. 16, Bengaluru Urban Bengaluru Karnataka ', NULL, 'Karnataka', '560029', '+91 8113055007', '2026-05-22 06:52:00'),
+(45, NULL, 'Universal Analyzers Barben Analytical AMETEK', 'NA', 'Main Plant', '5200 Convair Dr, Carson City NV 89706', NULL, '', NULL, '775-297-4730', '2026-05-22 06:52:00'),
+(46, NULL, 'Technical Manufacturing Corporation AMETEK', '', 'Technical Manufacturing Corporation 15 Centennial Drive Peabody', 'MA 01960', NULL, '', NULL, '+91 87923 34508', '2026-05-22 06:52:00'),
+(47, NULL, 'Tawara Robotics', '29AAFCI8082A1ZJ', 'I-HUB for Robotics & Autonomous Systems Innovation Foundation SID Entrepreneurship Building Indian Institute of Science', 'Bangalore', NULL, 'Karnataka', NULL, '91 8277361988 ', '2026-05-22 06:52:00'),
+(48, NULL, 'Shanthi Gears Limited', '33AADCS0692L1Z7', 'Shanthi Gears Limted  Avinashi Road', 'Muthugoundenpudur Coimbatore India', NULL, 'Tamil Nadu', '641402', '91 422 4545745', '2026-05-22 06:52:00'),
+(49, NULL, 'Sansera Engineering Ltd Plant-11', '29AAECS2440M1Z3', '11', 'Shyanumangala, Bidadi Karnataka 562109', NULL, 'Karnataka', NULL, '91 80500 41542 ', '2026-05-22 06:52:00'),
+(50, NULL, 'Sansera Engineering Ltd ', '29AAECS2440M1Z3', 'LTD PLANT-11 Plot No 48; Phase 2; Sector 2 Bidadi Indl Area', 'Ramanagara District  080-2974374', NULL, 'Karnataka', '562109', '91 80500 41542', '2026-05-22 06:52:00'),
+(51, NULL, 'React Labs Pvt Ltd ', '29AALCR0679Q1ZC', '-', '-, -', NULL, 'Karnataka', NULL, '+91 6282 103 921', '2026-05-22 06:52:00'),
+(52, NULL, 'Rapture Innovation Labs Pvt. Ltd ', '29AAICR7152H1Z0', 'Deshpande Startup', 'Next to Airport, Hubli Dharwad Karnataka ', NULL, 'Karnataka', '580030', '+91 87629 22648  ', '2026-05-22 06:52:00'),
+(53, NULL, 'Raison Tech ', '29AAVFR1377G2ZJ', 'C21', 'KSSIDC Industrial Area, Karnataka ', NULL, 'Karnataka', '561203', '+91 99868 77924 ', '2026-05-22 06:52:00'),
+(54, NULL, 'NW Engineering Private Limited ', '29AAHCN2160L1Z6', '#35 Jairam Nagar', 'Jakkur Layout, Bangalore', NULL, 'Karnataka', '560064', '+91 8088011653 ', '2026-05-22 06:52:00'),
+(55, NULL, 'Center for Excellence in Energy and Telecommunication (CEET)', '33AAAAR6720M1ZG', 'E3-01', 'Block E, Chennai ', NULL, 'Tamil Nadu', '600113', '9791243294', '2026-05-22 06:52:00'),
+(56, NULL, 'Micropoise Measurement Systems', 'N/A', '555 ', 'Mondial parkway, 44241', NULL, '', NULL, '+1-330-541-9201 ', '2026-05-22 06:52:00'),
+(57, NULL, 'Custiv manufacturing Solution private limited ', '29AAICC3244P1Z5', 'No.656', '4th Floor, ', NULL, 'Karnataka', NULL, '+91 9036725361', '2026-05-22 06:52:00'),
+(58, NULL, 'kornercrane  Inc', 'N/A', '5145 Taravella RoadMarrero', 'La 70072', NULL, '', NULL, '8155880466', '2026-05-22 06:52:00'),
+(59, NULL, 'log9', 'N/A', 'Survey #9', 'Bellary Rd, Karnataka ', NULL, '', '560092', '8722383030', '2026-05-22 06:52:00'),
+(60, NULL, 'Hotworx LLc ', 'N/A', '5145 Taravella RoadMarrero', 'La 70072', NULL, '', NULL, '9292860164', '2026-05-22 06:52:00'),
+(61, NULL, 'expleo solutions limited ', '29AABCT0976G3Z3', '2nd and 3rd Floor', 'Plot No. 148 Prestige Featherlite Tech park, Whitefield Bangalore ', NULL, 'Karnataka', '560066', '+91 97897 16831', '2026-05-22 06:52:00'),
+(62, NULL, 'Enkey Engineering Works ', '33AABFE2554N1ZG', '-', '-, -', NULL, 'Tamil Nadu', NULL, '-', '2026-05-22 06:52:00'),
+(63, NULL, 'Dexcel Electronics Designs (p) ltd', '29AABCD1888K1Z7', 'No.138 Maruthi Tower', '3rd Floor, Bangalore ', NULL, 'Karnataka', '560 008', '8105390653', '2026-05-22 06:52:00'),
+(64, NULL, 'AGILENT ', 'N/A', '-', '-, -', NULL, '', NULL, 'N/A', '2026-05-22 06:52:00'),
+(65, NULL, '3D Energy SRL', '', 'Via Palestro 31', '56025, ITALY', NULL, '', NULL, 'N/A', '2026-05-22 06:52:00'),
+(66, NULL, 'PILABZ ELECTRO MECHANICAL SYSTEMS PVT LTD', '33AAOCP0421B1Z1', 'NO.942', 'KRISP IT PARK, VANDALUR KELAMBAKKAM', 'Chennai', 'Tamil Nadu', NULL, '91 98403 29499', '2026-05-22 06:52:00'),
+(67, NULL, 'Ultrahuman Healthcare Pvt Ltd', '29AACCU5113B1ZQ', 'AM Chambers', '2nd & 3rd Floor, Bengaluru Karnataka ', NULL, 'Karnataka', '560068', '9663779605', '2026-05-22 06:52:00'),
+(68, NULL, 'InterCosmos Space Exploration Technologies Pvt. Ltd', '32AAFCI8619H1ZJ', ' LtdC-304', 'First Floor, India.', NULL, 'Kerala', NULL, '9789289867', '2026-05-22 06:52:00'),
+(69, NULL, 'Ametek Instruments India Pvt Ltd.', '29AAHCA2869B1ZO', '', '3rd & 4th FloorMahadevapura Industrial Area Bangalore', NULL, 'Karnataka', '560048', 'N/A', '2026-05-22 06:52:00'),
+(70, NULL, 'Aequs Engineered Plastics Pvt Ltd', '29AANCA2475M1Z1', 'Aequs SEZ', '#437/A,', NULL, 'Karnataka', '591243', '6366412689', '2026-05-22 06:52:00'),
+(71, NULL, 'AMIDC Automation Technologies Pvt Ltd', '29AARCA5712H1ZE', '19 A', 'Industrial Suburb2nd Stage, Bengaluru ', NULL, 'Karnataka', '560022', '8904052255', '2026-05-22 06:52:00'),
+(72, NULL, 'Algofet Private Limited', '29AAZCA9268Q1Z4', '177', 'HMT Colony, Karnataka ', NULL, 'Karnataka', '560013', 'N/A', '2026-05-22 06:52:00'),
+(73, NULL, 'ERZIA Technologies', 'N/A', '4', '39012 Santander, Spain', NULL, '', NULL, '+34 942 29 13 42', '2026-05-22 06:52:00'),
+(74, NULL, 'Vasmed Health Science Private Limited', '29AAFCV2258M1ZR', 'Plot No #160', '#161 KIADB Obdenahalli Industrial Area, Karnataka', NULL, 'Karnataka', '561205', '8281727378 ', '2026-05-22 06:52:00'),
+(75, NULL, 'Micropoise Measurement Systems Ametek ', NULL, '555 Mondial Parkway I Streetsboro', ' OH 44241-4510', NULL, '', NULL, ' 330-541-9278', '2026-05-22 06:52:00'),
+(76, NULL, 'WARM TABLE TECHNOLOGIES PRIVATE LIMITED', '29AADCW3834G1Z5', 'No. 274', 'Meena, Karnataka ', NULL, 'Karnataka', '560091', '9591800462', '2026-05-22 06:52:00'),
+(77, NULL, 'GUMPU TECHNOLOGIES PRIVATE LIMITED', '29AALCG3123C1ZV', 'Bhramari', '1/17/122, Karnataka ', NULL, 'Karnataka', '575008', '9731271005', '2026-05-22 06:52:00'),
+(78, NULL, 'IDEAFORGE TECHNOLOGY LIMITED', '27AABCI6495B1ZK', '  146', 'TTC Industrial Area, Navi Mumbai  ', NULL, 'Maharashtra', '400710', '8005548990', '2026-05-22 06:52:00'),
+(79, NULL, 'Krishna Engineering ', '29AKFPM8506Q1ZD', '#23', '13th cross, Bangalore ', NULL, 'Karnataka', '560091', '9731577980', '2026-05-22 06:52:00'),
+(80, NULL, 'IBK Engineering Private Limited', '29AADCI6406J1ZE', '#B-219 ', '4th Cross, Bangalore ', NULL, 'Karnataka', '560058', 'N/A', '2026-05-22 06:52:00'),
+(81, NULL, 'Astrobase Space Technologies Pvt. Ltd', ' 29ABACA9751C1ZO', 'Astrobase Space Technologies Pvt LTD (Factory) Plot No. 411', 'Sompura 2nd Stage, Dabaspet Industrial AreaBangalore Bengaluru Karnataka  ', NULL, 'Karnataka', '562132', '9620878334', '2026-05-22 06:52:00'),
+(82, NULL, 'Warbler PSM Private Limited', '32AADCW3172F1ZL', 'Door No 4/210', 'Mariyamman Building Tenhipaalam Tirurangadi Malapuram', NULL, 'Kerala', '673634', '9061068928', '2026-05-22 06:52:00'),
+(83, NULL, 'JOHNSON OUTDOORS ', 'N/A', ' OLD TOWN CANOE 125 ', 'GILMAN FALLS AVE BLDG B OLD TOWN ME 04468-1325 UNITED STATES,', NULL, '', NULL, '607.217.2798', '2026-05-22 06:52:00'),
+(84, NULL, 'GEE KEYY ENGINEERING CO.,', '33AHUPK9348N1ZE', ' 1/450-4', 'Kanavedan Kovil \nRoad', NULL, 'Tamil Nadu', '\n641407', 'N/A', '2026-05-22 06:52:00'),
+(86, NULL, 'Maven Techno Industries', '29ABQFM2836D1Z0 ', '9th Cross', 'Thigalarapalya Main Road', NULL, 'Karnataka', '560058', '+91 88671 18532', '2026-05-22 06:52:00'),
+(87, NULL, 'V M MANUFACTURERS', '29CODPV0872A1ZW', '9TH CROSS', 'ANADRAHALLI MAIN ROAD ', NULL, 'Karnataka', '560058', ' 8867118532', '2026-05-22 06:52:00'),
+(88, NULL, 'Seakeeper', '', '', 'Inc   Leesport5460 Pottsville PikeLeesport PA 19533, Inc   Leesport5460 Pottsville PikeLeesport PA 19533', NULL, '', NULL, '240.794.9438', '2026-05-22 06:52:00'),
+(89, NULL, 'Indian Institute Of Space Science and Technology', '32AAAAI6714J1ZV', 'IIST ', 'Near to LPSC, Thiruvananthapuram', NULL, 'Kerala', '695547', '0471 2568448', '2026-05-22 06:52:00'),
+(90, NULL, 'Roombr Technologies Pvt Ltd', ' 29AAFCV8708G1ZX', '683/A', '3rd Floor, Near Delima Circle JP Nagar Bangalore', NULL, 'Karnataka', NULL, 'N/A', '2026-05-22 06:52:00'),
+(91, NULL, 'Coherent', '36AABCF3213A1ZG', 'Finisar Technology India Pvt. Ltd Unit 05-01', 'Block II, Cyber Pearl ', NULL, 'Telangana', '500081', '+91-8374457832', '2026-05-22 06:52:00'),
+(92, NULL, 'Immersive Technology and Entrepreneurship Labs Foundation', 'GST: 33AAHCI7166B1ZR', 'No.22', 'Swagatham - Sneham Apartments, Chennai', NULL, 'Tamil Nadu', ' 600042.', '+91-9515178069', '2026-05-22 06:52:00'),
+(93, NULL, 'THUSHARA ENGINEERING', ' 29BQUPR0473B2ZG', 'THUSHARA ENGINEERING #14', '2nd Cross Road, Bangalore  ', NULL, 'Karnataka', '560058', '8088804970', '2026-05-22 06:52:00'),
+(94, NULL, 'TRITAN AMS PTE LTD', '', 'TRITAN AMS PTE LTD 13B Tuas Road', 'Singapore 638514.Fax: +65 6848 2056', NULL, '', NULL, '+65 9794 5113', '2026-05-22 06:52:00'),
+(95, NULL, 'Aharon Yosef & Sons Electronic Packaging Industries Ltd.', '', 'Aharon Yosef\'s Warehouse 22 Ha\'amal ', 'St. Gan-Yavne 7080000', NULL, '', NULL, ' 520042052', '2026-05-22 06:52:00'),
+(96, NULL, 'LARSEN And TOUBRO LIMITED', '33AAACL0140P3ZO', 'Coimbatore Bypass', 'Srinivasa Nagar, Tamil Nadu ', NULL, 'Tamil Nadu', '641050', '+91 9786011345', '2026-05-22 06:52:00'),
+(97, NULL, 'Quality One Networks', '33DGFPK6417P1Z0', '3/2', 'Sairam layout, India', NULL, 'Tamil Nadu', NULL, '9444586755', '2026-05-22 06:52:00'),
+(98, NULL, 'Rekise Marine', ' 29AAICR2662Q1ZK', 'Rekise Marine Pvt. Ltd. 408', '7th Cross Rd, Karnataka ', NULL, 'Karnataka', '560034', '91 9652752702', '2026-05-22 06:52:00'),
+(99, NULL, 'ADROIT TOOLING SOLUTIONS', '29ACCFA6035F1ZL', '13th Cross Rd', 'Kalika Nagar, Karnataka ', NULL, 'Karnataka', '560058', '+91 95911 50423 ', '2026-05-22 06:52:00'),
+(100, NULL, 'SteeCo Industries', '33AERFS6846R1ZV', '35', 'Srinivasa Nagar, Chennai ', NULL, 'Tamil Nadu', '600071', '+91-8825489143', '2026-05-22 06:52:00'),
+(101, NULL, 'Factorem Pte Ltd', 'N/A', '81 Ayer Rajah Crescent', '#01-54, Singapore 139967', NULL, '', NULL, '+65 8839 1796', '2026-05-22 06:52:00'),
+(102, NULL, 'Nimble Robotics', '', 'Westport FC402 Westport ', 'PkwyFort Worth TX 76177  United States.', NULL, '', NULL, '+1 (240) 463-3396', '2026-05-22 06:52:00'),
+(103, NULL, 'Component sourcing international ', NULL, 'CSI 1301 1301 Westinghouse ', 'Blvd Suite K Charlotte NC 28273 United States', NULL, '', NULL, '+1 (704) 843-9292', '2026-05-22 06:52:00'),
+(104, NULL, 'Finisar Technology India Pvt. Ltd', '36AABCF3213A1ZG', 'Finisar Technology India Pvt. LtdUnit 05-01', 'Block II, Cyber Pearl', NULL, 'Telangana', '500081', '+91 83744 57832', '2026-05-22 06:52:00'),
+(105, NULL, 'Temple Private Limited', '07AADCU5528K1Z1', 'Ground Floor', 'Kila Number 20, New Delhi   ', NULL, 'New Delhi', '110074', '9871300111', '2026-05-22 06:52:00'),
+(106, NULL, 'Sansera Engineering Ltd Plant-3', '29AAECS2440M1Z3', 'PLANT-3\nPlot No.1', 'Bommasandra-Jigani Link Road Indl. Area\nBangalore 560099 IN, Bommasandra-Jigani Link Road Indl. Area\nBangalore ', NULL, 'Karnataka', '560099', '91 80500 41542', '2026-05-22 06:52:00'),
+(107, NULL, 'Shenzhen Jinyihe Technology Co.,Ltd.', '', 'Building 9', 'first floor, China', NULL, '', NULL, '‪+8613714578126', '2026-05-22 06:52:00'),
+(108, NULL, 'MODERN TECH FABRICATORS & ENGINEERS ', '33DHCPKO31701ZH', '2-172 FAST THATHIYARKI AM', 'THIRUPPATHISARAM POST, TAMIL NADU ', NULL, 'Tamil Nadu', '629 901', '9626066798', '2026-05-22 06:52:00'),
+(109, NULL, 'spectro ametek ', 'N/A', 'Spectro Analytical Instruments', '\nGmbH, \nDeutschland.', NULL, '', NULL, '+49 (2821) 892-7116', '2026-05-22 06:52:00'),
+(110, NULL, 'R.P.Network System', '29AJPPP2238P1ZB', 'R.P.Network SystemNo-19', '1st Floor, India', NULL, 'Karnataka', NULL, '8050941829 / 9886556492', '2026-05-22 06:52:00'),
+(111, NULL, 'Nittoku', 'N/A', 'Nittoku Europe GmbHEbentaler Strasse 140A-9020 ', 'Klagenfurt am Worthersee Austria', NULL, '', NULL, '43 676 89 70 20 285', '2026-05-22 06:52:00'),
+(112, NULL, 'AGILITY ROBOTICS', '', '4698 ', 'TRUAX DRIVE SERoboFabSALEM', NULL, '', NULL, '+1 (513) 306-1226', '2026-05-22 06:52:00'),
+(113, NULL, 'FORMURA', '24AOSPP4512N1ZF', '153/3', 'Bandhani Chokdi - Tarapur Road ', NULL, 'Gujarat', '388470', '+91 9601279118', '2026-05-22 06:52:00'),
+(114, NULL, 'RAAD SYSTEMS PRIVATE LIMITED', '29AAJCR0353H1ZA', '2M-132', '2ND FLOOR2nd MAIN ROAD, BANGALORE ', NULL, 'Karnataka', '560043', '+91-9916004345', '2026-05-22 06:52:00'),
+(115, NULL, 'Raison Inspection Services', '29BCLPN6152N1ZU', '#B84/1', 'KSSIDC  Industrial Area, Bangalore ', NULL, 'Karnataka', '561203', '+91 99868 77924', '2026-05-22 06:52:00'),
+(116, NULL, 'Sense Mill Aero Solutions', '29AEAFS4123A1ZI', '4th Phase', '81 & 82, Karnataka 560058', NULL, 'Karnataka', NULL, '+91 98446 76812', '2026-05-22 06:52:00'),
+(117, NULL, 'ZETTAONE TECHNOLOGIES INDIA PVT. LTD', '33AAACZ7630E1ZI', 'P-4A', 'Sidco Industrial Estate, India', NULL, 'Tamil Nadu', NULL, '+91 9952727514', '2026-05-22 06:52:00'),
+(118, NULL, 'VARGA  TECHNOLOGIES PRIVATE LIMITED', '37AAFCV8060P1ZK', '#9-60-3', 'A.R.C Road, Chittor-517520(A.P)', NULL, 'Andhra Pradesh', NULL, '+91-9844988074', '2026-05-22 06:52:00'),
+(119, NULL, 'Inteva Products India Automotive Private Ltd.', '27AABCM9623K1Z5', 'A-33', 'Chakan MIDC, India', NULL, 'Maharashtra', NULL, '+912135612600', '2026-05-22 06:52:00'),
+(120, NULL, 'RIX INDIA MANUFACTURING PRIVATE LIMITED', '29AANCR2416H1Z6', '', 'Japanese Industrial township, Vasanthanarasapura 3rd phase Tumkur\n ', NULL, 'Karnataka', '572128', '+91, 9035589609', '2026-05-22 06:52:00'),
+(121, NULL, 'SS Automation Solutions Pvt Ltd.', '29AAJCS4095H1ZU', 'No 1 & 2  Sy. No. 46', '12th Cross, Bangalore  ', NULL, 'Karnataka', '560058', '080 - 46650000', '2026-05-22 06:52:00'),
+(122, NULL, 'Journal DD', '', 'Shop 29', 'Victoria St West, New Zealand', NULL, '', NULL, '+64 27 273 8810', '2026-05-22 06:52:00'),
+(123, NULL, 'SCHUNK SE & Co. KG', '', 'SCHUNK SE & Co. KGRobert-Bosch-Str. 12-1674336 Brackenheim-HausenDeutschland', NULL, NULL, '', NULL, '+49-7133-103-3509', '2026-05-22 06:52:00'),
+(124, NULL, 'A3 Engineering Solutions', '29BXDPS1105D1ZS', 'No.116', ', Bangalore', NULL, 'Karnataka', NULL, '+91 9008368043', '2026-05-22 06:52:00'),
+(125, NULL, 'Tata Advanced Systems Limited', '29AACCT5245K1ZZ', 'Hosur RoadNo 42-43', 'Electronic City Phase I Bengaluru ', NULL, 'Karnataka', '560100', '+91 9165369712', '2026-05-22 06:52:00'),
+(126, NULL, 'STEEL SMITH', '27AACFS3656E1Z8', 'SECTOR - 2', 'PLOT NO. 12, 401208', NULL, '', NULL, '', '2026-05-22 06:52:00'),
+(127, NULL, 'SRI LAKSHMI STEELS AND ALLOYS', '29AGRPK6961B1Z0', 'NO V2', 'NEAR SUB REGISTER OFFICE, 4TH PHASE PEENYA INDUSTRIAL AREA Bangalore ', NULL, 'Karnataka', '560058', '9448524819', '2026-05-22 06:52:00'),
+(128, NULL, 'HARCOURT INDUSTRIAL, INC', '', 'HARCOURT INDUSTRIAL', 'INC 1100 E WHITCOMB AVENUE MADISON HEIGHTS, MI 48071', NULL, '', NULL, '800/888-5033', '2026-05-22 06:52:00'),
+(129, NULL, 'WYNBIT SOFTWARE TECHNOLOGIES', '', 'WYNBIT SOFTWARE TECHNOLOGIES Virginia 22365 Broderick Dr', 'Sterling, USA', NULL, '', NULL, '+91 90357 47231', '2026-05-22 06:52:00'),
+(130, NULL, 'Infiniti Agrotech LLP', '30AAIFI2122B1ZC', '51A Pilerne Industrial EstatePilerne', 'Bardez, Goa - 403511. INDIA', NULL, 'Goa', NULL, '+918380042883', '2026-05-22 06:52:00'),
+(131, NULL, 'AINA Computer Pvt Ltd.', '29ABDCA0102A1ZM', 'AINA Computer Pvt. Ltd.No.2', 'Sy no.49/1 & 49/3,', NULL, 'Karnataka', NULL, '', '2026-05-22 06:52:00'),
+(132, NULL, 'Raison', '29AAVFR1377G2ZJ', 'C21, KSSIDC Industrial Area ', NULL, NULL, 'Karnataka', '561203', '+91 99868 77924', '2026-05-22 07:39:00'),
+(133, NULL, 'Shenzhen Jinyihe Technology Co., Ltd', NULL, 'Shenzhen Jinyihe Technology Co.,Ltd.\nBuilding 9, first floor, Hengmingzhu Science, Shajing Street shenzhen 518104,China', NULL, NULL, NULL, NULL, '+86 13714578126', '2026-05-22 07:39:00'),
+(134, NULL, 'CADMeister Technologies Pvt Ltd', '29AALCC9249B1ZE', 'Spanda Complex, No 8, 4th Floor,\n5th Cross Road, D Group Employees\nLayout,Bengaluru  ', NULL, NULL, 'Karnataka', '560091', '8147556776', '2026-05-22 07:39:00'),
+(135, NULL, 'M K Industries', '29GZDPK2613B1ZO', 'No. 12 GR LANE, S.P. ROAD CROSS BANGALORE ', NULL, NULL, 'Karnataka', '560002', '+91 866 078 6269', '2026-05-22 07:39:00'),
+(136, NULL, '3DPD', 'AAACZ1141NEM001', 'B2, KSSIDC Industrial Estate, Phase II\nHuskur Road, Veerasandra\nBangalore ', NULL, NULL, 'Karnataka', '560100', '9591526000', '2026-05-22 07:39:00'),
+(137, NULL, 'R.R. FORGINGS PRIVATE LIMITED', '29AAECR3432N1Z0', 'No.332, 4th Main, 9th Cross, Peenya 4th Phase, Bengaluru Karnataka', NULL, NULL, 'Karnataka', NULL, '9986797979', '2026-05-22 07:39:00'),
+(138, NULL, 'PAVAN MACHINE TOOLS & SERVICES INDIA PVT LTD', 'GSTIN 29AAGCP0579A1ZH', '\n#87/142 Iyyangar Layout, 1st Main Ganapthi Nagar,\nPeenya 3rd Phase\n\nBengaluru  ', NULL, NULL, 'Karnataka', '560058', '9620229905', '2026-05-22 07:39:00'),
+(139, NULL, 'NOVA STEEL CORPORATION', '27AZDPS7660Q1ZE', 'OFFICE NO: 5, 1ST FLOOR, 102 NARAYAN BUILDING,  ADESHAR DADY STREET, V.P.ROAD,  MUMBAI', NULL, NULL, 'Maharashtra', '400 004', '9819256446', '2026-05-22 07:39:00'),
+(140, NULL, 'Sri Allamaprabhu CNC Tech', '29AEDFS8589R1ZM', 'Plot no: 39/1, Shed No: 3, Ground Floor, 3rd Phase, 4th Main, \nPeenya Industrial Area, Bengaluru ', NULL, NULL, 'Maharashtra', '560058', '9535278208', '2026-05-22 07:39:00'),
+(141, NULL, 'AKASH ALUMINIUM COMPANY', '29ABCFA8433E1ZJ', 'NO.15, 14TH CROSS, 4TH PHASE, PEENYA INDUSTRIAL AREA, BANGALORE  ', NULL, NULL, 'Karnataka', '560058', '9591955071', '2026-05-22 07:39:00'),
+(142, NULL, 'HI TECH INTERNATIONAL', '33AADFH9663F1ZC', 'D-27, IRUNGATTUKOTTAI, SIPCOT Industrial Park Sriprumbudur,\nKancheepuram ', NULL, NULL, 'Tamil Nadu', '602105', '7696911183', '2026-05-22 07:39:00'),
+(143, NULL, 'Buoyant Marketing 2.0', '29AAYFB4008K1ZY', '#11(204), 2nd Floor ,75th Cross\n12th B Main,6th Block, Rajajinanagr\nBangalore ', NULL, NULL, 'Karnataka', '560010', '9742210283', '2026-05-22 07:39:00'),
+(144, NULL, 'NAGANA RAY METALS', '29FUEPS2749H1Z1', 'No.118, Shop No.2, Rajgopalnagar  Bus Stop, Peenya 2nd Stage Bangalore', NULL, NULL, 'Karnataka', '560058', '08049915978', '2026-05-22 07:39:00'),
+(145, NULL, 'SHREE VEE AGENCIES', '33AKGPV1868F2ZX', 'S.NO.98/12, Bagalor Road, Enapasandaram, \nNallor Post, Hosur . ', NULL, NULL, 'Tamil Nadu', '635109', '9500390402', '2026-05-22 07:39:00'),
+(146, NULL, 'Trust Engineering works', '29AAXFT7267K1ZY', 'No 4/136, 2nd cross, KHB layout laggere bengaluru', NULL, NULL, 'Karnataka', '560058', '8197813912', '2026-05-22 07:39:00'),
+(147, NULL, 'Bharath Electro Chem', '29BGKPP7132F1Z4', 'No. 14-G, 1st Cross, 2nd Main, 2nd Phase, Kumbalgodu Industrial Area,Bangalore', NULL, NULL, 'Karnataka', '560 074', '8792244445', '2026-05-22 07:39:00'),
+(148, NULL, 'RC Ventures', '29ALKPS5380A1ZV', '#73, Karivobanahalli, Tigalarapalya Road,\nPeenya 2nd Stage,\nBengaluru ', NULL, NULL, 'Karnataka', '560058\n', '97429 02299', '2026-05-22 07:39:00'),
+(149, NULL, 'Vasuki Technocast Private Limited', '24AAHCV3334N1Z2', 'Veraval Main Road, Shree Vasuki Industrial Area-1\nSr. No. 230/1, Veraval (Shapar), Rajkot\n', NULL, NULL, 'Gujarat', '360024', '+91 9737976633', '2026-05-22 07:39:00'),
+(150, NULL, 'SIZEMASTERS TECHNOLOGY LIMITED', '27AAACM6502E1ZV', 'No. 123, Ramtekdi Industrial Estate, Hadapsar, Pune ', NULL, NULL, 'Maharashtra', '411013', '9372404949\n', '2026-05-22 07:39:00'),
+(151, NULL, 'Venkateshwara Abrasives', NULL, 'New No. 42, Old No.12,\nReddy Street, Saradha Nagar,\nVirugambakkam, Chennai ', NULL, NULL, 'Tamil Nadu', '600 092', '9884484415', '2026-05-22 07:39:00'),
+(152, NULL, 'RONY POLYMERS', '29NGUPS1975R1ZJ', '#14 /15 Jayanth Building ,5th cross near, sri vidya public school thunga nagar, Magadi Main Road Bangalore  ', NULL, NULL, 'Karnataka', '560091', '+91-7483227662', '2026-05-22 07:39:00'),
+(153, NULL, 'TRIDENT MACHINERY CORPORATION', '29AWVPS6848M1Z2', 'D-1, UNITY BULDING, J C ROAD, Bengaluru\n(Bangalore) Urban \n', NULL, NULL, 'Karnataka', '560002', '9886791650', '2026-05-22 07:39:00'),
+(154, NULL, 'Hadvik Industries', '29QIBPS8666F1Z9', 'No.21, D1/15 shop No 1,Nelagadaranahalli main road, peenya 2nd stage bangalore', NULL, NULL, 'Karnataka', '560058\n', '9481730804', '2026-05-22 07:39:00'),
+(155, NULL, 'Shenzhen Jinyihe Technology Co., Ltd', NULL, 'Building 9, first floor，Hengmingzhu Science，Shajing Street shenzhen\n518104,China', NULL, NULL, NULL, NULL, '86-13714578126', '2026-05-22 07:39:00'),
+(156, NULL, 'PVM CREATIONS', '29LVOPS0606L1ZQ', '2 nd Floort 3/9 1st Cross Nanjappa Layout Adugodi \nBangalore ', NULL, NULL, 'Karnataka', '560030', '+91 94483 03564', '2026-05-22 07:39:00'),
+(157, NULL, 'NAVNEET STEELS', '29CJDPS5746P1Z7', 'No : 261/ 5 2 Nd Cross 3rd Main\n4 Th Phase, Peenya Indl Area, Bangalore ', NULL, NULL, 'Karnataka', '560058', '9343047099', '2026-05-22 07:39:00'),
+(158, NULL, 'SRI LAKSHMI STEELS AND ALLOYS', NULL, 'NO V2, NEAR SUB REGISTERS OFFICE\n4TH PHASE, PEENYA INDUSTRIAL ARE, \nBANGALORE ', NULL, NULL, 'Karnataka', '560058', '9448524819', '2026-05-22 07:39:00'),
+(159, NULL, 'Creative Proto Servcies', '29CAHPG3110Q1ZI', '#96/8, Site.No.1, Kammasandra Road,Hebbagodi,\nElectronic City Post, Bangalore ', NULL, NULL, 'Karnataka', '560 100', '9980606642', '2026-05-22 07:39:00'),
+(160, NULL, 'PVM CREATIONS', '29LVOPS0606L1ZQ', '2 nd Floort 3/9 1st Cross Nanjappa Layout Adugodi\nBangalore ', NULL, NULL, 'Karnataka', '560030', NULL, '2026-05-22 07:39:00'),
+(161, NULL, 'NEEOM METAL AND ALLOYS', '29BCJPC2230A1ZB', 'No.88, & 46, 14th Cross, 4th Phase, Industrial Estate \nPeenya 2nd Stage, Bangalore ', NULL, NULL, 'Karnataka', '560058', '7738951859', '2026-05-22 07:39:00'),
+(162, NULL, 'MARUDHAR TUBES INDIA', '27AJOPB4162D1ZG', '165/167, 2ND kUMBHARwADA, GolDEvAl, MUMBAI', NULL, NULL, 'Maharashtra', '400004', '+91 9930322119', '2026-05-22 07:39:00'),
+(163, NULL, 'SHUBHAM INDUSTRIES', '27AEEPD1768E1ZR', '403/404, PRASAD CHAMBERS, TATA ROAD NO -2, OPERA HOUSE, CHARNI ROAD (E), MUMBAI', NULL, NULL, 'Maharashtra', NULL, '9867912144', '2026-05-22 07:39:00'),
+(164, NULL, 'RAJDEEP ASSOCIATES', '29ACDPS8782Q1ZC', 'NO.4, DRESSER RAJAPPA LANE, SJP ROAD CROSS\nBANGALORE ', NULL, NULL, 'Karnataka', '560002', '9342822232', '2026-05-22 07:39:00'),
+(165, NULL, 'SST CUTTING TOOLS', '29AYRPR3672G1ZO', '#3B/ 29, 2nd Phase, KIADB Main Road\nIndl.Estate,Opp.BWSSB,Peenya 1st Stage\nBangalore ', NULL, NULL, 'Karnataka', '560058', '9886008580', '2026-05-22 07:39:00'),
+(166, NULL, 'SEVENHILL TRADING COMPANY', '29CFPPR7896F1ZB', 'No.46, 14th Cross, 4th Phase, Peenya Industrial Area, Bangalore ', NULL, NULL, 'Karnataka', '560058', '7204283710', '2026-05-22 07:39:00'),
+(167, NULL, 'Allamaprabhu cnc technologies', '29CDGPR1405M1Z8', 'Plot No.(460) 7/1, 12th Main road, Kaverinagar,Laggere,opp.IR polytechnic,3rd phase, Peenya Industrial area, Bengaluru', NULL, NULL, 'Karnataka', '560058', '9535906530', '2026-05-22 07:39:00'),
+(168, NULL, 'RNS Industries', '33GYJPS6778E1ZR', '14/B, RMT Bangalow Road, Sai Nagar, Sidco Post, Coimbatore ', NULL, NULL, 'Tamil Nadu', '641021', '9944961514', '2026-05-22 07:39:00'),
+(169, NULL, 'FUTURE TECHNOLOGIES', '29BYLPA3180R1ZS', 'No.14, 3rd Main Raod , 3rd Cross, I P Nagar,\nHegganahalli, Bangalore Urban, Karnataka ', NULL, NULL, 'Karnataka', '560091', '9640260258', '2026-05-22 07:39:00'),
+(170, NULL, 'Shreevara Innovations Pvt. Ltd.', '29ABPCS2702N1ZR', 'M/s Shreevara Innovations Pvt. Ltd.\n#1588/1889, Chennigappa Industrial Estate,\nMagadi Main Road, Sunkadakatte, Bangalore \n560091', NULL, NULL, 'Karnataka', '560091', '+91-9972141656', '2026-05-22 07:39:00'),
+(171, NULL, 'ROYAL HARDWARE AND TOOLS', '29AAKPH6199K1ZX', 'no.40, 1-1, Sadar Patrappa Rd, Gollarpet, Kumbarpet, Dodpete, Nagarathpete, Bengaluru, Karnataka ', NULL, NULL, 'Karnataka', '560002', '9844248338', '2026-05-22 07:39:00'),
+(172, NULL, 'Skymate technologies', '29APVPN4661EZB', '#98,5th cross,Srigandha nagar,Hegganalli,Bangalore', NULL, NULL, 'Karnataka', '560091', '+91 63605 50155', '2026-05-22 07:39:00'),
+(173, NULL, 'Bharath Electro Chem.', '29BGKPP7132F1Z4', 'No. 14-G, 1st Cross, 2nd Main, 2nd Phase, Kumbalgodu Industrial Area, Bangalore', NULL, NULL, 'Karnataka', '560 074', '8792244445', '2026-05-22 07:39:00'),
+(174, NULL, 'VISION TECHNOLOGIES', '33NBMPS2059R1ZJ', 'Plot NO.91, Bedrapalli Main Road,\nKamaraj Nagar Chinna Elsagiri,\nHosur ', NULL, NULL, 'Tamil Nadu', '635126', '+91 9087663066', '2026-05-22 07:39:00'),
+(175, NULL, 'EKTA CNC PVT LTD', '29AAACE8027A1ZZ', 'No15, 1st cross rajgopalnagar mainroad ganapathinagar peenya bangalore ', NULL, NULL, 'Karnataka', '560058', '9902623690', '2026-05-22 07:39:00'),
+(176, NULL, 'HIND CORPORATION', '29ABJPS5825M1ZU', '# 7/63,\"MAA AMBE SOLANKI\'S\",32ND CROSS,9 TH MAIN ROAD,JAYANAGAR 4TH BLOCK, BANGALORE ', NULL, NULL, 'Karnataka', '560011', '919341218106', '2026-05-22 07:39:00'),
+(177, NULL, 'ROOTS MULTICLEAN LTD.', '33AABCR0315F1Z3', 'SF NO.237/A2 TO 243/3,KOVILPALAYAM TO ,\nNEGAMAM RD, KANIYALAMPALAYAM\nVILLAGE,KINATHUKADAVU(TK),\nCoimbatore  ', NULL, NULL, 'Tamil Nadu', '642120', '+917760992552', '2026-05-22 07:39:00'),
+(178, NULL, 'GK TOOLINGS', '33DANPD0998G1ZK', 'Door No.3/350, Rajeshwari Layout, Sipcot-\n1 Begapalli Post, Hosur, \nKrishnagiri Dist.', NULL, NULL, 'Tamil Nadu', '635126', '8610845743', '2026-05-22 07:39:00'),
+(179, NULL, 'VMACH', '29DMTPM2616E1ZQ', '148/2 BOMMASANDRA INDUSTRIAL AREA, BOMMASANDRA POST, Anekal Taluk, Bangalore ', NULL, NULL, 'Karnataka', '560099', '9632032588', '2026-05-22 07:39:00'),
+(180, NULL, 'SUJAN INDUSTRIES', 'GSTIN: 29APQPR4938H1Z2', 'No.11/1, No.23, K Yugendra Reddy Building\nThimmareddy Layout,\nNear Indian Pirmary High School.\nDevarachikkanahalli\nBangalore', NULL, NULL, 'Karnataka', '560076', '9036622835', '2026-05-22 07:39:00'),
+(181, NULL, 'SHINING OVERSEAS', '27BBFPJ8033F1ZR', '3rd Floor, 7/A, Plot -68, Hira Cottage\nKhetwadi,  Raja Rammohan marg, Mumbai', NULL, NULL, 'Maharashtra', '400004', '9148746142', '2026-05-22 07:39:00'),
+(182, NULL, 'ACUTE WATER JET SOLUTIONS', NULL, 'C-72, 2ND A MAIN ROAD, \nPEENYA INDUSTRIAL ESTATE, PEENYA 2ND STAGE,\nBANGALORE ', NULL, NULL, 'Karnataka', '560058', '9353 886 394', '2026-05-22 07:39:00'),
+(183, NULL, 'S N TECHONOLEGIES', '29DGCPS2050D1ZK', '#40 S L V industrilal est 8th main 2nd cross\npeenya 2nd stage bengalore', NULL, NULL, 'Karnataka', '560058', '8892933254', '2026-05-22 07:39:00'),
+(184, NULL, 'R V Enterprieses', '29ATVPR7687Q1ZU', 'No 628, NR complex, Nethaji Nagar, Bangalore ', NULL, NULL, 'Karnataka', '560057', '8892037178', '2026-05-22 07:39:00'),
+(185, NULL, 'CHIRAG METALS', '29ACLPD2690Q1ZW', '3rd Floor, No.144 Shop.TF-18, Purvi Plaza, Bhashyam\nRoad, cottonpet, Bengaluru, Bengaluru Urban, Karnataka', NULL, NULL, 'Karnataka', '560053', '9945042360', '2026-05-22 07:39:00'),
+(186, NULL, 'Guri Industries', '29EEKPR1620P1ZT', '#05, 9th cross, balaji nagar, Thigarapalya main road, Karihabanahalli ', NULL, NULL, 'Karnataka', '560058', '9663329507', '2026-05-22 07:39:00'),
+(187, NULL, 'LBPM  Engineering Industries', '29CEPPP0892G1ZV', 'Ground Floor Flat \nNO 26 /7.  15 /16\n4th cross Gongondanahalli main road doddabidarekallu extension indiranagar\nNagasandra post Bangalore -', NULL, NULL, 'Karnataka', '560073', '7022592575', '2026-05-22 07:39:00'),
+(188, NULL, 'R K ENGINEERING', '29ABEFR0633H1Z8', 'No.39/2, Near Kere muneshwara temple, Thigalarapalaya Main road,', 'Karihobanahalli, Peenya 2nd stage, Yeshvanthpur Hobali', 'BANGALORE', 'Karnataka', '560058', '9688399659', '2026-05-22 07:39:00'),
+(189, NULL, 'Shiva Engineering', '29ADXFS7983C1Z3', '# 2 Kannikanagaar 1st Main Kachanayakanahalli Road\nBommasandra Ind Area\nBengaluru Urban, Karnataka ', NULL, NULL, 'Karnataka', '560099', '9535164896', '2026-05-22 07:39:00'),
+(190, NULL, 'Choudhary Steel Syndicate', '29AAHPN6776H1Z2', 'SAMPURNA CHAMBERS\nFFD3,4THFLOOR,VASVI TEMPLE STREET\nOPP.VIJAYA BANK,BANGALORE- 560004\nGodown Address\n34/1-5, 2nd Main Road,\nRaghavanagar, NTYL, Bangalore ', NULL, NULL, 'Karnataka', '560099', '9845010292', '2026-05-22 07:39:00'),
+(191, NULL, 'MALKAR INDUSTRIES', '27AAFFM6816M1ZU', 'D-260 , T.T.C., M.I.D.C., INDUSTRIAL AREA, TURBHE\nNAKA, Maharashtra', NULL, NULL, 'Maharashtra', '400705', '8657006650', '2026-05-22 07:39:00'),
+(192, NULL, '3DE TECHNOLOGY PROTOTYPE SOLUTIONS PVT LTD', '33AABCZ2737P1ZW', '3DE TECHNOLOGY PROTOTYPE\nSOLUTIONS PVT LTD\nNo 5, SF No 16/2A1\nNEAR SIDCO INDUSTRIAL ESTATE PHASE1\nZUZUVADI\nHosur  ', NULL, NULL, 'Tamil Nadu', '635126', '91 89258 02713', '2026-05-22 07:39:00'),
+(193, NULL, 'MAGAL TOOL TECH', '29FKEPP0298G1ZQ', 'Ground floor, No 05, Coconut street road, Heggananahalli, Vishwaneedam post, Vishwaneedam, Bengaluru, Bengaluru Urban', NULL, NULL, 'Karnataka', '560091', '9535242362', '2026-05-22 07:39:00'),
+(194, NULL, 'Noble Aerospace Pvt. Ltd.', '29AADCN1817A1ZV', 'No.3B32, MS Industrial Complex\n3rd Floor, 3rd Block, 14th Cross\n4th Phase, Peenya Industrial Area\nBangalore', NULL, NULL, 'Karnataka', '  560 058', '91 9901522733', '2026-05-22 07:39:00'),
+(195, NULL, 'Ultramet Aerospace Private limited', '29AADCU4646A1ZF', 'B121,3rd cross, 1st main road, Peenya industrial area , Bangalore', NULL, NULL, 'Karnataka', '560058', '+91 76765 07017', '2026-05-22 07:39:00'),
+(196, NULL, 'ADDLIFE COATING SYSTEMS PRIVATE LIMITED', '29AAKCA0007C1Z9', '#52, BOMMASANDRA INDUSTRIAL\nAREA, YARANDAHALLY, JIGANI HOBLI, Bengaluru Rural', NULL, NULL, 'Karnataka', '560099', '97909 06308', '2026-05-22 07:39:00'),
+(197, NULL, 'FASTOLEX PRODUCTS', '29BNUPS7809H1Z0', '#9, RAJEEV GANDHI NAGAR ROAD\nSUNKADAKATTE BANGALORE\nMob:9986761101\nOffice No:9019069447\n', NULL, NULL, 'Karnataka', '560091', '901906944', '2026-05-22 07:39:00'),
+(198, NULL, 'VML Technology', '29ANGPV6683F1ZA', '#No24/63 14th cross behind shrushuti bank Byraweshwara industrial area Andrahalli main road Peenya 2nd stage Bangalore', NULL, NULL, 'Karnataka', '560091', '8904314618', '2026-05-22 07:39:00'),
+(199, NULL, 'AXIS TECHNOLOGIES', '29ABWFA4536C1Z7', 'No 5 & 6,1st cross Andrahalli main \nroad Peenya 2nd Stage,Bangalore ', NULL, NULL, 'Karnataka', '560058', '9611468002', '2026-05-22 07:39:00'),
+(200, NULL, 'SHIVA SHAKTHI AEROSPACE', '29AFGFS6903K1ZH', 'N0.24,7THCROSS,KARIHOBNALLI,PEENYA 2ND STAGE ,TIGALARAPALYA Bangalore', NULL, NULL, 'Karnataka', '560058', '9845828043', '2026-05-22 07:39:00'),
+(201, NULL, 'SHREE RAGHAVENDRA CNC TECH', '29AESFS7614G1ZE', 'NO.31,2ND Cross, 10th Main Thigalarapalya\nMain Road Kariobnahalli , Peenya 2nd stage\nBangalore', NULL, NULL, 'Karnataka', '560058', '9241424984', '2026-05-22 07:39:00'),
+(202, NULL, 'SHINE TECHNOLOGIES', '29AFJFS1899D1ZG', 'No 63 1st Main Road,3rs Cross,Sri gandha nagara,Hegganahalli, banglore ', NULL, NULL, 'Karnataka', '560091', '8792636215', '2026-05-22 07:39:00'),
+(203, NULL, 'SUNSHINE TECHNOLOGIES', '29DVDPR5615D1ZG', 'NO148.40Feet road saibaba nagar. andralli main road, near peenya 2nd stage, bangluru', NULL, NULL, 'Karnataka', '560091', '7353560314', '2026-05-22 07:39:00'),
+(204, NULL, 'SS TECHNILOGIES', '29GKZPS4022M1Z2', 'No.854/1, Site No.41/42 Andrahally Main Road, Near Anupama English School, \nRameshwara Layout,  Vishwaneedam Post, Bengaluru ', NULL, NULL, 'Karnataka', '560091', '+91-8792692539', '2026-05-22 07:39:00'),
+(205, NULL, 'Bhairaveshwara technology', '29HHEPS6189E1ZM', 'No 03,9th Cross, karivobanahalli thigalarapalya, opp sagar hotel road, peenya Bangalore ', NULL, NULL, 'Karnataka', '560058', '6360926355', '2026-05-22 07:39:00'),
+(206, NULL, 'Regulus Industries', '29AUXPH1704M2Z1', '#48/4, Karihobanahalli, Maruthi Industrial Area, Peenya 2nd stage, bangalore ', NULL, NULL, 'Karnataka', '560058', '+91-9483163371', '2026-05-22 07:39:00'),
+(207, NULL, 'VINAYAKA MANUFACTURING SOLUTIONS', '29AWMPP5583F1ZV', 'No 17,16th Cross,\nAndrahalli Main Road\nByraveshwara Industrial Estate\nVishwaneedam Post\nBangalore ', NULL, NULL, 'Karnataka', '560 091', '+91 97468 78916', '2026-05-22 07:39:00'),
+(208, NULL, 'HYPHONIC PRECISION INDUSTRIES', '29AAOFH8163M1ZI', '#13, 1st Main Road, Kannikanagar, Near SBI Bank, Bommasandra Industrial Area, Anekal TQ, Bangalore', NULL, NULL, 'Karnataka', ' 560 099', '9442696600', '2026-05-22 07:39:00'),
+(209, NULL, 'N&M TOOLS', '29DHJPS0695J1ZJ', 'Site No.4, Back Side Biocon Park, Jigani Linked Road\nBommasandra, Bangalore  ', NULL, NULL, 'Karnataka', '560099', '7829789479', '2026-05-22 07:39:00'),
+(210, NULL, 'Precisorex', '29FLGPS0786B1ZS', '653/1, 3rd cross, Kasturi Badavane, Rajagopal Nagar, Peenya 2nd stage, Bangalore ', NULL, NULL, 'Karnataka', '560058', '9113240426', '2026-05-22 07:39:00'),
+(211, NULL, 'Nuthana Technologies', '29FCNPS9273M1Z9', '#13,Karihobanahalli, Thigalarapalya Main Road, Peenya 2nd Stage, Bangalore', NULL, NULL, 'Karnataka', '560058', '+91 9986241316', '2026-05-22 07:39:00'),
+(212, NULL, 'Phoenix Technologies', '29AZKPR0859F1ZW', '#589/50, 5th Cross\nDoddanna Industrial Estate, Srigandada kavalu, Peenya 2nd Stage, Bangalore ', NULL, NULL, 'Karnataka', '560 091\n', NULL, '2026-05-22 07:39:00'),
+(213, NULL, 'TRIVIK Engineering Solutions', '29AEZPM340M1ZT', '2B,Muddappa industrial Estate,Boralingappa garden, Govt. Jr college road, near SRS, peenya, Bangaluru', NULL, NULL, 'Karnataka', '560058', '+91 9448929703', '2026-05-22 07:39:00'),
+(214, NULL, 'FOREAXIS TECHNOLOGY', '29AAIFF2191B1ZL', 'No. 342/1326/110, Naidu Layout, Vikash Nagar 3rd Cross,Yarandahalli\nBommasandra Industrial Area, Bangalore ', NULL, NULL, 'Karnataka', '560099', '99865 97949', '2026-05-22 07:39:00'),
+(215, NULL, 'A R ENGINEERING', '29FDMPA1900F1ZV', 'NO.22, KIADB Road, T.Dasarahalli, Bengalore ', NULL, NULL, 'Karnataka', '560057', '7483291467', '2026-05-22 07:39:00'),
+(216, NULL, 'JP TOOL ELITE CNC', '29ECMPP1664K1ZV', 'NO.178/165/18 YARANDAHALLI VILLAGE, ANEKAL TALUK Bengaluru', NULL, NULL, 'Karnataka', '562106', '+91 81500 90762', '2026-05-22 07:39:00'),
+(217, NULL, 'Super Mill Technology', '29KTAPS7088R1Z7', 'No 14, BALAJI NAGARA, K O HALLI, PEENYA 2ND STAGE, Bangalore 560 058', NULL, NULL, 'Karnataka', '560 058', '9611468002', '2026-05-22 07:39:00'),
+(218, NULL, 'G1 Group', '29DKYPS1022K1ZG', '# C-91 GF, 10th main road ,3rd stage,peenya industrial area Bangaluru', NULL, NULL, 'Karnataka', '560058', '9945598415', '2026-05-22 07:39:00'),
+(219, NULL, 'Ravishing Retreat LLP', '29ABCFR5207K1ZZ', 'No. 6/7 1st cross near vidya peeta \ncircle or kengeri vidyapeeta post, kengeri \nhobil bangaluru karnataka ', NULL, NULL, 'Karnataka', '560060', '+91 831 018 9703', '2026-05-22 07:39:00'),
+(220, NULL, 'GODAVARI IRON & STEEL', NULL, 'Spl No.19, !st Stage Main Road, TVS Cross, Peenya. Bangalore ', NULL, NULL, 'Karnataka', '560058', '9845148646', '2026-05-22 07:39:00'),
+(221, NULL, 'SRI RAGHAVENDRA TECHNO SOLUTIONS', '29BFJPC1109K1ZK', 'NO.8,Khatha No.547.Andrahalli Main Road\nNear Anupama Vidya mandir\nBangalore ', NULL, NULL, 'Karnataka', '560091', '+918310653342', '2026-05-22 07:39:00'),
+(222, NULL, 'IKON TRADERS', '33AAHFI0304A1ZD', '103, Texspares Towers, 19/20 Cox Street\nKattoor ', 'Coimbatore ', NULL, 'Tamil Nadu', '641 009', '6383251049', '2026-05-22 07:39:00'),
+(223, NULL, 'SM ENGINEERING SOLUTIONS', '29GEFPS1333F1ZE', 'Flat no:74/10,Gottamaranahalli,SingenaAgrahara Main Road,Near Brookfield Highschool, Bangalore ', NULL, NULL, 'Karnataka', '560099', '9036360093', '2026-05-22 07:39:00'),
+(224, NULL, 'Alcon technologies', '29ABSFA9339F1ZU', '#43, karihobanahalli, 5th Cross, Thigalarapalya main Road, Peenya 2nd stage Bangalore', NULL, NULL, 'Karnataka', '560058', '+91 8105938615', '2026-05-22 07:39:00'),
+(225, NULL, 'SEE YES MICRO METHODS', '29ACNFS5486M1Z0', 'No.109, 2nd Cross, Bhairaweshwara Industrial Area,Andralli Main Road ,                                                                                                         \nPeenya 2nd Stage, Bangalore ', NULL, NULL, 'Karnataka', '560091', '9738777545', '2026-05-22 07:39:00'),
+(226, NULL, 'HAPPY SYED ENTERPRISES', '29BZUPK3877M175', '72/1 6TH MAIN ROAD 3RD PHASE PIA  Bangalore', NULL, NULL, 'Karnataka', ' 560058', '+91 8660205588', '2026-05-22 07:39:00'),
+(227, NULL, 'RKS INDUSTRIES', '29HSTPS8446E1ZO', '223-A 1, bommasandra indl area,3rd phase, hosur main road,bangalore 560099, Bengaluru ', NULL, NULL, 'Karnataka', '560099', '94813 72117', '2026-05-22 07:39:00'),
+(228, NULL, 'ACTiV MFG (Accurate Carbide)', NULL, '5655 North Westervelt Rd.\nSaginaw, MI 48604\nUnited States', NULL, NULL, NULL, NULL, '(415) 424-4289', '2026-05-22 07:39:00'),
+(229, NULL, 'SENSE MILL AERO SOLUTION', '29AEAFS4123A1ZI', '81 & 82 Karihobanahalli , Thigalarapalya Main Road Bengaluru', NULL, NULL, 'Karnataka', '560073', '9844676812', '2026-05-22 07:39:00'),
+(230, NULL, 'JAGADHA  ENGINEERING WORKS', '29AECPJ7444M1Z1', 'No. 30/31, 10th cross, 1st main road, Rajagopal Nagar , Peenya 2nd Stage, Bangalore ', NULL, NULL, 'Karnataka', '560058', '9886764931', '2026-05-22 07:39:00'),
+(231, NULL, 'MECH BIRD TECHNOLOGIES', '29AAMFC9581G1ZU', 'NO.117/4, Opp. A-12, (KHDC), Behind SS Tyre Center, 1st Main Road, Peenya 2nd Stage, Bangalore ', NULL, NULL, 'Karnataka', '560058', '9964530662', '2026-05-22 07:39:00'),
+(232, NULL, 'AMACE', '29AARCA3445M1Z1', '#429,12th Cross, 4th Phase, Peenya Industrial Area, Bengaluru ', NULL, NULL, 'Karnataka', '560058', '080-48523959', '2026-05-22 07:39:00'),
+(233, NULL, 'Sri Manjunatha Engineering', 'GST 29AQUPR2393B1ZB', 'c-262,  6th cross 1st stage peenya industrial estate,Bangalore', NULL, NULL, 'Karnataka', '560058', '90199327559', '2026-05-22 07:39:00'),
+(234, NULL, 'PS Engineering', '33ABDFP3220F1Z', 'S31 SIPCOT INDUSTRIAL PARK PILAIPAKKAM SRIPERUMBUDUR \nLAND MARK NEAR THREE BOND ADHESIVE', NULL, NULL, 'Tamilnadu', '602105', '9962534169', '2026-05-22 07:39:00'),
+(235, NULL, 'VENKATESHWARA ENGINEERING', '29ANHPP2757R1ZZ', '#B-132/2,3RD CROSS,’E’MAIN,1ST STAGE\nPEENYA INDUSTRIAL AREA BANGELORE', NULL, NULL, 'Karnataka', '560058', '6361543230', '2026-05-22 07:39:00'),
+(236, NULL, 'STEEL SMITH', '27AACFS3656E1Z8', 'SECTOR - 2, PLOT NO. 12, STEEL SMITH, VASAI TALUKA\nINDUSTRIAL CO-OP ESTATE LTD, GAURAIPADA VASAI EAST,\nPalghar ', NULL, NULL, 'Maharashtra', '401208', '', '2026-05-22 07:39:00'),
+(237, NULL, 'OM STEEL CORPORATION', '29AKSPC6087D1ZT', 'Shop No. #17, Site No. 5, 1st Main Road Peenya 2nd Stage Bangalore ', NULL, NULL, 'Karnataka', '560058', '9986734760', '2026-05-22 07:39:00'),
+(238, NULL, 'SRI LAKSHMI STEELS AND ALLOYS', '29AGRPK6961B1Z0', 'NO V2, NEAR SUB REGISTER OFFICE, 4TH PHASE PEENYA INDUSTRIAL AREA Bangalore ', NULL, NULL, 'Karnataka', '560058', '9448524819', '2026-05-22 07:39:00'),
+(239, NULL, 'AVIGHNA CONSULTANCY SERVICES', '29AAGCH6573A1ZJ', '#5254, Janapriya Heights, Mallasandra, Hesarghatta road, Bangalore  ', NULL, NULL, 'Karnataka', '560057', '98438 82276', '2026-05-22 07:39:00'),
+(240, NULL, 'Carl Zeiss India (Bangalore) Pvt. Ltd.', '29AADCC6152H1ZM', 'Plot No.03, Jigani Link Road,\nBommasandra Industrial Area,\nBangalore ', NULL, NULL, 'Karnataka', '560 099', NULL, '2026-05-22 07:39:00'),
+(241, NULL, 'BALAMBIGA METAL FINISHERS', '29AIZPM4681L1Z3', 'Unit-IIl, No.38B,Sompura 1st Stage, Dabaspet Industrial Area, Nelamangala Taluk,Bangalore ', NULL, NULL, 'Karnataka', '562123', '+91-6366948248', '2026-05-22 07:39:00'),
+(243, NULL, 'SRI LAKSHMI VENKATESHWARA ENGINEERING WORKS', '29BUFPR0789F1Z5', '#351, 15th Cross, Karimsab Layout, Srighandanagar, Doddanna Industrial Area,\nPeenya, Bengaluru ', NULL, NULL, 'Karnataka', '560091', '9141897837', '2026-05-22 07:39:00'),
+(244, NULL, 'SUN LIGHTS INOV TECH', '29AFUFS9034H1Z6', 'No. 137/3 , Doddmma-Doddahanumanthaiah  Industries, Magadi , Main Road,Kadabageri Cross,Mahohalli, Bangalore ', NULL, NULL, 'Karnataka', '560091', '+91 9187373619', '2026-05-22 07:39:00'),
+(245, NULL, 'CS Aerospace', '29BSRPC9412L1Z5', '14 Balaji Nagar 7th A Cross Road Bengaluru', NULL, NULL, 'Karnataka', '560058', '7760505572', '2026-05-22 07:39:00'),
+(246, NULL, 'TestCAL', '29AAIFT0881G1ZW', 'No.41A/17, 1st Floor, 2nd Main Opp.ABB, 2nd Phase, Peenya, Bengaluru', NULL, NULL, 'Karnataka', '560091', '080-29622211', '2026-05-22 07:39:00'),
+(247, NULL, 'Prithvi Industries', '29ABBFP3797M1ZF', 'No. 10, Ground Floor, SG Kaval, Kareemsab Layout, \nHegganahalli\nPeenya 2nd Stage\nBangalore \n', NULL, NULL, 'Karnataka', '560091', '+91-6360659115', '2026-05-22 07:39:00'),
+(248, NULL, 'TECHNOWINGS CNC', '29DESPS1359D1ZY', '#22,10th Cross,4th Phase,Ganapathi Nagar Peenya industrial Area Bengaluru ', NULL, NULL, 'Karnataka', '560058', '9986265291', '2026-05-22 07:39:00'),
+(249, NULL, 'Sinter Aerospace', '29AFFFS1200L1Z0', 'No8 11th cross doddanna industrial estate S G Kawal, Peenya 2nd stage, Bangalore ', NULL, NULL, 'Karnataka', '560091', '7012734494', '2026-05-22 07:39:00'),
+(250, NULL, 'ARYA SPRING INDUSTRIES', '29BMGPM0657N1ZH', '#6, 9th cross, Kasturi Layout, Rajagopal Nagar, Peenya 2nd stage, bangalore ', NULL, NULL, 'Karnataka', '560065', '9741337404', '2026-05-22 07:39:00'),
+(252, NULL, 'QUALITY ENTERPRISES', '33CGMPD3259C1ZQ', 'No:141/1 , M.G.R Nagar, Mookandapalli, Hosur ', NULL, NULL, 'Tamil Nadu', ' 635126', '7708662963', '2026-05-22 07:39:00'),
+(253, NULL, 'RAISING AEROTECH', '29ABKFR6891H1ZE', '31/1, Siri Complex, \n7th Cross, Kanteerava Studio Main Road, Nandhini \nLayout, Bangalore ', NULL, NULL, 'Karnataka', '560096', '7259839068', '2026-05-22 07:39:00'),
+(254, NULL, 'Mapana Metrology Private.Limited', '29AAOCM3714G1Z9', 'No.673, 4th Cross, Laggere, Rajagopal Nagar. Peenya 3rd Phase, \nBangalore', NULL, NULL, 'Karnataka', '560058', '9448783007', '2026-05-22 07:39:00'),
+(255, NULL, 'BCAP Precision Components', '29CRSPB0599J1Z4', '237/232, B.M Shankkarappa Estate, Sundadakatte, Magadi Main road, Bangalore', NULL, NULL, 'Karnataka', '560091', '7411222502', '2026-05-22 07:39:00'),
+(256, NULL, 'RR TECHNOLOGIES', '29BHXPC3935P2ZD', 'NO 333 Shed no 5, 4th Main 9th Cross Peenya 4th Phase Peenya Indl Estate Bangalore', NULL, NULL, 'Karanataka', '560058', '9902753377', '2026-05-22 07:39:00');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `dc_customer`
+--
+ALTER TABLE `dc_customer`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_customer_name` (`customer_name`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `dc_customer`
+--
+ALTER TABLE `dc_customer`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Management</title>
+  <link rel="icon" type="image/png" href="https://hanav.tech/assets/project-management-logo.png">
+  <link rel="stylesheet" href="/css/project-management.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+
+  <div style="display:flex; align-items:center;">
+    <span id="menuBtn" class="menu-btn">☰</span>
+    <h1>
+      <i class="fa-solid fa-bars-progress"></i>
+      &nbsp;Projects
+    </h1>
+  </div>
+
+  <div class="user-profile">
+    <div style="display:flex; align-items:center;">
+
+      <i class="fa-solid fa-magnifying-glass-chart"
+         title="Find your project by using ProjectID"
+         style="font-size:20px; cursor:pointer; margin-right:5px; display:none;"></i>
+
+         <img src="https://i.ibb.co/Gf2CPs3G/hanav-icon-pm-removebg-preview.png"alt="Logo"
+  `       class="header-logo">
+
+      <!-- Theme Toggle Icon -->
+      <i class="fa-solid fa-moon"
+        id="themeToggle"
+        title="Toggle Theme"
+        style="font-size:20px; cursor:pointer; margin-right:10px;">
+      </i>   
+
+      <i class="fa-solid fa-user-astronaut"
+         id="userToggle"
+         style="font-size:20px; cursor:pointer; margin-right:8px;"></i>
+
+      <!-- User Info (always visible on desktop) -->
+      <div class="user-info">
+        <span class="user-name">Divya Dharshini A</span>
+        <span class="user-email">divyaanand148@gmail.com</span>
+      </div>
+
+
+      <a href="/logout" title="Logout" style="color:white; margin-left:10px;" class="logout">
+        <i class="fa-solid fa-forward"></i>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+<!-- /Header -->
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <a href="/project-management/dashboard" data-section="dashboard" class="active">
+      <i class="fa-solid fa-chart-column"></i>
+      Dashboard
+    </a>
+    <a href="/project-management/products" data-section="products">
+      <i class="fa-solid fa-cubes"></i>
+      Projects
+    </a>
+    <a href="/project-management/inventory" data-section="inventory">
+    <i class="fa-solid fa-cart-flatbed"></i>
+    Inventory
+  </a>
+    <!-- Sidebar Bottom Logo -->
+    <div class="sidebar-bottom-logo" style="display:none">
+      <img src="https://i.ibb.co/Gf2CPs3G/hanav-icon-pm-removebg-preview.png" alt="Hanav Logo">
+    </div>
+  </div>
+  <!-- /Sidebar -->
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Dashboard Section -->
+   
+    <div id="dashboard" class="section">
+
+      <div class="section-title-row">
+        <p class="section-title">Dashboard</p>
+
+        <button onclick="refreshDashboard()"
+                style="height:36px; width:36px; border:none; border-radius:50%; background:#e0f2f1; color:#005e64; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.3s ease;"
+                onmouseover="this.style.background='#005e64'; this.style.color='#fff'; this.querySelector('i').style.transform='rotate(180deg)'"
+                onmouseout="this.style.background='#e0f2f1'; this.style.color='#005e64'; this.querySelector('i').style.transform='rotate(0deg)'">
+          <i id="dashRefreshIcon" class="fa-solid fa-rotate-right" style="transition:transform 0.4s ease;"></i> 
+        </button>
+
+      </div>
+
+        <div id="dashboardContent">
+
+      <div class="dash-filters">
+        <div class="dash-filter-group">
+          <label>Manager Category</label>
+          <select id="dashManagerCategoryFilter">
+            <option value="">Dropdown - Select</option>
+          </select>
+        </div>
+        <div class="dash-filter-group">
+          <label>Manager</label>
+          <select id="dashManagerFilter">
+            <option value="">Dropdown - Select</option>
+          </select>
+        </div>
+
+        <!-- Month Multi Select -->
+<div class="dash-filter-group">
+  <label>Month</label>
+
+  <div class="custom-multi-select" id="monthSelect">
+
+    <!-- Selected Text -->
+    <div class="select-box" id="monthSelectBox">
+      Select Months
+      <i class="fa-solid fa-chevron-down"></i>
+    </div>
+
+    <!-- Dropdown -->
+    <div class="checkbox-dropdown" id="monthDropdown">
+
+      <label>
+        <input type="checkbox" value="Jan">
+        January
+      </label>
+
+      <label>
+        <input type="checkbox" value="Feb">
+        February
+      </label>
+
+      <label>
+        <input type="checkbox" value="Mar">
+        March
+      </label>
+
+      <label>
+        <input type="checkbox" value="Apr">
+        April
+      </label>
+
+      <label>
+        <input type="checkbox" value="May">
+        May
+      </label>
+
+      <label>
+        <input type="checkbox" value="Jun">
+        June
+      </label>
+
+      <label>
+        <input type="checkbox" value="Jul">
+        July
+      </label>
+
+      <label>
+        <input type="checkbox" value="Aug">
+        August
+      </label>
+
+      <label>
+        <input type="checkbox" value="Sep">
+        September
+      </label>
+
+      <label>
+        <input type="checkbox" value="Oct">
+        October
+      </label>
+
+      <label>
+        <input type="checkbox" value="Nov">
+        November
+      </label>
+
+      <label>
+        <input type="checkbox" value="Dec">
+        December
+      </label>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Client Code Filter -->
+<div class="dash-filter-group">
+  <label>Client Code</label>
+  <select id="dashClientCodeFilter">
+    <option value="">Dropdown - Select</option>
+  </select>
+</div>
+
+<!-- Apply Button -->
+<div class="dash-filter-group" style="justify-content:flex-end; align-self:flex-end;">
+
+  <button id="applyDashboardBtn" onclick="applyDashboardFilterButton()" style="height:40px; padding:0 16px; background:#e0f2f1; color:#005e64; border:none; border-radius:2px; font-size:14px; font-family:'Gilroy',sans-serif; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
+    Apply
+    <i class="fa-solid fa-caret-right"></i>
+  </button>
+
+</div>
+      
+      </div>
+      <!-- /dash-filters -->
+
+      <div class="dashboard-cards">
+  <div class="dash-card" onclick="toggleProjectTable('total')">
+    <div class="info">
+      <p class="label">Total Projects</p>
+      <p class="value"><span id="totalCount">0</span>
+      </p>
+    </div>
+    <div class="dash-card-icon" style="background:#e0f2f1;">
+      <i class="fa-solid fa-file-lines" style="color:#005e64;"></i>
+    </div>
+  </div>
+  <div class="dash-card" onclick="toggleProjectTable('live')">
+    <div class="info">
+      <p class="label">Live Projects</p>
+      <p class="value"><span id="liveCount">0</span>
+      </p>
+    </div>
+    <div class="dash-card-icon" style="background:#dbeafe;">
+      <i class="fa-solid fa-circle-play" style="color:#1a56db;"></i>
+    </div>
+  </div>
+  <div class="dash-card" onclick="toggleProjectTable('completed')">
+    <div class="info">
+      <p class="label">Completed</p>
+      <p class="value"><span id="completedCount">0</span>
+      </p>
+    </div>
+    <div class="dash-card-icon" style="background:#dcfce7;">
+      <i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>
+    </div>
+  </div>
+  <div class="dash-card" onclick="toggleProjectTable('pending')">
+    <div class="info">
+      <p class="label">Pending</p>
+      <p class="value"><span id="pendingCount">0</span>
+      </p>
+    </div>
+    <div class="dash-card-icon" style="background:#fef9c3;">
+      <i class="fa-solid fa-clock" style="color:#ca8a04;"></i>
+    </div>
+  </div>
+</div>
+
+      <div class="dashboard-workspace-grid">
+
+  <!-- Pipeline Column -->
+<div class="pipeline-column">
+
+  <!-- DFM -->
+  <div class="pipeline-chart-card">
+    <!-- HEADER -->
+<div class="pipeline-chart-header">
+
+  <!-- LEFT -->
+  <div>
+    <h4>DFM</h4>
+    <span>In Progress · Pending · Completed</span>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="pipeline-status-area">
+
+    <!-- OVERDUE -->
+    <div class="mini-status overdue"
+     onclick="openStagePopup('DFM Checking','overdue')">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <span id="dfmOverdue">0 Overdue</span>
+</div>
+
+<div class="mini-status nextweek"
+     onclick="openStagePopup('DFM Checking','nextweek')">
+  <i class="fa-solid fa-calendar-week"></i>
+  <span id="dfmNextWeek">0 Next Week</span>
+</div>
+
+    <!-- PERCENTAGE -->
+    <p id="dfmPct" style="display: none">78%</p>
+
+  </div>
+
+</div>
+    <div class="pipeline-legend">
+  <span class="leg-dot" style="background:#005e64;"></span> In Progress
+  <span class="leg-dot" style="background:#0f4c81;"></span> Pending
+  <span class="leg-dot" style="background:#4f46e5;"></span> Completed
+</div>
+    <div class="pipeline-bar-wrap">
+      <canvas id="dfmChart"></canvas>
+    </div>
+  </div>
+
+  <!-- RM -->
+  <div class="pipeline-chart-card">
+    <div class="pipeline-chart-header">
+      <div>
+        <h4>Raw Material</h4>
+        <span>In Progress · Pending · Completed</span>
+      </div>
+      <div class="pipeline-status-area">
+
+    <!-- OVERDUE -->
+    <div class="mini-status overdue"
+     onclick="openStagePopup('RM Stage','overdue')">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <span id="rmOverdue">0 Overdue</span>
+</div>
+
+<div class="mini-status nextweek"
+     onclick="openStagePopup('RM Stage','nextweek')">
+  <i class="fa-solid fa-calendar-week"></i>
+  <span id="rmNextWeek">0 Next Week</span>
+</div>
+
+    <!-- PERCENTAGE -->
+    <p id="rmPct" style="display: none">48%</p>
+    </div>
+  </div>
+    <div class="pipeline-legend">
+  <span class="leg-dot" style="background:#005e64;"></span> In Progress
+  <span class="leg-dot" style="background:#0f4c81;"></span> Pending
+  <span class="leg-dot" style="background:#4f46e5;"></span> Completed
+</div>
+    <div class="pipeline-bar-wrap">
+      <canvas id="rmChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Manufacturing -->
+  <div class="pipeline-chart-card">
+    <div class="pipeline-chart-header">
+      <div>
+        <h4>Manufacturing</h4>
+        <span>In Progress · Pending · Completed</span>
+      </div>
+      <div class="pipeline-status-area">
+
+    <!-- OVERDUE -->
+    <div class="mini-status overdue"
+     onclick="openStagePopup('Manufacturing','overdue')">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <span id="manufacturingOverdue">0 Overdue</span>
+</div>
+
+<div class="mini-status nextweek"
+     onclick="openStagePopup('Manufacturing','nextweek')">
+  <i class="fa-solid fa-calendar-week"></i>
+  <span id="manufacturingNextWeek">0 Next Week</span>
+</div>
+
+    <!-- PERCENTAGE -->
+    <p id="manufacturingPct" style="display: none">63%</p>
+    </div>
+
+  </div>
+    <div class="pipeline-legend">
+  <span class="leg-dot" style="background:#005e64;"></span> In Progress
+  <span class="leg-dot" style="background:#0f4c81;"></span> Pending
+  <span class="leg-dot" style="background:#4f46e5;"></span> Completed
+</div>
+    <div class="pipeline-bar-wrap">
+      <canvas id="manufacturingChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Inspection -->
+  <div class="pipeline-chart-card">
+    <div class="pipeline-chart-header">
+      <div>
+        <h4>Inspection</h4>
+        <span>In Progress · Pending · Completed</span>
+      </div>
+      <div class="pipeline-status-area">
+
+    <!-- OVERDUE -->
+    <div class="mini-status overdue"
+     onclick="openStagePopup('Inspection','overdue')">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <span id="inspectionOverdue">0 Overdue</span>
+</div>
+
+<div class="mini-status nextweek"
+     onclick="openStagePopup('Inspection','nextweek')">
+  <i class="fa-solid fa-calendar-week"></i>
+  <span id="inspectionNextWeek">0 Next Week</span>
+</div>
+
+    <!-- PERCENTAGE -->
+    <p id="inspectionPct" style="display: none">77%</p>
+    </div>
+
+  </div>
+    <div class="pipeline-legend">
+  <span class="leg-dot" style="background:#005e64;"></span> In Progress
+  <span class="leg-dot" style="background:#0f4c81;"></span> Pending
+  <span class="leg-dot" style="background:#4f46e5;"></span> Completed
+</div>
+    <div class="pipeline-bar-wrap">
+      <canvas id="inspectionChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Dispatch -->
+  <div class="pipeline-chart-card">
+    <div class="pipeline-chart-header">
+      <div>
+        <h4>Dispatch</h4>
+        <span>In Progress · Pending · Completed</span>
+      </div>
+      <div class="pipeline-status-area">
+
+    <!-- OVERDUE -->
+    <div class="mini-status overdue"
+     onclick="openStagePopup('Dispatch','overdue')">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <span id="dispatchOverdue">0 Overdue</span>
+</div>
+
+<div class="mini-status nextweek"
+     onclick="openStagePopup('Dispatch','nextweek')">
+  <i class="fa-solid fa-calendar-week"></i>
+  <span id="dispatchNextWeek">0 Next Week</span>
+</div>
+
+    <!-- PERCENTAGE -->
+    <p id="dispatchPct" style="display: none">50%</p>
+    </div>
+
+  </div>
+    <div class="pipeline-legend">
+  <span class="leg-dot" style="background:#005e64;"></span> In Progress
+  <span class="leg-dot" style="background:#0f4c81;"></span> Pending
+  <span class="leg-dot" style="background:#4f46e5;"></span> Completed
+</div>
+    <div class="pipeline-bar-wrap">
+      <canvas id="dispatchChart"></canvas>
+    </div>
+  </div>
+</div>
+
+    <!-- Analytics Column -->
+  <div class="analytics-column">
+
+    <!-- OTD Card: metrics + pie chart -->
+    <div class="pipeline-chart-card">
+
+      <div class="pipeline-chart-header">
+        <h4>OTD</h4>
+        <span class="otd-badge" style="color:#ffffff; font-size:16px;">
+          <span id="otdTopPercentage" style="color:#ffffff; font-size:16px;">0</span>%
+        </span>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-tile critical"  onclick="toggleProjectTable('critical')">
+          <div class="tile-count-row">
+            <span class="tile-count" id="criticalCount">0</span>
+          </div>
+          <span class="tile-label">Critical projects</span>
+        </div>
+        <div class="metric-tile thisweek" onclick="toggleProjectTable('thisweek')">
+          <div class="tile-count-row">
+            <span class="tile-count" id="thisWeekDueCount">0</span>
+          </div>
+          <span class="tile-label">This week due</span>
+        </div>
+        <div class="metric-tile nextweek" onclick="toggleProjectTable('nextweek')">
+          <div class="tile-count-row">
+            <span class="tile-count" id="nextWeekDueCount">0</span>
+          </div>
+          <span class="tile-label">Next week due</span>
+        </div>
+      </div>
+
+      <p style="font-size:16px; font-weight:400; color:#374151; margin:20px 0 10px;">OTD Performance</p>
+<div class="pie-chart-wrapper">
+  <canvas id="otdPieChart"></canvas>
+</div>
+</div>
+
+<!-- Drill Table Card: separate container -->   
+    <div id="dashboardProjectTable" class="pipeline-chart-card drill-table-card" style="display:none;">
+      <div class="drill-table-header">
+        <span id="drillTableTitle" style="font-size:18px; font-weight:400; color:#111827;"></span>
+        <i class="fa-solid fa-xmark" onclick="closeDrillTable()" style="cursor:pointer; color:#94a3b8; font-size:16px;"></i>
+      </div>
+      <div class="drill-table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Sl No</th>
+              <th>Project ID</th>
+              <th>Part NO.</th>
+              <th>Created At</th>
+              <th>Qty</th>
+
+              <th>Ac</th>
+            </tr>
+          </thead>
+          <tbody id="dashboardProjectTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+<!-- Spinning Logo Card -->
+<div  id="logoCard" class="pipeline-chart-card" style="display:none; flex-direction:column; justify-content:center; align-items:center; padding:30px;">
+  <div style="position:relative; width:260px; height:260px; display:flex; justify-content:center; align-items:center;">
+    <img src="https://i.ibb.co/XZ78rQxN/Copy-of-Hana-V-removebg-preview.png" alt="Hana V Base"
+      style="position:absolute; width:100%; height:100%; object-fit:contain; z-index:1;">
+    <img src="https://i.ibb.co/dsGpKTps/Hana-V-Logo-3-removebg-preview.png" alt="Spinning Globe"
+      style="position:absolute; width:58%; height:58%; margin-top:22px; margin-right:16px; object-fit:contain; z-index:2; animation:spinGlobe 12s linear infinite;">
+  </div>
+  <p style="margin-top:18px; font-size:18px; color:#8a8a8a; font-weight:500; text-align:center; letter-spacing:0.4px;">
+    HanaV Manufacturing Business <br> and Private Limited
+  </p>
+</div>
+
+
+
+  </div>
+      </div>
+      <!-- /dashboard-workspace-grid -->
+
+    </div>
+    <!-- /Dashboard Section -->
+     </div>
+
+    <!-- Products Section -->
+    <div id="products" class="section" style="display:none;">
+
+      <div class="table-controls">
+
+        <div class="products-header-left">
+          <p class="section-title products-title">
+            All Products List
+            <span style="font-size:18px; color:#005e64;">
+              (<span id="productCountSpan">0</span>)
+            </span>
+          </p>
+        </div>
+
+        <div class="products-header-center">
+          <div class="search-box">
+            <input type="text" placeholder="Search for products..." id="searchInput" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+        </div>
+        <div class="products-filters">
+          <select id="statusFilter">
+            <option value="">All Status</option>
+          </select>
+          <select id="managerFilter">
+            <option value="">All Managers</option>
+          </select>
+          <select id="aging">
+  <option value="" selected disabled hidden>Aging</option>
+  <option value="all" >All</option>
+  <option value="0-30">0 - 30 Days</option>
+  <option value="31-60">31 - 60 Days</option>
+  <option value="61-90">61 - 90 Days</option>
+  <option value="90+">90+ Days</option>
+</select>
+<select id="engineerFilter">
+            <option value="">All Engineers</option>
+          </select>
+        </div>
+        <div class="products-header-right">
+          <p class="showing-count">
+            Showing <span id="showingCount">0</span> of <span id="totalCountProducts">0</span> products
+          </p>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="productsTable" class="data-table">
+          <thead>
+            <tr>
+              <th>Sl No</th>
+              <th>Created At</th>
+              <th id="th-project-id">
+                Project ID
+                <i class="fa-solid fa-circle-down col-indicator"></i>
+              </th>
+              <th id="th-po-ref">
+                PO Reference
+                <i class="fa-solid fa-circle-down col-indicator"></i>
+              </th>
+              <th>Quantity</th>
+              <th>Aging</th>
+              <th>Status</th>
+              <th>Tracker</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody">
+            <tr>
+              <td colspan="7" class="empty-state">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="loadMoreContainer" style="text-align:center; margin-top:15px; display:none;">
+          <button onclick="loadMoreProducts()" class="load-more-btn">Load More</button>
+        </div>
+      </div>
+
+    </div>
+   
+    
+    <!-- /Products Section -->
+
+  <div id="inventory" class="section" style="display:none;">
+
+  <div class="section-title-row">
+    <div class="section-filter-inventory" style="display:flex;">
+      <p class="section-title" style="white-space:nowrap;">Inventory</p>
+      <div class="search-box" style="max-width:280px;margin:0;">
+        <input type="text" id="inventorySearch" placeholder="Search..." />
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+    </div>
+    <div>
+     <span id="inventoryShowingCount"></span>
+    </div>
+</div>
+
+<!-- Table -->
+  <div class="table-container">
+    <table class="data-table" id="inventoryTable">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Part Number</th>
+          <th>Part Name</th>
+          <th>Type</th>
+          <th>Project ID</th>
+          <th>Inventory Qty</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        <tr>
+          <td colspan="7" class="empty-state">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="invLoadMoreContainer" style="text-align:center; margin-top:15px; display:none;">
+    <button onclick="loadMoreInventory()" class="load-more-btn">Load More</button>
+  </div>
+
+</div>
+
+    <!-- Transactions Section -->
+    <div id="transactions" class="section" style="display:none;">
+      <p class="section-title">Part Transactions</p>
+    </div>
+
+    <!-- Reports Section -->
+    <div id="reports" class="section" style="display:none;">
+      <p class="section-title">Reports & Analytics</p>
+    </div>
+
+</div>
+<!-- Chart JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- Dashboard Loader -->
+<div id="dashboardLoader">
+
+  <img
+    src="https://i.ibb.co/XxkzXPr1/20d6948e-118a-11ee-823d-0b503ca393bf.gif"
+    alt="Loading" >
+</div>
+
+
+<!-- ADJUST QTY POPUP -->
+<div id="adjustQtyOverlay" onclick="closeAdjustQtyPopup()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(4px);z-index:29500;"></div>
+
+<div id="adjustQtyPopup"
+  style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(500px,94vw);background:#fff;border-radius:10px;
+  box-shadow:0 16px 50px rgba(0,0,0,0.22);z-index:29501;overflow:hidden;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid #e5e7eb;background:var(--primary-color)">
+    <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#fff;">
+      <i class="fa-solid fa-sliders" style="color:var(--primary);"></i>
+      Manual Adjustment
+    </div>
+    <i class="fa-solid fa-xmark" onclick="closeAdjustQtyPopup()"
+      style="cursor:pointer;font-size:16px;color:#ffffff;"></i>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px;">
+
+    <!-- Part Info -->
+   <div style="background:#f9fafb;border-radius:8px;padding:12px 14px;
+  border:1px solid #e5e7eb;display:flex;flex-direction:column;gap:8px;">
+
+  <!-- Row 1: Part Number + Current Qty -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+        letter-spacing:0.05em;">Part Number</div>
+      <div id="adjustQtyPartNumber"
+        style="font-size:14px;font-weight:600;color:var(--primary);"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;">
+      <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+        letter-spacing:0.05em;">Current Qty</div>
+      <div id="adjustQtyCurrentDisplay"
+        style="font-size:18px;font-weight:700;color:#2563eb;"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Part Name -->
+  <div style="display:flex;flex-direction:column;gap:3px;border-top:1px solid #e5e7eb;padding-top:8px;">
+    <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+      letter-spacing:0.05em;">Part Name</div>
+    <div id="adjustQtyPartName"
+      style="font-size:13px;color:#374151;"></div>
+  </div>
+
+</div>
+
+<!-- Adjustment Controls -->
+    <div style="display:flex;gap:12px;align-items:flex-end;">
+  <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+    <label style="font-size:14px;color:var(--primary);font-weight:500;">
+      Reason for Adjustment
+    </label>
+    <select id="adjustQtyReason"
+      style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #e5e7eb;
+      border-radius:4px;background:#f9fafb;color:#111;outline:none;cursor:pointer;">
+      <option value="">Select reason...</option>
+      <option value="received">Stock Received</option>
+      <option value="damaged">Damaged / Rejected</option>
+      <option value="returned">Returned to Vendor</option>
+      <option value="correction">Correction / Manual Adjust</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+  <!-- Qty -->
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <label style="font-size:13px;color:var(--primary);font-weight:600;">
+      Qty
+    </label>
+    <input type="number" id="adjustQtyValue" min="0" placeholder="Enter qty..."
+      oninput="updateAdjustPreview()"
+      style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #e5e7eb;
+      border-radius:4px;background:#f9fafb;color:#111;outline:none;" />
+  </div>
+</div>
+
+   <!-- Adjustment Type -->
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+  <label style="font-size:13px;color:var(--primary);font-weight:600;white-space:nowrap;">
+    Adjustment Type:
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#111;">
+    <input type="radio" name="adjustType" value="add" checked
+      onchange="updateAdjustPreview()"
+      style="accent-color:var(--primary);width:15px;height:15px;" />
+    <span style="background:#dcfce7;color:#166534;padding:3px 10px;
+      border-radius:20px;font-size:12px;font-weight:600;">+ Add</span>
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#111;">
+    <input type="radio" name="adjustType" value="subtract"
+      onchange="updateAdjustPreview()"
+      style="accent-color:var(--primary);width:15px;height:15px;" />
+    <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;
+      border-radius:20px;font-size:12px;font-weight:600;">− Subtract</span>
+  </label>
+</div>
+
+<!-- Remarks -->
+<div style="display:flex;flex-direction:column;gap:8px;">
+  <label style="font-size:13px;color:var(--primary);font-weight:600;">
+    Remarks
+  </label>
+  <textarea id="adjustQtyRemarks" placeholder="Enter remarks..."
+    style="width:100%;padding:9px 12px;font-size:13px;height:36px;border:1px solid #e5e7eb;
+    border-radius:4px;background:#f9fafb;color:#111;outline:none;resize:none;"></textarea>
+</div>
+
+    <!-- Preview -->
+    <div id="adjustQtyPreview"
+      style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;
+      border-radius:8px;padding:12px 16px;font-size:13px;color:#166534;font-weight:600;
+      display:flex;align-items:center;justify-content:space-between;">
+      <span>New Qty will be:</span>
+      <span id="adjustQtyPreviewVal"
+        style="font-size:20px;font-weight:700;color:#059669;"></span>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;
+    border-top:1px solid #e5e7eb;">
+    <button onclick="closeAdjustQtyPopup()"
+      style="padding:9px 20px;border:1px solid #e5e7eb;background:#f3f4f6;
+      border-radius:5px;font-size:13px;cursor:pointer;color:#374151;">Cancel</button>
+    <button onclick="saveAdjustQty()"
+      style="padding:9px 22px;border:none;background:var(--primary-color);color:#fff;
+      border-radius:5px;font-size:13px;font-weight:600;cursor:pointer;
+      display:inline-flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-circle-check"></i> Apply
+    </button>
+  </div>
+</div>
+<div id="popupOverlay" onclick="closeStagePopup()"></div>
+
+<div id="stagePopup">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h3 id="popupTitle">Dispatch - Overdue</h3>
+    <button class="popup-close" onclick="closeStagePopup()">✕</button>
+  </div>
+  <table class="popup-table">
+    <colgroup>
+      <col /><col /><col /><col /><col /><col />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Sl No</th>
+        <th>Project ID</th>
+        <th>Part No</th>
+        <th>Stage Date</th>
+        <th>Qty</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="popupTableBody"></tbody>
+  </table>
+</div>
+
+
+<!-- External JS -->
+<!-- <script src="/js/dashboard-chart.js"></script> -->
+<script src="/js/project-management.js"></script>
+</body>
+</html>

@@ -10,9 +10,18 @@
 </head>
 <body>
 
+
   <header class="topbar">
     <div class="logo">
-      <img src="https://i.ibb.co/Cfm8QDG/Hanav-Logo-Symbol-removebg-preview.png" alt="Project Tracker Logo" class="tracker-logo"/>
+    <div style="display: flex;align-items: center;">
+      <div>
+        <img src="https://i.ibb.co/Cfm8QDG/Hanav-Logo-Symbol-removebg-preview.png" alt="Project Tracker Logo" class="tracker-logo"/>
+      </div>
+      <div style="margin-left: -5px; margin-top: -4px;">
+        <p style="font-size: 28px; font-weight: 800;"> <span style="color:rgb(255 0 0 / 75%);">H</span><span style="color: rgb(8 62 161 / 81%);">anaV</span></p>
+        <p style="margin-top: -6px; letter-spacing: 0.2px; font-weight: 600;"> <span style="color: rgb(255 0 0 / 75%);">G</span>ROW <span style="color: rgb(255 0 0 / 75%);;">T</span>OGETHER</p>
+      </div>
+    </div>
       
       <div class="logo-text">
         <h1>Project Tracker</h1>
@@ -49,7 +58,18 @@
           <i class="fa-regular fa-calendar"></i>
           Created at&nbsp;<b><label id="createdAt">14 April 2026</label></b>
         </div>
+      
       </div>
+
+      <div class="progress-col">
+    <div class="donut-chart-wrap">
+    <canvas id="projectProgressChart"></canvas>
+    <div class="donut-center">
+      <span id="centerPercent">52%</span>
+      <small id="centerLabel"> Completed</small>
+    </div>
+      </div>
+    </div>
 
       <!-- Col 2: Dates -->
       <div class="dates-col">
@@ -99,7 +119,7 @@
         <div class="person-row">
           <span class="person-label">Engineer</span>
           <div class="person-input-wrap">
-            <input type="text" id="engineerInput" class="engineer-input"placeholder="Enter engineer name..."/>
+            <input type="text" id="engineerInput" class="engineer-input"placeholder="Enter engineer name..."   oninput="capitalizeFirst(this)"/>
           </div>
         </div>
         <div class="people-action save-people-btn">
@@ -116,20 +136,47 @@
     <div class="docs-title">
       <i class="fa-solid fa-boxes-stacked"></i>
       <h2>Parts & Orders</h2>
+
+    <!-- Search Box -->
+        <div class="parts-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="partSearch"placeholder="Search part name..." oninput="filterParts()"/>
+
+        </div>
+
+       
+               <button
+        class="service-save-btn"
+        title="Save Selected Parts"
+        onclick="saveServiceParts()">
+
+        <i class="fa-solid fa-floppy-disk"></i>
+
+    </button>
+      </div>
+
+
+<span class="docs-count" id="docsCount">6 parts</span>
     </div>
-    <span class="docs-count" id="docsCount">6 parts</span>
   </div>
 
   <div class="table-wrap">
     <table class="docs-table">
       <thead>
         <tr>
+           <th style="width:40px;">
+        <input type="checkbox" id="selectAllService">
+    </th>
           <th>S.No</th>
           <th>Part Number</th>
           <th>Part Name</th>
-          <th>Order Quantity</th>
-          <th>Required Date</th>
+          <th>Batch</th>
+          <th>Quantity</th>
+          <th>Dispatch</th>
+          <th>Current</th>
+          <th>Req. Date</th>
           <th>Status</th>
+          <th>Section</th>
           <th>Actions</th>
           <th>Route Card</th>
         </tr>
@@ -143,48 +190,82 @@
   <!-- RIGHT SIDE VIEW PANEL -->
    <div class="overlay" id="overlay"></div>
 <div class="view-panel" id="viewPanel">
+
+  <div id="panelCollapseBtn" title="close" onclick="closePanel()">
+  <i class="fa-solid fa-caret-right"></i>
+</div>
+
   <div class="view-panel-content">
 
     <div class="view-header">
   <h3>Part Details</h3>
 
   <div class="header-icons">
-    <i class="fa-solid fa-clone"></i>
-    <i class="fa-solid fa-share"></i>
+    <i class="fa-solid fa-clone" onclick="copyPartUrl()" title="Copy Link" style="cursor:pointer"></i>
+    <i class="fa-solid fa-share" onclick="sharePartUrl()" title="Copy Link" style="cursor:pointer"></i>
     <i class="fa-solid fa-xmark close-icon" onclick="closePanel()"></i>
   </div>
 </div>
 
 <div class="view-body">
 
-  <!-- TOP DETAILS -->
-  <div class="part-top">
-    <div class="part-col">
-      <label>Part Name: </label>
-      <p id="partName">-</p>
-    </div>
+ <div class="part-top">
 
-    <div class="part-col">
-      <label>Order Quantity: </label>
-      <p id="partQty">-</p>
+  <!-- Row 1: Part Name full width -->
+    <div class="part-top-name-row">
+  <label class="part-top-label">Part Number:</label>
+  <p id="partNumber">-</p>
+  <label class="part-top-label">Part Name:</label>
+  <p id="partName">-</p>
+  <label class="part-top-label" style="margin-left:16px;">Order Quantity:</label>
+  <p id="partQty" style="font-size:14px;font-weight:600;color:#111;">-</p>
+</div>
+
+<!-- Row 2: All meta fields in one line -->
+<div class="part-top-meta-row">
+  <div class="part-col">
+      <label>Dispatch Date:</label>
+      <input type="date" class="required-date" id="requiredDate"/>
+      <i class="fa-solid fa-square-check date-save" onclick="saveRequiredDate()" title="Save Required Date" style="cursor:pointer;"></i>
     </div>
     <div class="part-col">
-  <label>Required Date: </label>
+      <label>Part Status:</label>
+      <div class="status-save-wrap">
+        <select class="part-status" id="partStatus">
+          <option value="">Select Status</option>
+          <option value="Active">Active</option>
+          <option value="On-Hold">On-Hold</option>
+          <option value="Completed">Completed</option>
+        </select>
+        <i class="fa-solid fa-square-check status-save-btn" onclick="saveProjectStatus()" title="Save Status"></i>
+      </div>
+    </div>
+    <div class="part-col">
+      <label>Upload File:</label>
+      <span class="part-files-text">Part Files (<span class="file-count">0</span>)</span>
+    </div>
+   <div class="part-col">
+  <label>Duplicate :</label>
   <input
-    type="date" class="required-date"
-    id="requiredDate"/> <i class="fa-brands fa-square-xing date-save" onclick="saveRequiredDate()" title="Save Required Date"
-    style="cursor:pointer;"></i>
+    type="text"
+    id="duplicateText"
+    class="duplicate-textbox"
+    placeholder="Enter part number"
+  >
 </div>
 
-    <!-- <i class="fa-solid fa-circle-check date-save"></i> -->
-
-    <div class="part-col">
-  <label>Upload File: </label>
-
-  <span class="part-files-text">
-    Part Files (<span class="file-count">0</span>)
-  </span>
+<div class="part-col">
+  <label>&nbsp;</label>
+  <button
+    type="button"
+    class="duplicate-btn"
+    onclick="applyDuplicate()"
+  >
+    Apply
+  </button>
 </div>
+  </div>
+
 </div>
 
 <div class="tabs">
@@ -293,7 +374,7 @@
   <div class="stage-section-header">
     <span class="stage-section-title">
       Inspection
-      <select id="inspVariantSelect""
+      <select id="inspVariantSelect"
   style="margin-left:10px; font-size:12px; padding:4px 8px; border:1px solid #e5e7eb;
          border-radius:4px; background:#f9fafb; color:#111; outline:none; cursor:pointer;">
   <option value="" disabled selected>Select Type</option>
@@ -358,6 +439,14 @@
               </table>
             </div>
           </div>
+
+          <!-- INVENTORY STOCK -->
+    <div style="margin:12px 20px 16px;display:flex;align-items:center;gap:10px;
+      background:#ffe4e8f2;border:1px solid #fa788d;border-radius:4px;padding:12px 16px;">
+      <i class="fa-solid fa-boxes-stacked" style="color:var(--primary);font-size:16px;"></i>
+      <span style="font-size:14px;font-weight:600;color:#374151;">Inventory Stock:</span>
+      <span id="inventoryStockQty" style="font-size:18px;font-weight:700;color:var(--primary);">0</span>
+    </div>
 
         </div><!-- /stage tab -->
 
@@ -464,9 +553,16 @@
 
   <div class="project-id">
     <label>Project ID:</label>
-    <span id="alertProjectId">(AM110-AP)</span>
+    <span id="popupProjectId">(AM110-AP)</span>
   </div>
-
+           <p
+  id="waitingApproverText"
+  style="
+    margin:6px 0 10px;
+    font-size:13px;
+    color:#6b7280;
+  "
+></p>
           <!-- Approver -->
           <div class="popup-field">
             <label>
@@ -475,7 +571,7 @@
             <input 
               type="text" 
               id="alertApproverInput"
-              placeholder="Enter approver name..."
+              readonly
             />
           </div>
 
@@ -516,7 +612,7 @@
   </div>
    <div class="project-id" style="margin:10px 0 5px 15px;">
     <label>Project ID:</label>
-    <span id="alertProjectId">(AM110-AP)</span>
+    <span id="alertProjectId"></span>
   </div>
 
   <div class="verify-body">
@@ -542,6 +638,477 @@
            color:#fff;cursor:pointer;font-size:14px;font-weight:500;">OK</button>
 </div>
 
-  <script src="/js/project-tracker.js"></script>
+<!-- Save Success Popup -->
+<div id="saveSuccessOverlay" style="display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.35);z-index:30010;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:32px 28px;text-align:center;
+    width:300px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 16px;font-size:32px;">✅</div>
+    <h3 style="font-size:18px;font-weight:600;margin-bottom:6px;color:#111">Saved successfully!</h3>
+    <p style="font-size:13px;color:#6b7280;margin-bottom:20px;">Your data has been saved and updated.</p>
+    <button onclick="closeSaveSuccessPopup()"
+      style="background:#fa788d;color:#fff;border:none;padding:10px 36px;
+        border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;">OK</button>
+  </div>
+</div>
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:30011;display:none;"></canvas>
+
+
+
+
+  <!-- SPLIT POPUP -->
+<div id="splitOverlay" onclick="window.closeSplitPopup()"
+  style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    z-index:9998;
+  ">
+</div>
+
+<div id="splitPopup"
+  style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:520px;
+    max-width:95%;
+    background:#fff;
+    border-radius:8px;
+    z-index:9999;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    overflow:hidden;
+  ">
+
+  <!-- HEADER -->
+  <div style="
+    padding:18px 22px;
+    border-bottom:1px solid #f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  ">
+    <div>
+      <h3 style="
+        margin:0;
+        font-size:18px;
+        font-weight:700;
+        color:#111827;
+      ">
+        Split Quantity
+      </h3>
+
+      <p style="
+        margin:4px 0 0;
+        font-size:12px;
+        color:#6b7280;
+      ">
+        Create warehouse quantity split
+      </p>
+    </div>
+
+    <button
+      onclick="window.closeSplitPopup()"
+      style="
+        border:none;
+        background:none;
+        font-size:22px;
+        cursor:pointer;
+        color:#9ca3af;
+      ">
+      ×
+    </button>
+  </div>
+
+  <!-- BODY -->
+  <div style="padding:22px;">
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:18px;
+    ">
+
+      <div style="
+        background:#f9fafb;
+        border-radius:10px;
+        padding:14px;
+      ">
+        <div style="
+          font-size:11px;
+          color:#6b7280;
+          margin-bottom:5px;
+        ">
+          PART NUMBER
+        </div>
+
+        <div id="splitPartNumber"
+          style="
+            font-weight:600;
+            color:#111827;
+          ">
+        </div>
+      </div>
+
+      <div style="
+        background:#fdf2f8;
+        border-radius:10px;
+        padding:14px;
+      ">
+        <div style="
+          font-size:11px;
+          color:#9d174d;
+          margin-bottom:5px;
+        ">
+          TOTAL QTY
+        </div>
+
+        <div id="splitTotalQty"
+          style="
+            font-weight:700;
+            font-size:20px;
+            color:#ec4899;
+          ">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PART NAME -->
+    <div style="
+      margin-bottom:18px;
+      padding:14px;
+      background:#f8fafc;
+      border-radius:10px;
+    ">
+      <div style="
+        font-size:11px;
+        color:#64748b;
+        margin-bottom:5px;
+      ">
+        PART NAME
+      </div>
+
+      <div id="splitPartName"
+        style="
+          font-weight:600;
+          color:#111827;
+        ">
+      </div>
+    </div>
+
+    <!-- ROWS -->
+    <div id="splitRows"></div>
+
+    <!-- ADD BUTTON -->
+    <button
+      onclick="addSplitRow()"
+      style="
+        width:100%;
+        margin-top:10px;
+        border:none;
+        background:#fce7f3;
+        color:#ec4899;
+        padding:12px;
+        border-radius:10px;
+        font-weight:600;
+        cursor:pointer;
+      ">
+      <i class="fa-solid fa-plus"></i>
+      Add Split Row
+    </button>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div style="
+    padding:18px 22px;
+    border-top:1px solid #f1f5f9;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  ">
+
+    <button
+      onclick="window.closeSplitPopup()"
+      style="
+        padding:10px 18px;
+        border-radius:10px;
+        border:1px solid #e5e7eb;
+        background:#fff;
+        cursor:pointer;
+      ">
+      Cancel
+    </button>
+
+    <button
+      onclick="saveSplit()"
+      style="
+        padding:10px 18px;
+        border:none;
+        border-radius:10px;
+        background:#ec4899;
+        color:#fff;
+        font-weight:600;
+        cursor:pointer;
+      ">
+      Save Split
+    </button>
+
+  </div>
+
+</div>
+
+<!-- IMPORT POPUP -->
+<div id="importPopupOverlay" onclick="closeImportPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:29000;"></div>
+
+<div id="importPopup" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(520px,94vw);max-height:88vh;background:#fff;border-radius:10px;
+  box-shadow:0 16px 50px rgba(0,0,0,0.22);z-index:29001;overflow:hidden;display:none;flex-direction:column;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+    border-bottom:1px solid #e5e7eb;background:rgba(250,120,141,0.08);">
+    <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#111;">
+      <i class="fa-solid fa-file-import" style="color:var(--primary);"></i>
+      Import Parts
+    </div>
+    <i class="fa-solid fa-xmark" onclick="closeImportPopup()" style="cursor:pointer;font-size:16px;color:#6b7280;"></i>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:18px;overflow-y:auto;flex:1;">
+
+    <!-- Parts Table -->
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+      <thead>
+        <tr style="background:#f9fafb;">
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;
+            letter-spacing:0.05em;color:#6b7280;border-bottom:1px solid #e5e7eb;">Part Number</th>
+          <th style="text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;
+            letter-spacing:0.05em;color:#6b7280;border-bottom:1px solid #e5e7eb;">Part Name</th>
+          <th style="text-align:center;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;
+            letter-spacing:0.05em;color:#6b7280;border-bottom:1px solid #e5e7eb;width:100px;">Qty</th>
+        </tr>
+      </thead>
+      <tbody id="importPartsTbody"></tbody>
+    </table>
+
+    <!-- Total Qty -->
+    <div style="display:flex;align-items:center;justify-content:space-between;
+      background:#fdf2f8;border-radius:8px;padding:12px 16px;margin-bottom:18px;">
+      <span style="font-size:13px;font-weight:600;color:#9d174d;">Total Quantity</span>
+      <span id="importTotalQty" style="font-size:20px;font-weight:700;color:#ec4899;">0</span>
+    </div>
+
+    <!-- Invoice Number -->
+    <div style="margin-bottom:18px;">
+      <label style="display:block;font-size:13px;color:var(--primary);margin-bottom:6px;font-weight:600;">
+        Invoice No <span style="color:#ef4444;">*</span>
+      </label>
+      <input type="text" id="importInvoiceInput" placeholder="Enter invoice number..."
+        style="width:100%;padding:10px 14px;font-size:13px;border:1px solid #e5e7eb;border-radius:4px;
+          outline:none;background:#f9fafb;color:#111;font-family:'Gilroy',sans-serif;box-sizing:border-box;" />
+      <p id="importInvoiceError" style="color:#ef4444;font-size:12px;min-height:16px;margin-top:4px;"></p>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;border-top:1px solid #e5e7eb;">
+    <button onclick="closeImportPopup()"
+      style="padding:9px 20px;border:1px solid #e5e7eb;background:#f3f4f6;border-radius:5px;
+        font-size:13px;cursor:pointer;color:#374151;">Cancel</button>
+    <button onclick="submitImport()"
+      style="padding:9px 22px;border:none;background:var(--primary);color:#fff;border-radius:5px;
+        font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-circle-check"></i> Submit
+    </button>
+  </div>
+</div>
+
+<!-- INVOICES PANEL -->
+<div id="invoicesPanelOverlay" onclick="closeInvoicesPanel()" 
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(4px);z-index:28000;"></div>
+
+<div id="invoicesPanel" style="display:none;position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);width:min(480px,94vw);max-height:85vh;
+  background:#fff;border-radius:10px;box-shadow:0 16px 50px rgba(0,0,0,0.22);
+  z-index:28001;flex-direction:column;overflow:hidden;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid #e5e7eb;background:rgba(250,120,141,0.08);">
+    <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#111;">
+      <i class="fa-solid fa-rectangle-list" style="color:var(--primary);"></i>
+      Connected Invoices
+    </div>
+    <i class="fa-solid fa-xmark" onclick="closeInvoicesPanel()" 
+      style="cursor:pointer;font-size:16px;color:#6b7280;"></i>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:18px;overflow-y:auto;flex:1;" id="invoicesPanelBody">
+    <div id="invoicesEmptyState" style="display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:50px 20px;color:#9ca3af;">
+      <i class="fa-solid fa-rectangle-list" style="font-size:40px;color:#e5e7eb;margin-bottom:12px;"></i>
+      <p style="font-size:14px;font-weight:600;color:#6b7280;margin:0 0 4px;">No Invoices Yet</p>
+      <p style="font-size:12px;color:#9ca3af;margin:0;">Submitted invoices will appear here.</p>
+    </div>
+    <div id="invoicesList"></div>
+  </div>
+</div>
+
+
+
+<!-- ADJUST QTY POPUP -->
+<div id="adjustQtyOverlay" onclick="closeAdjustQtyPopup()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(4px);z-index:29500;"></div>
+
+<div id="adjustQtyPopup"
+  style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(500px,94vw);background:#fff;border-radius:10px;
+  box-shadow:0 16px 50px rgba(0,0,0,0.22);z-index:29501;overflow:hidden;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid #e5e7eb;background:rgba(250,120,141,0.08);">
+    <div style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#111;">
+      <i class="fa-solid fa-sliders" style="color:var(--primary);"></i>
+      Manual Adjustment
+    </div>
+    <i class="fa-solid fa-xmark" onclick="closeAdjustQtyPopup()"
+      style="cursor:pointer;font-size:16px;color:#6b7280;"></i>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px;">
+
+    <!-- Part Info -->
+   <div style="background:#f9fafb;border-radius:8px;padding:12px 14px;
+  border:1px solid #e5e7eb;display:flex;flex-direction:column;gap:8px;">
+
+  <!-- Row 1: Part Number + Current Qty -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+        letter-spacing:0.05em;">Part Number</div>
+      <div id="adjustQtyPartNumber"
+        style="font-size:14px;font-weight:600;color:var(--primary);"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;">
+      <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+        letter-spacing:0.05em;">Current Qty</div>
+      <div id="adjustQtyCurrentDisplay"
+        style="font-size:18px;font-weight:700;color:#2563eb;"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Part Name -->
+  <div style="display:flex;flex-direction:column;gap:3px;border-top:1px solid #e5e7eb;padding-top:8px;">
+    <div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;
+      letter-spacing:0.05em;">Part Name</div>
+    <div id="adjustQtyPartName"
+      style="font-size:13px;color:#374151;"></div>
+  </div>
+
+</div>
+
+<!-- Adjustment Controls -->
+    <div style="display:flex;gap:12px;align-items:flex-end;">
+  <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+    <label style="font-size:14px;color:var(--primary);font-weight:500;">
+      Reason for Adjustment
+    </label>
+    <select id="adjustQtyReason"
+      style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #e5e7eb;
+      border-radius:4px;background:#f9fafb;color:#111;outline:none;cursor:pointer;">
+      <option value="">Select reason...</option>
+      <option value="received">Stock Received</option>
+      <option value="damaged">Damaged / Rejected</option>
+      <option value="returned">Returned to Vendor</option>
+      <option value="correction">Correction / Manual Adjust</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+  <!-- Qty -->
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <label style="font-size:13px;color:var(--primary);font-weight:600;">
+      Qty
+    </label>
+    <input type="number" id="adjustQtyValue" min="0" placeholder="Enter qty..."
+      oninput="updateAdjustPreview()"
+      style="width:100%;padding:9px 12px;font-size:13px;border:1px solid #e5e7eb;
+      border-radius:4px;background:#f9fafb;color:#111;outline:none;" />
+  </div>
+</div>
+
+   <!-- Adjustment Type -->
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+  <label style="font-size:13px;color:var(--primary);font-weight:600;white-space:nowrap;">
+    Adjustment Type:
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#111;">
+    <input type="radio" name="adjustType" value="add" checked
+      onchange="updateAdjustPreview()"
+      style="accent-color:var(--primary);width:15px;height:15px;" />
+    <span style="background:#dcfce7;color:#166534;padding:3px 10px;
+      border-radius:20px;font-size:12px;font-weight:600;">+ Add</span>
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#111;">
+    <input type="radio" name="adjustType" value="subtract"
+      onchange="updateAdjustPreview()"
+      style="accent-color:var(--primary);width:15px;height:15px;" />
+    <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;
+      border-radius:20px;font-size:12px;font-weight:600;">− Subtract</span>
+  </label>
+</div>
+
+<!-- Remarks -->
+<div style="display:flex;flex-direction:column;gap:8px;">
+  <label style="font-size:13px;color:var(--primary);font-weight:600;">
+    Remarks
+  </label>
+  <textarea id="adjustQtyRemarks" placeholder="Enter remarks..."
+    style="width:100%;padding:9px 12px;font-size:13px;height:36px;border:1px solid #e5e7eb;
+    border-radius:4px;background:#f9fafb;color:#111;outline:none;resize:none;"></textarea>
+</div>
+
+    <!-- Preview -->
+    <div id="adjustQtyPreview"
+      style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;
+      border-radius:8px;padding:12px 16px;font-size:13px;color:#166534;font-weight:600;
+      display:flex;align-items:center;justify-content:space-between;">
+      <span>New Qty will be:</span>
+      <span id="adjustQtyPreviewVal"
+        style="font-size:20px;font-weight:700;color:#059669;"></span>
+    </div>
+  </div>
+
+  
+  <!-- Footer -->
+  <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;
+    border-top:1px solid #e5e7eb;">
+    <button onclick="closeAdjustQtyPopup()"
+      style="padding:9px 20px;border:1px solid #e5e7eb;background:#f3f4f6;
+      border-radius:5px;font-size:13px;cursor:pointer;color:#374151;">Cancel</button>
+    <button onclick="saveAdjustQty()"
+      style="padding:9px 22px;border:none;background:var(--primary);color:#fff;
+      border-radius:5px;font-size:13px;font-weight:600;cursor:pointer;
+      display:inline-flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-circle-check"></i> Apply
+    </button>
+  </div>
+</div>
+ <script src="/js/project-tracker.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
